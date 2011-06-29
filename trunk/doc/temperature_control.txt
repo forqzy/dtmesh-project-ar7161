@@ -1,0 +1,30 @@
+一。温度传感器的源代码：
+温度控制驱动的源代码位于：linux/kernels/mips-linux-2.6.15/drivers/hwmon下
+由linux/kernels/mips-linux-2.6.15/include/linux/autoconf.h和
+linux/kernels/mips-linux-2.6.15/arch/mips/configs/intellus_routing_defconfig
+可知采用的是LM75。
+
+看lm75.c的代码，发现此温度传感器用的是I2C的总线。
+根据函数内容得知，驱动在加载的时候会自动检测I2C总线上的设备，因此会自动发现温度传感器。
+lm75_update_device（）是对温度传感器进行轮询读数时用的函数。
+
+重新编译需要运行： make kernel_clean；make kernel_build 
+对这部分编译的信息如下：
+
+  CC      drivers/hwmon/hwmon.o
+  CC      drivers/hwmon/lm75.o
+  LD      drivers/hwmon/built-in.o
+  
+二。在页面上温度显示情况：
+在页面上Status下有一个Temperature的统计信息，显示当前板子的温度：
+Current board temperature:34.5°C(51.2°F)
+
+其对应的cgi是rootfs/cgiCommon/usr/www/APTemperature.html  
+cat /sys/class/hwmon/hwmon0/device/temp1_input
+做简单变换即为显示在页面上的信息。
+ 
+也可查看i2c总线，里面也有lm75传感器的数据，
+cat /sys/bus/i2c/devices/0-0048/temp1_input 
+同上面是相同的效果。
+
+
