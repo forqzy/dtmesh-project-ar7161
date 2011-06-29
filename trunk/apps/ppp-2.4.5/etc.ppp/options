@@ -1,0 +1,13 @@
+asyncmap 0
+noauth
+local
+hide-password
+noproxyarp
+lcp-echo-interval 30
+lcp-echo-failure 4
+ms-dns 202.102.154.3
+ms-dns 202.102.152.3
+netmask 255.255.255.0
+noipdefault
+defaultroute
+usepeerdns
