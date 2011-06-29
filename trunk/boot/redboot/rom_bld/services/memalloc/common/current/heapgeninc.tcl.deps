@@ -1,0 +1,5 @@
+heapgeninc.tcl:  \
+ /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/ecos/packages/services/memalloc/common/current/src/heapgen.cpp \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/system.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/memalloc.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/memalloc/dlmalloc.hxx

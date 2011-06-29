@@ -1,0 +1,252 @@
+src/startup.o.d:  \
+ /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/ecos/packages/infra/current/src/startup.cxx \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/infra.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/system.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_type.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/build/mipsisa32-elf/lib/gcc-lib/mipsisa32-elf/3.2.1/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/basetype.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_pb44.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_ar7100.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_mips32.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_trac.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_ass.h
+src/prestart.o.d:  \
+ /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/ecos/packages/infra/current/src/prestart.cxx \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_type.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/build/mipsisa32-elf/lib/gcc-lib/mipsisa32-elf/3.2.1/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/basetype.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/system.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_pb44.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_ar7100.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_mips32.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_trac.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/infra.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_ass.h
+src/pkgstart.o.d:  \
+ /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/ecos/packages/infra/current/src/pkgstart.cxx \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/infra.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/system.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_type.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/build/mipsisa32-elf/lib/gcc-lib/mipsisa32-elf/3.2.1/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/basetype.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_pb44.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_ar7100.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_mips32.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_trac.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_ass.h
+src/userstart.o.d:  \
+ /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/ecos/packages/infra/current/src/userstart.cxx \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_type.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/build/mipsisa32-elf/lib/gcc-lib/mipsisa32-elf/3.2.1/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/basetype.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/system.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_pb44.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_ar7100.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_mips32.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_trac.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/infra.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_ass.h
+src/dummyxxmain.o.d:  \
+ /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/ecos/packages/infra/current/src/dummyxxmain.cxx \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/infra.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/system.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_type.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/build/mipsisa32-elf/lib/gcc-lib/mipsisa32-elf/3.2.1/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/basetype.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_pb44.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_ar7100.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_mips32.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_trac.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_ass.h
+src/null.o.d:  \
+ /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/ecos/packages/infra/current/src/null.cxx \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/infra.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/system.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_type.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/build/mipsisa32-elf/lib/gcc-lib/mipsisa32-elf/3.2.1/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/basetype.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_pb44.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_ar7100.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_mips32.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_trac.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_ass.h
+src/simple.o.d:  \
+ /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/ecos/packages/infra/current/src/simple.cxx \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/system.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/infra.h
+src/fancy.o.d:  \
+ /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/ecos/packages/infra/current/src/fancy.cxx \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/system.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/infra.h
+src/buffer.o.d:  \
+ /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/ecos/packages/infra/current/src/buffer.cxx \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/system.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/infra.h
+src/diag.o.d:  \
+ /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/ecos/packages/infra/current/src/diag.cxx \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/system.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_pb44.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_ar7100.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_mips32.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/infra.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_type.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/build/mipsisa32-elf/lib/gcc-lib/mipsisa32-elf/3.2.1/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/basetype.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/diag.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/stdarg.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/build/mipsisa32-elf/lib/gcc-lib/mipsisa32-elf/3.2.1/include/stdarg.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/hal_arch.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/var_arch.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/hal_intr.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/hal_io.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/plf_io.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/var_intr.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/plf_intr.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/ar7100_soc.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/hal_diag.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/hal_if.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/dbg-threads-api.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/dbg-thread-syscall.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/limits.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/isoinfra.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/fileio/limits.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/io_fileio.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/build/mipsisa32-elf/lib/gcc-lib/mipsisa32-elf/3.2.1/include/limits.h
+src/tcdiag.o.d:  \
+ /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/ecos/packages/infra/current/src/tcdiag.cxx \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/infra.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/system.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_pb44.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_ar7100.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_mips32.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_type.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/build/mipsisa32-elf/lib/gcc-lib/mipsisa32-elf/3.2.1/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/basetype.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/hal_arch.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/var_arch.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/diag.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/stdarg.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/build/mipsisa32-elf/lib/gcc-lib/mipsisa32-elf/3.2.1/include/stdarg.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/testcase.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/hal_intr.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/hal_io.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/plf_io.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/var_intr.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/plf_intr.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/ar7100_soc.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/hal_if.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/dbg-threads-api.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/dbg-thread-syscall.h
+src/memcpy.o.d:  \
+ /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/ecos/packages/infra/current/src/memcpy.c \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/infra.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/system.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_type.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/build/mipsisa32-elf/lib/gcc-lib/mipsisa32-elf/3.2.1/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/basetype.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_pb44.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_ar7100.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_mips32.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_trac.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_ass.h
+src/memset.o.d:  \
+ /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/ecos/packages/infra/current/src/memset.c \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/infra.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/system.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_type.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/build/mipsisa32-elf/lib/gcc-lib/mipsisa32-elf/3.2.1/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/basetype.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_pb44.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_ar7100.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_mips32.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_trac.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_ass.h
+src/delete.o.d:  \
+ /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/ecos/packages/infra/current/src/delete.cxx \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/system.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/infra.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_type.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/build/mipsisa32-elf/lib/gcc-lib/mipsisa32-elf/3.2.1/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/basetype.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_pb44.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_ar7100.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_mips32.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips.h
+src/eprintf.o.d:  \
+ /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/ecos/packages/infra/current/src/eprintf.c \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/system.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/isoinfra.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_type.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/build/mipsisa32-elf/lib/gcc-lib/mipsisa32-elf/3.2.1/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/basetype.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_pb44.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_ar7100.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_mips32.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_ass.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/infra.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/diag.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/stdarg.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/build/mipsisa32-elf/lib/gcc-lib/mipsisa32-elf/3.2.1/include/stdarg.h
+src/pure.o.d:  \
+ /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/ecos/packages/infra/current/src/pure.cxx \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/infra.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/system.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_ass.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_type.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/build/mipsisa32-elf/lib/gcc-lib/mipsisa32-elf/3.2.1/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/basetype.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_pb44.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_ar7100.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_mips32.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips.h
+src/abort.o.d:  \
+ /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/ecos/packages/infra/current/src/abort.cxx \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/infra.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/system.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_ass.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/infra/cyg_type.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/build/mipsisa32-elf/lib/gcc-lib/mipsisa32-elf/3.2.1/include/stddef.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/cyg/hal/basetype.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_pb44.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_ar7100.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips_mips32.h \
+  /home/fanjianqi/atheros_work/reference/trunk_11_6_22/boot/redboot/rom_bld/install/include/pkgconf/hal_mips.h
