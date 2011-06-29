@@ -1,0 +1,16 @@
+﻿本文介绍页面DynmicDNS（DDNS）的配置：
+采用inadyn方式，使用简单的配置文件/etc/inadyn.conf
+具体的inadyn命令行方式可以采用help命令查看
+现有的支持一下DDNS服务商：
+dyndns.org
+freedns.afraid.org
+zoneedit.com
+no-ip.com
+3322.org
+首先在上面的服务商中，任选一个，注册一个帐号（已在dyndns.org 和3322.org测试成功）
+User Name：即为在上面服务商中注册的用户名
+Password:     密码
+Host Name:  在服务商中申请的hostname
+Server Address：即dyndns_system，如dyndns@dyndns.org, dyndns@3322.org
+
+在/tmp/inadyn.log提供了日志文件，查看ip是否更新成功。
