@@ -1,0 +1,12 @@
+cdl_option CYGNUM_HAL_BOARD_TYPE {
+    user_value    {"JA76PF2HX"}
+};
+
+cdl_option CYGDAT_REDBOOT_MIPS_LINUX_BOOT_COMMAND_LINE {
+    user_value "console=ttyS0,115200 root=31:02 rootfstype=jffs2 init=/sbin/init lm75.force=0,0x48 board=ja76hx"
+};
+
+#JA76PF2HX has only port 1 , use port 1 as default
+cdl_option CYGNUM_REDBOOT_DEFAULT_NETWORK_DEVICE {
+    user_value 1
+};

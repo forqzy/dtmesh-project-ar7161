@@ -1,0 +1,7 @@
+cdl_option CYGNUM_HAL_BOARD_TYPE {
+    user_value    {"JA76PF2"}
+};
+
+cdl_option CYGDAT_REDBOOT_MIPS_LINUX_BOOT_COMMAND_LINE {
+    user_value "console=ttyS0,115200 root=31:02 rootfstype=jffs2 init=/sbin/init lm75.force=0,0x48 board=ja76pf2"
+};
