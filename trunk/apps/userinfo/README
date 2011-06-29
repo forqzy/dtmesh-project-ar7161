@@ -1,0 +1,56 @@
+    该README说明如何修改Web site页面的用户名密码和进入开发板的用户名密码
+
+一：修改Web页面的用户名和密码
+
+代码位置：/rootfs/intellus/etc/ath/apcfg
+
+cfg -a HTTPD_USERNAME=${HTTPD_USERNAME:=admin}
+cfg -a HTTPD_PASSWORD=${HTTPD_PASSWORD:="\$1\$\$CoERg7ynjYLsj2j4glJ34."}
+cfg -a HTTPD_PORT=${HTTPD_PORT:=80}
+
+如上，配置了用户名，密码和端口号，在此处可修改用户名，密码。
+注意：密码是通过crypt（）函数加密之后的密文形式，下面（三）介绍了如何生成该密码。
+
+二：修改进入开发板的用户名和密码
+1.通过命令修改
+进入开发板之后，通过命令passwd可以修改该用户的密码。
+默认busybox编译不支持增加删除用户，可以自己修改配置脚本/apps/busybox-1.01/defconfig-intellus
+
+2.直接修改shadow和passwd文档
+
+在/rootfs/cgiCommon/etc/下的shadow和passwd保存了用户名和密码信息
+在shadow里找到对应的用户名，后面是密码（加密之后的），如:
+  root:$1$$CoERg7ynjYLsj2j4glJ34.:10933:0:99999:7:::
+  Admin:$1$$CoERg7ynjYLsj2j4glJ34.:10933:0:99999:7:::
+  bin::10933:0:99999:7:::
+  daemon::10933:0:99999:7:::
+  adm::10933:0:99999:7:::
+  lp:*:10933:0:99999:7:::
+  sync:*:10933:0:99999:7:::
+  shutdown:*:10933:0:99999:7:::
+
+有两个用户root和Admin，$1$$CoERg7ynjYLsj2j4glJ34.是密码（admin）
+除此之外，还有其它的用户名，如bin，daemon等是系统账户，是系统正常运行所需要的。
+
+修改密码直接在shadow里修改即可。
+若想更改用户（增加，删除，改名等）要在passwd和shadow里都修改，要在这两个文件里面都要这个用户。
+
+三：使用crypt（）函数生成密文
+在apps/userinfo下面运行make就可生成可执行文件crypt
+wangchunyan919@wcy:~/svn/trunk/apps/userinfo$ make
+gcc -o crypt crypt.c -lcrypt
+
+运行crypt，输入密码的明文，如admin
+wangchunyan919@wcy:~/svn/trunk/apps/userinfo$ ./crypt admin
+$1$$CoERg7ynjYLsj2j4glJ34.
+
+则$1$$CoERg7ynjYLsj2j4glJ34.即为密文形式
+
+
+注意：此处所使用的crypt（）加密形式已封装为仅为该代码所使用的形式，
+采用的salt为$1$,若不同的salt形式，加密出来的密文形式不同。
+
+
+
+
+
