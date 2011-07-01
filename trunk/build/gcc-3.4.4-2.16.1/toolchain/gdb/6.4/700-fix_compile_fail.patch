@@ -1,0 +1,11 @@
+--- gdb-6.4/bfd/ecoff.c	2009-10-23 13:02:04.000000000 +0800
++++ gdb-6.4/bfd/ecoff.c	2009-10-23 13:02:15.000000000 +0800
+@@ -3087,7 +3087,7 @@
+   last_elt = current;
+   for (i = 0; i < orl_count; i++)
+     {
+-      unsigned int hash, rehash;
++      unsigned int hash, rehash=0;
+ 
+       /* Advance firstreal to the file position of this archive
+ 	 element.  */
