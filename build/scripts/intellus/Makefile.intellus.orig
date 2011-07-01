@@ -1,0 +1,153 @@
+
+export HAL=$(TOPDIR)/wlan/common/lmac/hal
+export ENETDIR=$(TOPDIR)/linux/drivers/net/ag7100/
+export ATH_TOOL_DIR=$(TOPDIR)/wlan/linux/tools/
+export ATH_DFS=$(TOPDIR)/wlan/common/lmac/dfs
+# MADWIFIPATH is for use by e.g. apps/wpa2 code:
+#export MADWIFIPATH=$(TOPDIR)/wlan/linux/
+
+#
+# This is the specific makefile for the pb42 board.  It has dependancies for both
+# the "common" build and the "jffs2" build.  This is unique for each board type, and
+# must be configured for each board.
+#
+
+# To enable library optimization (removing unused object code from
+# shared libraries) set BUILD_LIBRARYOPT to 'y' else 'n'
+BUILD_LIBRARYOPT := y
+
+ifeq ($(BUILD_CONFIG), _routing)
+pb42fus_build: common_fusion iptables_build fusion_build $(BUILD_TYPE)_build 
+else
+pb42fus_build: common_fusion fusion_build $(BUILD_TYPE)_build
+endif
+
+ifeq ($(BUILD_WPA2),y) ##################################################
+common_fusion: check_tftp rootfs_prep toolchain_build kernel_build \
+	kernel_info redboot_fusion enet_build busybox_build wpa2 sar \
+	art_mod cgi
+common_build: check_tftp rootfs_prep toolchain_build kernel_build \
+	kernel_info redboot_build enet_build busybox_build wpa2 sar 
+
+else ################################################################
+common_fusion: check_tftp rootfs_prep toolchain_build kernel_build \
+	kernel_info redboot_fusion enet_build busybox_build wsc_fus \
+	fus_supplicant sar 					\
+	art_mod
+common_build: check_tftp rootfs_prep toolchain_build kernel_build \
+	kernel_info redboot_build enet_build busybox_build wsc \
+	wpa_supplicant sar
+
+endif ################################################################
+
+#
+# Unique rules for the ag7100 PHY with the ar7100 (Hydra)  board
+#
+
+enet_build: kernel_build
+	cd $(ENETDIR) && rm -f *.o *.ko *.mod.*
+	$(MAKEARCH) -C $(KERNELPATH) SUBDIRS=$(ENETDIR) modules
+	test -d $(MODULEPATH) || mkdir -p $(MODULEPATH)
+	cp $(ENETDIR)/ag7100_mod.ko $(MODULEPATH)
+
+iptables_build:
+	@echo making iptables
+	cd ../apps/iptables/iptables-1.3.6 && \
+	$(MAKE) clean && \
+	$(MAKE) KERNEL_DIR=$(KERNELPATH) && \
+	$(TOOLPREFIX)strip iptables && \
+	cp iptables $(INSTALL_ROOT)/sbin/iptables 
+
+# WIRELESSTOOLNAMES must agree with wlan/linux/tools/Makefile
+WIRELESSTOOLNAMES := athstats athstatsclear 80211stats athkey athchans athctrl\
+	athdebug 80211debug wlanconfig athcwm athampdutrc atrc \
+	pktlogconf pktlogdump radartool
+wireless_tools_fus:
+	@echo making wireless_tools
+	if test -n "$(WIRELESSTOOLS)"; then \
+	cd ../apps/$(WIRELESSTOOLS); make clean; make; \
+	cp -f $(WIRELESSTOOLSLIB) $(INSTALL_ROOT)/lib; \
+	cp -f iwpriv $(INSTALL_ROOT)/sbin; \
+	cp -f iwconfig $(INSTALL_ROOT)/sbin; \
+	cp -f iwlist $(INSTALL_ROOT)/sbin; \
+	cd $(TOPDIR)/wlan/linux/tools && make clean; \
+	make wlanconfig BUILD_STATIC=$(BUILD_STATIC); \
+	cp -f wlanconfig $(INSTALL_ROOT)/sbin; \
+	fi
+
+ath_tools_fus: ath_tools_fus_clean
+	@echo makeing ath tools;\
+	cd ../wlan/linux/tools;\
+	make ath_tools;
+
+ath_tools_fus_clean:
+	@echo cleaning ath tools;\
+	cd ../wlan/linux/tools;\
+	make ath_tools_clean;
+
+cgi: ath_tools_fus_clean
+	@echo makeing cgi;\
+	cd ../wlan/linux/tools;\
+	rm -rf cgiMain;\
+	make cgiMain;
+
+hostapd_fus: openssl
+	if ( test -e ../apps/wpa/hostapd-0.4.8 ) then \
+	cd ../apps/wpa/hostapd-0.4.8; cp -f defconfig.fus .config; make clean; make; \
+	make PREFIX=$(INSTALL_ROOT)/sbin CONFIG_PATH=$(INSTALL_ROOT)/etc/ath DEFAULT_CFG=$(INSTALL_ROOT)/etc/ath/default install; \
+	fi
+
+### After more testing, we'll switch to lastest hostapd code:
+#notyet# hostapd_fus: openssl
+#notyet#	if ( test -e ../apps/wpa/hostap-0.6.1/hostapd ) then \
+#notyet# 	cd ../apps/wpa/hostap-0.6.1/hostapd; cp -f defconfig.fus .config; make -f Makefile.atheros clean ; make -f Makefile.atheros ; \
+#notyet# 	make PREFIX=$(INSTALL_ROOT)/sbin CONFIG_PATH=$(INSTALL_ROOT)/etc/ath DEFAULT_CFG=$(INSTALL_ROOT)/etc/ath/default -f Makefile.atheros install; \
+#notyet# 	fi
+
+wsc_fus: hostapd_fus
+	if (test -e ../apps/wpa/wsc/src/linux ) then \
+	chmod -R 755 ../apps/wpa/wsc/src/lunux; \
+	cd ../apps/wpa/wsc/src/linux; make clean; \
+	make PREFIX=$(INSTALL_ROOT)/sbin CONFIG_PATH=$(INSTALL_ROOT)/etc/ath DEFAULT_CFG=$(INSTALL_ROOT)/etc/ath/default install; \
+	fi
+
+fus_supplicant:
+	if (test -e ../apps/wpa/wpa_supplicant-0.5.5 ) then \
+	cd ../apps/wpa/wpa_supplicant-0.5.5; cp -f defconfig.fus .config; make clean; \
+    make; make PREFIX=$(INSTALL_ROOT)/sbin install; \
+	fi
+
+art_mod:
+	@echo Making ART Module
+	cd ../apps/art && make -f makefile.soc.linux.mips clean && \
+	make -f makefile.soc.linux.mips hydra
+	cp ../apps/art/modules/art.ko $(MODULEPATH)/art.ko
+
+fusion_hal_build: 
+	@echo making FUSION hal
+	if test -n "$(FUSIONTARGET)"; then \
+	cd $(HAL)/linux && make TARGET=$(FUSIONTARGET) clean &&  \
+	make TARGET=$(FUSIONTARGET) && make TARGET=$(FUSIONTARGET) release; \
+	fi
+
+fusion_build: fusion_hal_build wireless_tools_fus ath_tools_fus
+	@echo making fusion
+	cd $(TOPDIR)/wlan/linux && \
+	$(MAKEARCH) TARGET=$(FUSIONTARGET) clean \
+	&&  $(MAKEARCH) TARGET=$(FUSIONTARGET) && \
+	$(MAKEARCH) DESTDIR=$(INSTALLROOT) TARGET=$(FUSIONTARGET) install
+	$(MAKE) $(BUILD_TYPE)_build
+	
+redboot_fusion:
+	@echo making redboot...
+	cd $(BOOTLOADERDIR) && make pb42_rom BOARD_TYPE=pb42
+	cp $(BOOTLOADERDIR)/rom_bld/install/bin/redboot.rom $(IMAGEPATH)
+	cd $(BOOTLOADERDIR) && make pb42_ram BOARD_TYPE=pb42
+	cp $(BOOTLOADERDIR)/ram_bld/install/bin/redboot.bin $(IMAGEPATH)
+
+uboot_fusion:
+	@echo making uboot...
+	cd $(BOOTLOADERDIR) && make pb42_config
+	cd $(BOOTLOADERDIR) && make clean && make
+	cp $(BOOTLOADERDIR)/u-boot.bin $(IMAGEPATH)
+
