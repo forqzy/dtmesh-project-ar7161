@@ -1,0 +1,91 @@
+<html>
+<META http-equiv="Content-Type" content="text/html">
+<LINK REL="stylesheet" href="../styleSheet.css" type="text/css">
+<script type="text/javascript" src="/lang/b28n.js"></script>
+<script language="JavaScript" type="text/javascript">
+Butterlate.setTextDomain("atheros");
+
+function initTranslation()
+{
+	var e = document.getElementById("configuration");
+	e.innerHTML = _("AthSelect configuration");
+	e = document.getElementById("network");
+	e.innerHTML = _("AthSelect network");
+/*	e = document.getElementById("radio");
+	e.innerHTML = _("AthSelect radio");     */
+	e = document.getElementById("fan");
+	e.innerHTML = _("AthSelect fan");
+	e = document.getElementById("gpio");
+	e.innerHTML = _("AthSelect gpio");
+	e = document.getElementById("pppoeSrv");
+	e.innerHTML = _("AthSelect pppoeSrv");
+	e = document.getElementById("VAPconfig");
+	e.innerHTML = _("AthSelect VAP config");
+	e = document.getElementById("status");
+	e.innerHTML = _("AthSelect status");
+	e = document.getElementById("overview");
+	e.innerHTML = _("AthSelect overview");
+	e = document.getElementById("channel");
+	e.innerHTML = _("AthSelect channel");
+	e = document.getElementById("wlan");
+	e.innerHTML = _("AthSelect wlan");
+	e = document.getElementById("temperature");
+	e.innerHTML = _("AthSelect temperature");
+	e = document.getElementById("system");
+	e.innerHTML = _("AthSelect system");
+	e = document.getElementById("upgrade");
+	e.innerHTML = _("AthSelect firmware upgrade");
+	e = document.getElementById("administration");
+	e.innerHTML = _("AthSelect administration");
+	e = document.getElementById("management");
+	e.innerHTML = _("AthSelect management");
+	e = document.getElementById("systemcommand");
+	e.innerHTML = _("AthSelect systemcommand");
+	e = document.getElementById("firewall");
+	e.innerHTML = _("AthSelect firewall");
+	e = document.getElementById("PortForwarding");
+	e.innerHTML = _("AthSelect port forwarding");
+	e = document.getElementById("RoutingConfig");
+	e.innerHTML = _("AthSelect routing config");
+}
+
+function initValue()
+{
+	initTranslation();
+}
+</script>
+
+<body bgcolor="azure" onload="initValue()">
+<p class="topnavg" align="center" id="configuration">Configuration</p>
+<a class="SideNav" href="cgi-bin/APBasicConfig" target="parameter" id="network">Network</a><br>
+<a class="SideNav" href="cgi-bin/APRadioConfig" target="parameter" id="radio">Radio</a><br>
+<a class="SideNav" href="cgi-bin/APFanConfig" target="parameter" id="fan">Fan</a><br>
+<a class="SideNav" href="cgi-bin/APGPIOConfig" target="parameter" id="gpio">GPIO</a><br>
+<a class="SideNav" href="cgi-bin/PPPoEInternet" target="parameter" id="pppoeSrv">PPPoE Server</a><br>
+<a class="SideNav" href="cgi-bin/RoutingConfig" target="parameter" id="RoutingConfig">Routing Settings</a><br>
+<p class="topnavg" align="center" id="VAPconfig">VAP Config</p>
+&nbsp&nbsp<a class="SideNav" href="cgi-bin/VAPcfg?INDEX=1" target="parameter">VAP 1</a><br>
+&nbsp&nbsp<a class="SideNav" href="cgi-bin/VAPcfg?INDEX=2" target="parameter">VAP 2</a><br>
+&nbsp&nbsp<a class="SideNav" href="cgi-bin/VAPcfg?INDEX=3" target="parameter">VAP 3</a><br>
+&nbsp&nbsp<a class="SideNav" href="cgi-bin/VAPcfg?INDEX=4" target="parameter">VAP 4</a><br>
+&nbsp&nbsp<a class="SideNav" href="cgi-bin/VAPcfg?INDEX=5" target="parameter">VAP 5</a><br>
+&nbsp&nbsp<a class="SideNav" href="cgi-bin/VAPcfg?INDEX=6" target="parameter">VAP 6</a><br>
+&nbsp&nbsp<a class="SideNav" href="cgi-bin/VAPcfg?INDEX=7" target="parameter">VAP 7</a><br>
+&nbsp&nbsp<a class="SideNav" href="cgi-bin/VAPcfg?INDEX=8" target="parameter">VAP 8</a><br>
+<p class="topnavg" align="center" id="status">Status</p>
+<a class="SideNav" href="cgi-bin/APStatus" target="parameter" id="overview">Overview</a><br>
+<a class="SideNav" href="cgi-bin/APChannels" target="parameter" id="channel">Available Channel</a><br>
+<a class="SideNav" href="cgi-bin/APStatistics" target="parameter" id="wlan">WLAN</a><br>
+<a class="SideNav" href="cgi-bin/APTemperature" target="parameter" id="temperature">Temperature</a><br>
+
+<p class="topnavg" align="center" id="system">System</p>
+<a class="SideNav" href="APUpgradeLoad.html" target="parameter" id="upgrade">Firmware Upgrade</a><br>
+<a class="SideNav" href="cgi-bin/Administration" target="parameter" id="administration">Administration</a><br>
+<a class="SideNav" href="cgi-bin/CfgManagement" target="parameter" id="management">Management</a><br>
+<a class="SideNav" href="cgi-bin/SystemCommand" target="parameter" id="systemcommand">System Command</a><br>
+
+<p class="topnavg" align="center" id="firewall">Firewall</p>
+<a class="SideNav" href="cgi-bin/PortForward" target="parameter" id="PortForwarding">Port Forwarding</a><br>
+<a class="SideNav" href="cgi-bin/DMZ" target="parameter" id="DMZ">DMZ</a><br>
+</body>
+</html>

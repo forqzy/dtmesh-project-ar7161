@@ -1,0 +1,434 @@
+<HTML><HEAD>
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Expires" CONTENT="-1">
+<META http-equiv="Content-Type" content="text/html">
+<LINK REL="stylesheet" href="../styleSheet.css" type="text/css">
+<script type="text/javascript" src="/lang/b28n.js"></script>
+<script language="JavaScript" type="text/javascript">
+Butterlate.setTextDomain("atheros");
+
+function isAllNum(str)
+{
+	for (var i=0; i<str.length; i++) 
+	{
+		if (str.charAt(i) >= '0' && str.charAt(i) <= '9')
+			continue;
+		return 0;
+	}
+	return 1;
+}
+
+function NTPValueCheck()
+{
+	if (document.Administration.NTP_HOSTNAME.value == "")
+	{
+		alert("Please input the NTP Server name!");
+		document.Administration.NTP_HOSTNAME.focus();
+		return false;
+	}
+	if (document.Administration.NTP_HOSTNAME.value != "" && 
+	    document.Administration.NTPSync.value == "")
+	{
+		alert("Please specify a value for the interval of synchroniztion.");
+		return false;
+	}
+	
+	if (isAllNum(document.Administration.NTPSync.value ) == 0)
+	{
+		alert("Invalid NTP synchronization value.");
+		document.Administration.NTPSync.focus();
+		return false;
+	}
+	return true;
+}
+	
+function NTPsettime()
+{
+	var currentTime = new Date();
+
+	var seconds = currentTime.getSeconds();
+	var minutes = currentTime.getMinutes();
+	var hours = currentTime.getHours();
+	var month = currentTime.getMonth() + 1;
+	var day = currentTime.getDate();
+	var year = currentTime.getFullYear();
+
+	var seconds_str = " ";
+	var minutes_str = " ";
+	var hours_str = " ";
+	var month_str = " ";
+	var day_str = " ";
+	var year_str = " ";
+
+	if (seconds < 10)
+		seconds_str = "0" + seconds;
+	else
+		seconds_str = "" + seconds;
+
+	if (minutes < 10)
+		minutes_str = "0" + minutes;
+	else
+		minutes_str = "" + minutes;
+		
+	if (hours < 10)
+		hours_str = "0" + hours;
+	else
+		hours_str = "" + hours;
+	
+	if (month < 10)
+		month_str = "0" + month;
+	else
+		month_str = "" + month;
+		
+	if (day < 10)
+		day_str = "0" + day;
+	else
+		day_str = "" + day;
+		
+	var tmp = month_str + day_str + hours_str + minutes_str + year+ "." + seconds_str + " ";
+	document.getElementById("NTPTime").value = tmp;
+
+	return true;
+}
+
+function NTPCheck()
+{
+	NTPValueCheck();
+	NTPsettime();
+}
+
+function initTranslation()
+{
+	var e = document.getElementById("UPDATE");
+	e.value = _("admin update");
+	e = document.getElementById("COMMIT");
+	e.value = _("admin commit");
+	e = document.getElementById("RebootButton");
+	e.value = _("admin reboot");
+	e = document.getElementById("StartButton");
+	e.value = _("admin start");	
+	e = document.getElementById("StopButton");
+	e.value = _("admin stop");	
+	
+	e = document.getElementById("LangSettings");
+	e.innerHTML = _("adm language settings");	
+	e = document.getElementById("SelectLang");
+	e.innerHTML = _("adm language select");	
+	e = document.getElementById("langEn");
+	e.innerHTML = _("lang en");
+	e = document.getElementById("langZhcn");
+	e.innerHTML = _("lang chinese");
+	e = document.getElementById("LangApply");
+	e.value = _("admin apply");
+	e = document.getElementById("LangCancel");
+	e.value = _("admin cancel")
+	
+	e = document.getElementById("StyleSettings");
+	e.innerHTML = _("adm style settings");	
+	e = document.getElementById("SelectStyle");
+	e.innerHTML = _("adm style select");	
+	e = document.getElementById("default");
+	e.innerHTML = _("style default");
+	e = document.getElementById("style2");
+	e.innerHTML = _("style 2");
+   e = document.getElementById("style3");
+	e.innerHTML = _("style 3");
+	e = document.getElementById("styleApply");
+	e.value = _("admin apply");
+	e = document.getElementById("styleCancel");
+	e.value = _("admin cancel")
+	
+	e = document.getElementById("AdmSettings");
+	e.innerHTML = _("adm settings");
+	e = document.getElementById("AdmAccount");
+	e.innerHTML = _("adm account");
+	e = document.getElementById("AdmPwd");
+	e.innerHTML = _("adm password");
+	
+	e = document.getElementById("NTPSettings");
+	e.innerHTML = _("NTP settings");
+	e = document.getElementById("NTPAction");
+	e.innerHTML = _("NTP action");
+	e = document.getElementById("NTPCurrentTime");
+	e.innerHTML = _("NTP current time");
+	e = document.getElementById("NTPTimeZone");
+	e.innerHTML = _("NTP time zone");		
+	e = document.getElementById("manNTPMidIsland");
+	e.innerHTML = _("man ntp mid island");
+	e = document.getElementById("manNTPHawaii");
+	e.innerHTML = _("man ntp hawaii");
+	e = document.getElementById("manNTPAlaska");
+	e.innerHTML = _("man ntp alaska");
+	e = document.getElementById("manNTPPacific");
+	e.innerHTML = _("man ntp pacific");
+	e = document.getElementById("manNTPMountain");
+	e.innerHTML = _("man ntp mountain");
+	e = document.getElementById("manNTPArizona");
+	e.innerHTML = _("man ntp arizona");
+	e = document.getElementById("manNTPCentral");
+	e.innerHTML = _("man ntp central");
+	e = document.getElementById("manNTPMidUS");
+	e.innerHTML = _("man ntp mid us");
+	e = document.getElementById("manNTPIndianaEast");
+	e.innerHTML = _("man ntp indiana east");
+	e = document.getElementById("manNTPEastern");
+	e.innerHTML = _("man ntp eastern");
+	e = document.getElementById("manNTPAtlantic");
+	e.innerHTML = _("man ntp atlantic");
+	e = document.getElementById("manNTPBolivia");
+	e.innerHTML = _("man ntp bolivia");
+	e = document.getElementById("manNTPGuyana");
+	e.innerHTML = _("man ntp guyana");
+	e = document.getElementById("manNTPBrazilEast");
+	e.innerHTML = _("man ntp brazil east");
+	e = document.getElementById("manNTPMidAtlantic");
+	e.innerHTML = _("man ntp mid atlantic");
+	e = document.getElementById("manNTPAzoresIslands");
+	e.innerHTML = _("man ntp azores islands");
+	e = document.getElementById("manNTPGambia");
+	e.innerHTML = _("man ntp gambia");
+	e = document.getElementById("manNTPEngland");
+	e.innerHTML = _("man ntp england");
+	e = document.getElementById("manNTPCzechRepublic");
+	e.innerHTML = _("man ntp czech republic");
+	e = document.getElementById("manNTPGermany");
+	e.innerHTML = _("man ntp germany");
+	e = document.getElementById("manNTPTunisia");
+	e.innerHTML = _("man ntp tunisia");
+	e = document.getElementById("manNTPGreece");
+	e.innerHTML = _("man ntp greece");
+	e = document.getElementById("manNTPSouthAfrica");
+	e.innerHTML = _("man ntp south africa");
+	e = document.getElementById("manNTPIraq");
+	e.innerHTML = _("man ntp iraq");
+	e = document.getElementById("manNTPMoscowWinter");
+	e.innerHTML = _("man ntp moscow winter");
+	e = document.getElementById("manNTPArmenia");
+	e.innerHTML = _("man ntp armenia");
+	e = document.getElementById("manNTPPakistan");
+	e.innerHTML = _("man ntp pakistan");
+	e = document.getElementById("manNTPBangladesh");
+	e.innerHTML = _("man ntp bangladesh");
+	e = document.getElementById("manNTPThailand");
+	e.innerHTML = _("man ntp thailand");
+	e = document.getElementById("manNTPChinaCoast");
+	e.innerHTML = _("man ntp chinacoast");
+	e = document.getElementById("manNTPTaipei");
+	e.innerHTML = _("man ntp taipei");
+	e = document.getElementById("manNTPSingapore");
+	e.innerHTML = _("man ntp singapore");
+	e = document.getElementById("manNTPAustraliaWA");
+	e.innerHTML = _("man ntp australia wa");
+	e = document.getElementById("manNTPJapan");
+	e.innerHTML = _("man ntp japan");
+	e = document.getElementById("manNTPKorean");
+	e.innerHTML = _("man ntp korean");
+	e = document.getElementById("manNTPGuam");
+	e.innerHTML = _("man ntp guam");
+	e = document.getElementById("manNTPAustraliaQLD");
+	e.innerHTML = _("man ntp australia qld");
+	e = document.getElementById("manNTPSolomonIslands");
+	e.innerHTML = _("man ntp solomon islands");
+	e = document.getElementById("manNTPFiji");
+	e.innerHTML = _("man ntp fiji");
+	e = document.getElementById("manNTPNewZealand");
+	e.innerHTML = _("man ntp newzealand");
+	e = document.getElementById("NTPServer");
+	e.innerHTML = _("NTP server ip");
+	e = document.getElementById("ntpSync");
+	e.innerHTML = _("NTP sync interval");		
+	e = document.getElementById("NTPHost");
+	e.value = _("NTP syn with host");
+	e = document.getElementById("NTPApply");
+	e.value = _("admin apply");
+	e = document.getElementById("NTPReset");
+	e.value = _("admin reset");
+}
+
+function setLanguage()
+{
+	document.cookie="language="+document.Administration.langSelection.value+"; path=/";
+	parent.selector.location.reload();	
+	return true;
+}
+
+function setStyle()
+{
+	parent.selector.location.reload();	
+	parent.title.location.reload();
+	return true;
+}
+
+function initValue()
+{
+	var lang_element = document.getElementById("langSelection");
+	
+	initTranslation();
+	if (document.cookie.length > 0) 
+	{
+		var s = document.cookie.indexOf("language=");
+		var e = document.cookie.indexOf(";", s);
+		var lang = "en";
+		var i;
+
+		if (s != -1) 
+		{
+			if (e == -1)
+				lang = document.cookie.substring(s+9);
+			else
+				lang = document.cookie.substring(s+9, e);
+		}
+		for (i=0; i<lang_element.options.length; i++) 
+		{
+			if (lang == lang_element.options[i].value) 
+			{
+				lang_element.options.selectedIndex = i;
+				break;
+			}
+		}
+	}
+}
+</script>
+</head>
+
+<body onload="initValue()">
+<form method="post" name="Administration">
+<p class="headind"><INPUT TYPE="SUBMIT" id="UPDATE" NAME="UPDATE" VALUE="Update">
+&nbsp&nbsp<INPUT TYPE="SUBMIT" id="COMMIT"  NAME="COMMIT" VALUE="Commit">
+&nbsp&nbsp<INPUT TYPE="SUBMIT" id="RebootButton" NAME="RebootButton" VALUE="Reboot">
+&nbsp&nbsp<INPUT TYPE="SUBMIT" id="StartButton" NAME="StartButton" VALUE="Start">
+&nbsp&nbsp<INPUT TYPE="SUBMIT" id="StopButton" NAME="StopButton" VALUE="Stop"></p>
+
+<!-- ----------------- Langauge Settings ----------------- -->
+<table><tr><td>
+<p class="topnavg" id="LangSettings">Language Settings</p>
+<table width="280" border="1" cellspacing="1" cellpadding="2">
+  <tr>
+    <td class="header" id="SelectLang">Select Language</td>
+    <td>
+      <select name="langSelection" id="langSelection">
+        <option ~slangSelection:en~ value="en" id="langEn">English</option>
+        <option ~slangSelection:zhcn~ value="zhcn" id="langZhcn">Simple Chinese</option>
+      </select>
+    </td>
+  </tr>
+</table>
+<table>
+  <tr><td>
+      <input type="submit" value="Apply" id="LangApply" onClick="return setLanguage()"> &nbsp; &nbsp;
+      <input type="reset"  value="Cancel" id="LangCancel" onClick="window.location.reload()">
+  </td></tr>
+</table>
+
+<!-- ----------------- Style Settings ----------------- -->
+<p class="topnavg" id="StyleSettings">Style Settings</p>
+<table width="280" border="1" cellspacing="1" cellpadding="2">
+  <tr>
+    <td class="header" id="SelectStyle" name="SelectStyle">Select Style</td>
+    <td>
+      <select name="StyleSelection" id="StyleSelection">
+        <option ~sStyleSelection:default~ value="default" id="default">Default</option>
+        <option ~sStyleSelection:style2~ value="style2" id="style2">Style 2</option>
+        <option ~sStyleSelection:style3~ value="style3" id="style3">Style 3</option>
+      </select>
+    </td>
+  </tr>
+</table>
+<table>
+  <tr><td>
+      <input type="submit" value="Apply" name="styleApply" id="styleApply" onClick="return setStyle()"> &nbsp; &nbsp;
+      <input type="reset"  value="Cancel" name="styleCancel" id="styleCancel" onClick="window.location.reload()">
+  </td></tr>
+</table>
+
+<!-- ----------------- Adm Settings ----------------- -->
+<p class="topnavg" id="AdmSettings">Administrator Settings</p>
+<table width="280" border="1" cellspacing="1" cellpadding="2">
+  <tr><td class="header" id="AdmAccount">Account</td>
+  <td><INPUT type="text" id="HTTPD_USERNAME" name="HTTPD_USERNAME"
+           class="text2" size="20" maxlength="32"
+           value="~~HTTPD_USERNAME~"></td></tr>
+  <tr><td class="header" id="AdmPwd">Password</td>
+  <td><input type="password" id="HTTPD_PASSWORD" name="HTTPD_PASSWORD" 
+    	class="text2" size="20" maxlength="32" 
+    	value="~~HTTPD_PASSWORD~"></td></tr>
+</table>
+
+<!-- ----------------- NTP Settings ----------------- -->
+<p class="topnavg" id="NTPSettings">NTP Settings</p>
+<p class="action" id="NTPAction">Action:Time Zone Sync works only in Router mode!</p>
+<table width="440" border="1" cellspacing="1" cellpadding="2">
+<tr>
+	<td class="header" id="NTPCurrentTime">Current Time</td>
+	<td class="headind">~`date`~</td>
+</tr>
+<tr>
+  <td class="header" id="NTPTimeZone">Time Zone</td>
+  <td>
+    <select name="TIMEZONE">
+      <option ~sTIMEZONE:UCT_-11~ value="UCT_-11" id="manNTPMidIsland">(GMT-11:00) Midway Island, Samoa</option>
+      <option ~sTIMEZONE:UCT_-10~ value="UCT_-10" id="manNTPHawaii">(GMT-10:00) Hawaii</option>
+      <option ~sTIMEZONE:NAS_-09~ value="NAS_-09" id="manNTPAlaska">(GMT-09:00) Alaska</option>
+      <option ~sTIMEZONE:PST_-08~ value="PST_-08" id="manNTPPacific">(GMT-08:00) Pacific Time</option>
+      <option ~sTIMEZONE:MST_-07~ value="MST_-07" id="manNTPMountain">(GMT-07:00) Mountain Time</option>
+      <option ~sTIMEZONE:UCT_-07~ value="UCT_-07" id="manNTPArizona">(GMT-07:00) Arizona</option>
+      <option ~sTIMEZONE:CST_-06~ value="CST_-06" id="manNTPCentral">(GMT-06:00) Central Time</option>
+      <option ~sTIMEZONE:UCT_-06~ value="UCT_-06" id="manNTPMidUS">(GMT-06:00) Middle America</option>
+      <option ~sTIMEZONE:UCT_-05~ value="UCT_-05" id="manNTPIndianaEast">(GMT-05:00) Indiana East, Colombia</option>
+      <option ~sTIMEZONE:EST_-05~ value="EST_-05" id="manNTPEastern">(GMT-05:00) Eastern Time</option>
+      <option ~sTIMEZONE:AST_-04~ value="AST_-04" id="manNTPAtlantic">(GMT-04:00) Atlantic Time, Brazil West</option>
+      <option ~sTIMEZONE:UCT_-04~ value="UCT_-04" id="manNTPBolivia">(GMT-04:00) Bolivia, Venezuela</option>
+      <option ~sTIMEZONE:UCT_-03~ value="UCT_-03" id="manNTPGuyana">(GMT-03:00) Guyana</option>
+      <option ~sTIMEZONE:EBS_-03~ value="EBS_-03" id="manNTPBrazilEast">(GMT-03:00) Brazil East, Greenland</option>
+      <option ~sTIMEZONE:NOR_-02~ value="NOR_-02" id="manNTPMidAtlantic">(GMT-02:00) Mid-Atlantic</option>
+      <option ~sTIMEZONE:EUT_-01~ value="EUT_-01" id="manNTPAzoresIslands">(GMT-01:00) Azores Islands</option>
+      <option ~sTIMEZONE:UCT_000~ value="UCT_000" id="manNTPGambia">(GMT) Gambia, Liberia, Morocco</option>
+      <option ~sTIMEZONE:GMT_000~ value="GMT_000" id="manNTPEngland">(GMT) England</option>
+      <option ~sTIMEZONE:MET_001~ value="MET_001" id="manNTPCzechRepublic">(GMT+01:00) Czech Republic, N</option>
+      <option ~sTIMEZONE:MEZ_001~ value="MEZ_001" id="manNTPGermany">(GMT+01:00) Germany</option>
+      <option ~sTIMEZONE:UCT_001~ value="UCT_001" id="manNTPTunisia">(GMT+01:00) Tunisia</option>
+      <option ~sTIMEZONE:EET_002~ value="EET_002" id="manNTPGreece">(GMT+02:00) Greece, Ukraine, Turkey</option>
+      <option ~sTIMEZONE:SAS_002~ value="SAS_002" id="manNTPSouthAfrica">(GMT+02:00) South Africa</option>
+      <option ~sTIMEZONE:IST_003~ value="IST_003" id="manNTPIraq">(GMT+03:00) Iraq, Jordan, Kuwait</option>
+      <option ~sTIMEZONE:MSK_003~ value="MSK_003" id="manNTPMoscowWinter">(GMT+03:00) Moscow Winter Time</option>
+      <option ~sTIMEZONE:UCT_004~ value="UCT_004" id="manNTPArmenia">(GMT+04:00) Armenia</option>
+      <option ~sTIMEZONE:UCT_005~ value="UCT_005" id="manNTPPakistan">(GMT+05:00) Pakistan, Russia</option>
+      <option ~sTIMEZONE:UCT_006~ value="UCT_006" id="manNTPBangladesh">(GMT+06:00) Bangladesh, Russia</option>
+      <option ~sTIMEZONE:UCT_007~ value="UCT_007" id="manNTPThailand">(GMT+07:00) Thailand, Russia</option>
+      <option ~sTIMEZONE:CST_008~ value="CST_008" id="manNTPChinaCoast">(GMT+08:00) China Coast, Hong Kong</option>
+      <option ~sTIMEZONE:CCT_008~ value="CCT_008" id="manNTPTaipei">(GMT+08:00) Taipei</option>
+      <option ~sTIMEZONE:SST_008~ value="SST_008" id="manNTPSingapore">(GMT+08:00) Singapore</option>
+      <option ~sTIMEZONE:AWS_008~ value="AWS_008" id="manNTPAustraliaWA">(GMT+08:00) Australia (WA)</option>
+      <option ~sTIMEZONE:JST_009~ value="JST_009" id="manNTPJapan">(GMT+09:00) Japan, Korea</option>
+      <option ~sTIMEZONE:KST_009~ value="KST_009" id="manNTPKorean">(GMT+09:00) Korean</option>
+      <option ~sTIMEZONE:UCT_010~ value="UCT_010" id="manNTPGuam">(GMT+10:00) Guam, Russia</option>
+      <option ~sTIMEZONE:AES_010~ value="AES_010" id="manNTPAustraliaQLD">(GMT+10:00) Australia (QLD,TAS,NSW,ACT,VIC)</option>
+      <option ~sTIMEZONE:UCT_011~ value="UCT_011" id="manNTPSolomonIslands">(GMT+11:00) Solomon Islands</option>
+      <option ~sTIMEZONE:UCT_012~ value="UCT_012" id="manNTPFiji">(GMT+12:00) Fiji</option>
+      <option ~sTIMEZONE:NZS_012~ value="NZS_012" id="manNTPNewZealand">(GMT+12:00) New Zealand</option>
+    </select>
+  </td>
+</tr>
+<tr>
+  <td class="header" id="NTPServer">NTP Server</td>
+  <td><input size="32" maxlength="64" id="NTP_HOSTNAME" name="NTP_HOSTNAME" value="~~NTP_HOSTNAME~" type="text">
+	  <br>&nbsp;&nbsp;<font color="#808080">ex:&nbsp;time.nist.gov</font>
+	  <br>&nbsp;&nbsp;<font color="#808080">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pool.ntp.org</font>
+  </td></tr>
+<tr>
+    <td class="header" id="ntpSync">NTP Sync</td>
+    <td><input size="16" id="NTPSync" name="NTPSync" value="~~NTPSync~" type="text">seconds</td>
+</tr>
+</table>
+<table>
+  <tr><td>
+      <input type="hidden" id="NTPTime" name="NTPTime" value="">
+      <input type="submit" id="NTPHost" value="Sync with host" name="NTPSetTime" onclick="return NTPsettime()">
+      <input type="submit" id="NTPApply" value="Apply" name="NTPApply" onclick="return NTPCheck()">
+      <input type="reset"  id="NTPReset" value="Reset" name="NTPReset">
+  </td></tr>
+</table>
+</table>
+</FORM>
+
+</body></html>

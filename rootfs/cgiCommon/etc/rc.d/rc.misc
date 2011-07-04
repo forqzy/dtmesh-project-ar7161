@@ -1,0 +1,53 @@
+#!/bin/sh
+. /etc/ath/apcfg
+
+#local hostname
+echo $LOCAL_HOSTNAME > /proc/sys/kernel/hostname
+
+#watchdog
+/sbin/watchdog -t5 /dev/watchdog
+
+#temperature
+echo $FAN_START_TEMP > /sys/class/hwmon/hwmon0/device/temp1_max
+echo $FAN_STOP_TEMP > /sys/class/hwmon/hwmon0/device/temp1_max_hyst
+
+#GPIO
+if [ -e "/proc/gpio/2/dir" ]; then
+  if [ $GPIO2_DIR = "1" ]; then
+    echo out > /proc/gpio/2/dir
+    echo $GPIO2_LEVEL > /proc/gpio/2/out
+  else
+    echo in > /proc/gpio/2/dir
+  fi
+fi
+
+if [ -e "/proc/gpio/7/dir" ]; then
+  if [ $GPIO7_DIR = "1" ]; then
+    echo out > /proc/gpio/7/dir
+    if [ -e  "/proc/gpio/7/out" ]; then
+      echo $GPIO7_LEVEL > /proc/gpio/7/out
+    fi
+  else
+    echo in > /proc/gpio/7/dir
+  fi
+fi
+
+if [ -e "/proc/gpio/8/dir" ]; then
+  if [ $GPIO8_DIR = "1" ]; then
+    echo out > /proc/gpio/8/dir
+    if [ -e  "/proc/gpio/7/out" ]; then
+      echo $GPIO8_LEVEL > /proc/gpio/8/out
+    fi
+  else
+    echo in > /proc/gpio/8/dir
+  fi
+fi
+
+#NTP and TimeZone
+echo "$TIMEZONE" > /tmp/TZ
+echo "$TIMEZONE" > /etc/tmpTZ
+sed -e 's#.*_\(-*\)0*\(.*\)#GMT-\1\2#' /etc/tmpTZ > /etc/tmpTZ2
+sed -e 's#\(.*\)--\(.*\)#\1\2#' /etc/tmpTZ2 > /etc/TZ
+rm -rf /etc/tmpTZ
+rm -rf /etc/tmpTZ2
+

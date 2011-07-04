@@ -1,0 +1,22 @@
+<HTML><HEAD>
+<LINK REL="stylesheet" href="../styleSheet.css" type="text/css">
+<script type="text/javascript" src="/lang/b28n.js"></script>
+<script language="JavaScript" type="text/javascript">
+Butterlate.setTextDomain("atheros");
+
+function initTranslation()
+{
+	var e = document.getElementById("SystemStatus");
+	e.innerHTML = _("System Status");
+}
+
+function initValue()
+{
+	initTranslation();
+}
+</script>
+</head>
+<body onload="initValue()">
+<p class="topnavg" id="SystemStatus">System Status</p>
+<p class="textout">~`iwconfig 2>/dev/null`~</p>
+</body></html>

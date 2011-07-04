@@ -1,0 +1,49 @@
+Content-type: text/html
+
+<!
+   jjPlus Corp. Copyright 2008
+!>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" !>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><title>__HOSTNAME__ Upgrade __PERCENT__%</title><META HTTP-EQUIV="refresh" CONTENT="5"; URL="progress.html">
+  <style type="text/css">
+    .body_text {
+    font-family: verdana, arial, helvetica, sans-serif;
+    font-size: 14px;color: #000000;
+    font-style: normal;line-height: normal;
+    font-weight: normal;font-variant: normal;
+    text-transform: none;
+    border-style: none;
+    }
+    .title {font-family: verdana, arial, helvetica, sans-serif;
+    font-size: larger;
+    font-style: normal;
+    font-weight: bolder;
+    color: #000000;
+    }
+    body {
+    background-color: #ffffff;
+    margin: 0;
+    padding:0;
+    }
+    div.prog-wrap { position: relative;
+    border: 1px solid black;
+    }div.prog-bar { position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    }div.prog-text { text-align: center;
+    position: relative;
+    }
+  </style>
+</head>
+<body>
+<div style="margin-left: 10px; border: none; background: #ffffff;
+    color:#000000; position:absolute;">
+<p class="title">Firmware Upgrade</p>
+<p class="body_text">__PROGRESS_TEXT__</p>
+  <div class="prog-wrap" style="width: 200px">
+    <div class="prog-bar" style="width: __PIXELS__px; background-color: #73b621;"></div>
+    <div class="prog-text" style="width: 200px">__PERCENT__%</div>
+</div></div></body></html>

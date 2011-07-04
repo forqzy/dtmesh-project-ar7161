@@ -1,0 +1,29 @@
+<HTML><HEAD>
+<LINK REL="stylesheet" href="../styleSheet.css" type="text/css">
+<script type="text/javascript" src="/lang/b28n.js"></script>
+<script language="JavaScript" type="text/javascript">
+Butterlate.setTextDomain("atheros");
+
+function temp()
+{
+	var C="~`cat /sys/class/hwmon/hwmon0/device/temp1_input`~";
+	C=C.replace("<br><br>","");
+	C=C/1000;
+	F=(C/9)*5+32;
+	F=Math.round(F*10)/10;
+
+	document.getElementById("current_temp").innerHTML = _("Current board temperature:");
+	document.getElementById("temp").innerHTML = C+"&deg\;C("+F+"&deg\;F)"
+	setTimeout("window.location=\"APTemperature\"",5000);
+}
+</script>
+
+</head><body onLoad="temp()">
+<p class="headch">Statistics</p>
+<table>
+  <tr>
+	<td class="doctitle" id="current_temp">
+	<td class="doctitle" id="temp">
+  </tr>
+</table>    
+</body></html>

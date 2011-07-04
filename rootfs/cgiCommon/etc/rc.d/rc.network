@@ -1,0 +1,120 @@
+#!/bin/sh
+#########################################################################
+##  Network Configuration
+##
+##  This script sets up the WAN/LAN ports to the appropriate configuration
+##
+#########################################################################
+
+##
+# Enable the loopback interface
+##
+
+ifconfig lo 127.0.0.1 up
+
+PPPOE_FILE=/etc/options.pppoe
+##
+# Set DNS
+##
+touch /etc/options.pppoe;
+touch /tmp/resolv.conf
+[ -e "/etc/resolv.conf" ] || ln -s /tmp/resolv.conf /etc/
+
+[ -n "$PRIDNS" ] && echo "nameserver $PRIDNS" >> /tmp/resolv.conf
+[ -n "$SECDNS" ] && echo "nameserver $SECDNS" >> /tmp/resolv.conf
+
+##
+## Check the WAN mode.  If not bridged, check for DHCP client, else
+## simply set the address
+##
+
+if [ "${NETWORK_MODE}" != "Bridge" ]; then
+    case ${WAN_PROTO} in
+        "DHCP")
+            if [ "$AP_STARTMODE" != "client" ] ; then
+                udhcpc -b -i $ETH0 -s /etc/udhcpc.script &
+            fi
+        ;;
+        "Static")
+            ## Static IP address
+            if [ "$AP_STARTMODE" != "client" ] ; then
+                ifconfig $ETH0 $WAN_IPADDR netmask $WAN_NETMASK up
+            fi
+
+            [ "$WAN_GATEWAY" != "" ] && route add default gw $WAN_GATEWAY
+        ;;
+        "PPPOE")
+			if [ "$WAN_PPPOE_USER" != "" ]; then
+				echo "" > $PPPOE_FILE
+				sed -i 's/USER=.*$/USER='${WAN_PPPOE_USER}'/'  /etc/ppp/pppoe.conf
+				sed -i 's/ETH=.*$/ETH='$ETH0'/'  /etc/ppp/pppoe.conf
+				echo "user '$WAN_PPPOE_USER'" >> $PPPOE_FILE
+			fi
+				
+			if [ "$WAN_PPPOE_PASS" != "" ]; then
+				echo "#User    #Server #Password    #IP" > /etc/ppp/pap-secrets
+				echo "${WAN_PPPOE_USER}    *    ${WAN_PPPOE_PASS}    * "  >> /etc/ppp/pap-secrets
+				
+				echo "password '$WAN_PPPOE_PASS'" >> $PPPOE_FILE
+				echo "nomppe" >> $PPPOE_FILE
+				echo "hide-password" >> $PPPOE_FILE
+				echo "noipdefault" >> $PPPOE_FILE
+				echo "defaultroute" >> $PPPOE_FILE
+				echo "nodetach" >> $PPPOE_FILE
+				echo "usepeerdns" >> $PPPOE_FILE
+			fi            
+			
+			case ${WAN_PPPOE_OPMode} in
+				"OnDemand")
+					if [ "$WAN_PPPOE_IdleTime" != "" ]; then
+						sed -i 's/DEMAND=.*$/DEMAND='${WAN_PPPOE_IdleTime}'/'  /etc/ppp/pppoe.conf
+						
+						WAN_PPPOE_IdleTime=`expr $WAN_PPPOE_IdleTime \* 60`
+						echo "demand" >> $PPPOE_FILE
+						echo "idle $WAN_PPPOE_IdleTime" >> $PPPOE_FILE
+					fi
+				;;
+				"KeepAlive")
+					if [ "$WAN_PPPOE_RedialPeriod" != "" ]; then
+						echo "persist" >> $PPPOE_FILE
+						echo "holdoff $WAN_PPPOE_RedialPeriod" >> $PPPOE_FILE
+					fi
+				;;
+				"Manual")
+					sed -i 's/DEMAND=.*$/DEMAND=no/'  /etc/ppp/pppoe.conf
+				;;
+			esac
+			
+			echo "ipcp-accept-remote" >> $PPPOE_FILE 
+			echo "ipcp-accept-local" >> $PPPOE_FILE 
+			echo "lcp-echo-failure 3" >> $PPPOE_FILE
+			echo "lcp-echo-interval 20" >> $PPPOE_FILE
+			echo "ktune" >> $PPPOE_FILE
+			echo "default-asyncmap nopcomp noaccomp" >> $PPPOE_FILE
+			echo "novj nobsdcomp nodeflate" >> $PPPOE_FILE
+			echo "plugin /etc/ppp/plugins/rp-pppoe.so $ETH0" >> $PPPOE_FILE			
+			
+			cfg -t /etc/ppp/pap-secrets > /tmp/pap-secrets
+			cfg -t /etc/ppp/pppoe.conf > /tmp/pppoe.conf
+			pppd file /etc/options.pppoe &
+        ;;
+        "3G")
+            cfg -t /etc/ppp/peers/pppd.conf.in > /tmp/pppd.conf
+            cfg -t /etc/ppp/chat/gsm-modem.chat.in > /tmp/gsm-modem.chat
+            /etc/rc.d/rc.usb-modem && sleep 5
+            echo -e "AT+CPIN=$GSM_PIN\r" > /dev/ttyUSB0 && sleep 1
+            pppd /dev/ttyUSB0 call pppd.conf
+        ;;
+    esac
+
+
+elif [ "$LAN_GATEWAY" != "" ] ; then
+    route add default gw $LAN_GATEWAY
+fi
+
+/etc/rc.d/rc.dhcp
+##
+## Bring up the 4 port interface
+##
+
+ifconfig $ETH1 up

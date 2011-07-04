@@ -1,0 +1,40 @@
+<HTML><HEAD>
+<LINK REL="stylesheet" href="../styleSheet.css" type="text/css">
+<script type="text/javascript" src="/lang/b28n.js"></script>
+<script language="JavaScript" type="text/javascript">
+Butterlate.setTextDomain("atheros");
+
+function initTranslation()
+{
+	var e = document.getElementById("FirmwareUpgrade");
+	e.innerHTML = _("firmware upgrade");
+	e = document.getElementById("Success");
+	e.innerHTML =_("firmware success");
+	e = document.getElementById("fileUpload");
+	e.innerHTML =_("file upload");
+	e = document.getElementById("bytesUpload");
+	e.innerHTML =_("bytes upload");
+}
+
+function start_upgrade(){
+	initTranslation();
+	document.forms[0].submit();
+}
+
+</script>
+</head><body onLoad="start_upgrade()">
+<form action="/cgi-bin/upgrade" method=post>
+<p class="headind">
+<INPUT TYPE="hidden" NAME="imgfile" VALUE="<insert dirname><insert lastfilename>"></p>
+<INPUT TYPE="hidden" NAME="errorpage" VALUE="APUpgradeError.html"></p>
+<INPUT TYPE="hidden" NAME="nextpage" VALUE="APUpgradeRedirect.html"></p>
+<INPUT TYPE="hidden" NAME="refresh" VALUE="5"></p>
+</form>
+<p class="topnavg" id="FirmwareUpgrade">Starting Firmware Upgrade</p>
+<table>
+<tr><td class="header" id="Success">Success!</td>
+<tr><td id="fileUpload">File uploaded:</td><td> <insert lastfilename></td></tr>
+<tr><td id="bytesUpload">Bytes uploaded:</td><td> <insert bytecount></td></tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,67 @@
+#!/bin/sh
+
+# This script runs when init it run during the boot process.
+# Mounts everything in the fstab
+
+mount -a
+mount -o remount +w /
+
+#
+# Mount sysfs to /sys
+#
+
+if [ ! -d "/sys" ]; then
+  mkdir /sys
+  mount -t sysfs sysfs /sys
+fi
+
+#
+# Mount the RAM filesystem to /tmp
+#
+
+mount -t ramfs -n none /tmp
+
+export PATH=$PATH:/etc/ath
+
+insmod /lib/modules/2.6.15/net/ag7100_mod.ko
+
+##
+## Get the default settings from apcfg
+##
+
+. /etc/ath/apcfg
+
+##
+## Put the names of the interfaces in the environmental variables
+## (They can be board unique)
+##
+
+export ETH0=eth1
+export ETH1=eth0
+export ATH0=ath0
+
+ifconfig $ETH0 up
+ifconfig $ETH1 up
+ifconfig $ETH0 down
+ifconfig $ETH0 up
+/etc/rc.d/rc.bridge
+
+if [ "${WLAN_ON_BOOT}" = "y" ]; then
+    export PATH=$PATH:/tmp/tools
+    /etc/ath/apup
+fi
+
+/etc/rc.d/rc.network
+/etc/rc.d/rc.firewall
+/etc/rc.d/rc.misc
+/etc/rc.d/rc.pppoe
+
+cat > /tmp/httpd.conf <<EOF
+/:${HTTPD_USERNAME}:${HTTPD_PASSWORD}
+EOF
+
+/etc/rc.d/rc.wlan-snat
+/usr/sbin/telnetd
+/usr/sbin/httpd -h /usr/www -c /tmp/httpd.conf -p ${HTTPD_PORT}
+/bin/factoryreset /dev/freset
+

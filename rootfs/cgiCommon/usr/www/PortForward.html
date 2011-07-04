@@ -1,0 +1,345 @@
+<html><head>
+<LINK REL="stylesheet" href="../styleSheet.css" type="text/css">
+<script type="text/javascript" src="/lang/b28n.js"></script>
+<script language="JavaScript" type="text/javascript">
+Butterlate.setTextDomain("atheros");
+
+function atoi(str, num)
+{
+	var i = 1;
+	if(num != 1 )
+	{
+		while (i != num && str.length != 0)
+		{
+			if(str.charAt(0) == '.')
+			{
+				i++;
+			}
+			str = str.substring(1);
+		}
+	  	if(i != num )
+	  	{
+			return -1;
+		}
+	}
+	
+	for(i = 0; i < str.length; i++)
+	{
+		if(str.charAt(i) == '.')
+		{
+			str = str.substring(0, i);
+			break;
+		}
+	}
+	if(str.length == 0)
+	{
+		return -1;
+	}
+	return parseInt(str, 10);
+}
+
+function isAllNum(str)
+{
+	for (var i=0; i<str.length; i++)
+	{
+	    if((str.charAt(i) >= '0' && str.charAt(i) <= '9') || (str.charAt(i) == '.' ))
+	    {
+			continue;
+		}
+		return 0;
+	}
+	return 1;
+}
+
+function CheckComment(str)
+{
+	for (var i = 0; i < str.length; i++)
+	{
+	    if(str.charAt(i) == ',' )
+	    {
+			alert("Comment can't include ',' !");
+			return 0
+		}
+	}
+	return 1;
+}
+
+function checkRange(str, num, mini, maxi)
+{
+	var d = atoi(str,num);
+	if(d > maxi || d < mini)
+	{
+		return false;
+	}
+	return true;
+}
+
+function checkIpAddr(field)
+{
+	var n = 0;
+    if ( isAllNum(field.value) == 0) 
+    {
+        alert('It should be a [0-9] number.');
+        field.value = field.defaultValue;
+        field.focus();
+        return false;
+    }
+
+    if( (!checkRange(field.value,1,1,255)) ||
+        (!checkRange(field.value,2,0,255)) ||
+        (!checkRange(field.value,3,0,255)) ||
+        (!checkRange(field.value,4,1,254)) )
+	{
+        alert('IP format error.');
+        field.value = field.defaultValue;
+        field.focus();
+        return false;
+    }
+    for (var i=0; i< field.value.length; i++)
+    {
+        if(field.value.charAt(i) == '.' )
+        {
+            n++;
+        }
+	}
+	if(3 != n)
+	{
+		alert('IP format error.');
+		return false;	
+	}
+	
+   return true;
+}
+
+function formCheck()
+{
+	if(!document.portForward.PortForwardEnabled.options.selectedIndex)
+	{
+		// user choose disable
+		return true;
+	}
+
+	if(	document.portForward.PortForward_ip_address.value == "" &&
+		document.portForward.PortForward_fromPort.value == "" &&
+		document.portForward.PortForward_toPort.value   == "" &&
+		document.portForward.PortForward_comment.value  == "")
+		return true;
+
+	// exam IP address
+    if(document.portForward.PortForward_ip_address.value == "")
+    {
+        alert("Not set ip address.");
+        document.portForward.PortForward_ip_address.focus();
+        return false;
+    }
+
+    if(! checkIpAddr(document.portForward.PortForward_ip_address) )
+    {
+        document.portForward.PortForward_ip_address.focus();
+        return false;
+    }
+
+    if(isAllNum(document.portForward.PortForward_ip_address.value) == 0)
+    {
+        alert("Invalid ip address.");
+        document.portForward.PortForward_ip_address.focus();
+        return false;
+    }
+
+	// exam Port
+	if(document.portForward.PortForward_fromPort.value == "")
+	{
+		alert("Not set from_port.");
+		document.portForward.PortForward_fromPort.focus();
+		return false;
+	}
+
+	if(isAllNum( document.portForward.PortForward_fromPort.value ) == 0)
+	{
+		alert("From_port should all be number.");
+		document.portForward.PortForward_fromPort.focus();
+		return false;
+	}
+
+	var d1 = atoi(document.portForward.PortForward_fromPort.value, 1);
+	if(d1 > 65535 || d1 < 1)
+	{
+		alert("From_port is between 1 and 65535!");
+		document.portForward.PortForward_fromPort.focus();
+		return false;
+	}
+	
+	if(document.portForward.PortForward_toPort.value != "")
+	{
+		if(isAllNum( document.portForward.PortForward_toPort.value ) == 0)
+		{
+			alert("To_port should all be number.");
+			document.portForward.PortForward_toPort.focus();
+			return false;
+		}
+		var d2 = atoi(document.portForward.PortForward_toPort.value, 1);
+		if(d2 > 65535 || d2 < 1)
+		{
+			alert("To_port is between 1 and 65535!");
+			document.portForward.PortForward_toPort.focus();
+			return false;
+		}
+		if(d1 > d2)
+		{
+			alert("To_port should not be bigger than from_port.");
+			document.portForward.PortForward_fromPort.focus();
+			return false;
+		}
+    }
+    else
+    {
+		alert("Not set to_port.");
+		document.portForward.PortForward_toPort.focus();
+		return false;   
+    }
+    //exam comment
+    if(CheckComment(document.portForward.PortForward_comment.value) == 0)
+    {
+		document.portForward.PortForward_comment.focus();
+		return false;
+    }
+    return true;
+}
+
+function initTranslation()
+{
+	var e = document.getElementById("forwardTitle");
+	e.innerHTML = _("forward title");
+	e = document.getElementById("forwardAction");
+	e.innerHTML = _("admin action");	
+	e = document.getElementById("forwardIntroduction");
+	e.innerHTML = _("forward introduction");
+	e = document.getElementById("forwardVirtualSrvSet");
+	e.innerHTML = _("forward server setting");
+	e = document.getElementById("forwardVirtualSrvIPAddr");
+	e.innerHTML = _("forward server ipaddr");
+	e = document.getElementById("forwardVirtualSrvDisable");
+	e.innerHTML = _("admin disable");
+	e = document.getElementById("forwardVirtualSrvEnable");
+	e.innerHTML = _("admin enable");
+	e = document.getElementById("forwardVirtualSrvPortRange");
+	e.innerHTML = _("forward port range");
+	e = document.getElementById("forwardVirtualSrvProtocol");
+	e.innerHTML = _("forward protocol");
+	e = document.getElementById("forwardVirtualSrvComment");
+	e.innerHTML = _("forward comment");
+	e = document.getElementById("forwardVirtualSrvApply");
+	e.value = _("admin apply");
+	e = document.getElementById("forwardVirtualSrvReset");
+	e.value = _("admin reset");
+
+	e = document.getElementById("forwardCurrentVirtualSrvDel");
+	e.value = _("firewall del select");
+	e = document.getElementById("forwardCurrentVirtualSrvReset");
+	e.value = _("admin reset");
+	e = document.getElementById("forwardCurrentVirtualSrv");
+	e.innerHTML = _("forward current virtual server");
+	e = document.getElementById("forwardCurrentVirtualSrvNo");
+	e.innerHTML = _("forward no");
+	e = document.getElementById("forwardCurrentVirtualSrvIP");
+	e.innerHTML = _("forward server ipaddr");
+	e = document.getElementById("forwardCurrentVirtualSrvPort");
+	e.innerHTML = _("forward port range");
+	e = document.getElementById("forwardCurrentVirtualSrvProtocol");
+	e.innerHTML = _("forward protocol");
+	e = document.getElementById("forwardCurrentVirtualSrvComment");
+	e.innerHTML = _("forward comment");
+}
+
+
+function updateState()
+{
+	if(document.portForward.PortForwardEnabled.value == "0")
+	{
+		document.portForward.PortForward_ip_address.disabled = true;
+		document.portForward.PortForward_fromPort.disabled = true;
+		document.portForward.PortForward_toPort.disabled = true;
+		document.portForward.PortForward_protocol.disabled = true;
+		document.portForward.PortForward_comment.disabled = true;
+	}
+	else
+	{
+		document.portForward.PortForward_ip_address.disabled = false;
+		document.portForward.PortForward_fromPort.disabled = false;
+		document.portForward.PortForward_toPort.disabled = false;
+		document.portForward.PortForward_protocol.disabled = false;
+		document.portForward.PortForward_comment.disabled = false;	
+	}
+}
+
+function initValue()
+{
+	updateState();
+	initTranslation();
+}
+</script>
+</head>
+
+<body onload="initValue()">
+<form method="post" name="portForward">
+<table><tr><td>
+<p class="topnavg" id="forwardTitle" >Virtual Server  Settings </p>
+<p id="forwardAction" class="action">
+	Action:These settings only work in Router mode!</p>
+<p id="forwardIntroduction" class="headind">The maximum rule count is 32.</p>
+
+<table width="400" border="1" cellpadding="2" cellspacing="1">
+<tr>
+	<td class="header" id="forwardVirtualSrvSet">Virtual Server Settings</td>
+	<td>
+	<select name="PortForwardEnabled" onChange="updateState()">
+    	<option ~sPortForwardEnabled:0~ value="0" id="forwardVirtualSrvDisable">Disable</option>
+		<option ~sPortForwardEnabled:1~ value="1" id="forwardVirtualSrvEnable">Enable</option>
+    </select></td>	
+</tr>
+<tr>
+	<td class="header" id="forwardVirtualSrvIPAddr">IP Address
+	<td><input type="text" id="PortForward_ip_address" name="PortForward_ip_address"
+		size="16" maxlength="16">
+</tr>
+<tr>
+	<td class="header" id="forwardVirtualSrvPortRange">Port Range
+	<td><input type="text" name="PortForward_fromPort" size="8" maxlength="5">
+	  -	<input type="text" name="PortForward_toPort"   size="8" maxlength="5"></td>
+</tr> 
+<tr>
+	<td class="header" id="forwardVirtualSrvProtocol">Protocol</td>
+	<td>
+	  <select name="PortForward_protocol">
+		<option value="TCP">TCP</option>
+  		<option value="UDP">UDP</option>
+  		<option value="TCPUDP">TCP+UDP</option>
+  	  </select></td>
+</tr>
+<tr>
+	<td class="header" id="forwardVirtualSrvComment">Comment</td>
+	<td><input type="text" name="PortForward_comment" size="24" maxlength="32"></td>
+</tr>
+</table>
+<table width="400">
+    <tr style="text-align:right">
+		<td><input type="submit" value="Apply" id="forwardVirtualSrvApply" name="PortForwardApply" onClick="return formCheck()">
+		    <input type="reset"  value="Reset" id="forwardVirtualSrvReset" name="PortForwardReset"></td>
+	</tr>
+</table>
+</table>
+  <p class="headind">
+  	 <input type="submit" value="Delete Selected" id="forwardCurrentVirtualSrvDel"   name="deleteSelPortForward">
+	 <input type="reset"  value="Reset"           id="forwardCurrentVirtualSrvReset" name="deleteReset">
+  </p>
+
+<table border=1 cellpadding=2 cellspacing=1>
+<tr>
+	<td class=topnavg colspan=5 id=forwardCurrentVirtualSrv>Current Virtual Servers in system: </td></tr>
+<tr>
+	<td id=forwardCurrentVirtualSrvNo class=header> No.</td>
+	<td align=center id=forwardCurrentVirtualSrvIP       class=header> IP Address</td>
+	<td align=center id=forwardCurrentVirtualSrvPort     class=header> Port Range</td>
+	<td align=center id=forwardCurrentVirtualSrvProtocol class=header> Protocol</td>
+	<td align=center id=forwardCurrentVirtualSrvComment  class=header> Comment</td>
+</tr>

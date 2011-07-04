@@ -1,0 +1,49 @@
+#!/bin/sh
+#########################################################################
+##  PPPoE Server Configuration
+##
+##  This script sets up pppoe server/client to the appropriate configuration
+##
+#########################################################################
+
+. /etc/ath/apcfg
+
+## pppoe server configuration
+if [ "${NETWORK_MODE}" = "Router" ]; then
+	if [ "${PPPoESrvButton}" = "enable" ]; then
+		#start ip forward 
+		echo "1">/proc/sys/net/ipv4/ip_forward 
+
+		if [ "$PPPoEFirstDNS" != "" ]; then
+			sed -i 's/ms-dns.*$//'  /etc/ppp/options
+			sed -i '/^\s*$/d' /etc/ppp/options
+			echo "ms-dns $PPPoEFirstDNS" >> /etc/ppp/options
+		fi
+		
+		if [ "$PPPoESecondDNS" != "" ]; then
+			echo "ms-dns $PPPoESecondDNS" >> /etc/ppp/options
+		fi
+		
+		if [ "$PswAuthen" = "PAP" ]; then
+			sed -i 's/require-.*$//'  /etc/ppp/pppoe-server-options
+			echo "require-pap" >> /etc/ppp/pppoe-server-options
+		elif [ "$PswAuthen" != "PAP" ]; then
+			sed -i 's/require-.*$//'  /etc/ppp/pppoe-server-options
+			echo "require-chap" >> /etc/ppp/pppoe-server-options
+		fi
+		
+		#pppoe server configuration
+		pppoe-server -I br0 -L $PPPoESrvIP -R $ClientStartIP -N $ClientMaxNum 
+		
+		#add iptables rules
+		iptables -t nat -A POSTROUTING -j MASQUERADE
+		iptables -A FORWARD -o $ETH0 -j ACCEPT
+	fi
+fi
+
+## pppoe client configuration
+
+
+
+
+

@@ -1,0 +1,255 @@
+Intellus LSDK README File
+
+jjPlus Corp. Copyright 2010
+
+This README offers additional instructions to build the embedded linux
+operating system image for the Intellus embedded platform series, an Atheros PB42
+reference design variant.  Please contact Atheros or an Atheros distributor for
+more information about the PB42 LSDK reference design distribution.
+
+Note: Redboot should be upgraded. Please see "Updating the Redboot Flash Image" section.
+
+
+___ Top Level Build Files to Prepare the Build Tree ___
+
+The Intellus LSDK distribution is available in two files, a base archive and an
+archive of optional binary drivers and images. The distribution is based on the 
+Atheros LSDK-pb42fus-7.3.0.429 release.  The kernel version is 2.6.15.
+
+The modifications for the Intellus embedded platform series add platform build type,
+ja73pf, ja76pf, ja76pf2 and ja76pf2hx which includes support for:
+
+  - AR8216 10/100M PHY switch
+  - AR8316 10/100/1000M PHY switch
+  - LM75A temperature controlled chassis fan
+  - factory reset and WPS GPIO support
+  - Firmware Upgrade support
+  - MD5-crypt password for the http interface
+
+
+___ Building the Firmware ____
+
+The build process consists of uncompressing the distribution files and running
+the make utility in the build directory.
+
+>tar -zxf LSDK-intellus-7.3.0.429.tar.gz
+>tar -zxf LSDK-WLAN-intellus-7.3.0.429.tar.gz
+>cd LSDK-intellus-7.3.0.429/build
+>make
+
+A clean build of the tool chain, kernel and all file system components takes approximately 
+20 minutes on a 2GHz Intel Core2 Duo T7300 w/ 2GB DDR2.
+
+___ Building the Firmware in 64-bit Linux ___
+
+The prebuilt binaries are built for 32-bit. To build successfully,"ia32" package is necessary.
+On a Ubuntu machine, please follow the command below. 
+
+~ $ sudo apt-get install ia32
+
+
+___ Building the Firmware with older gcc ___
+
+The GCC should be equal or under 4.1, if the GCC is too new. Please install older gcc. GCC-4.1
+is recommended.
+
+~ $ sudo apt-get install gcc-4.1
+
+To use older gcc to build, a file "site.mk" should be included to the Makefile.
+
+>cd LSDK-intellus-7.3.0.429/build
+>echo "HOSTCC = gcc-4.1" > site.mk
+>make clean ; make
+
+
+___ Intellus Firmware Images ___
+
+The kernel and file system image files are located in the directory
+LSDK-ja73pf-7.3.0.429/images/intellus:
+    |
+    | - intellus_routing-jffs2 - file system image
+    | - INTELLUS-update.img    - firmware image for http upgrade   
+    | - redboot-ja73pf.bin     - RAM boot loader image for JA73PF
+    | - redboot-ja73pf.rom     - flash ROM boot loader image for JA73PF
+    | - redboot-ja76pf.bin     - RAM boot loader image for JA76PF
+    | - redboot-ja76pf.rom     - flash ROM boot loader image for JA76PF
+    | - redboot-ja76pf2.bin    - RAM boot loader image for JA76PF2
+    | - redboot-ja76pf2.rom    - flash ROM boot loader image for JA76PF2
+    | - redboot-ja76pf2hx.bin  - RAM boot loader image for JA76PF2HX
+    | - redboot-ja76pf2hx.rom  - flash ROM boot loader image for JA76PF2HX
+    | - vmlinux_routing.bin.gz - Linux kernel image
+    | - vmlinux_routing.info   - Linux kernel load address and entry point informations
+
+The RAM boot loader image is included for JTAG loading on a non-bootable device.
+ 
+The flash partition table for the JA73PF and JA76PF is below.
+
+    RedBoot> fis list
+    Name              FLASH addr  Mem addr    Length      Entry point
+    RedBoot           0xBF000000  0xBF000000  0x00040000  0x00000000
+    vmlinux           0xBF040000  0x80060000  0x00160000  0x80060000
+    filesystem        0xBF1A0000  0x80051400  0x005C0000  0x80051400
+    caldata           0xBF760000  0xBF760000  0x00080000  0x80500000
+    FIS directory     0xBF7E0000  0xBF7E0000  0x0000F000  0x00000000
+    RedBoot config    0xBF7EF000  0xBF7EF000  0x00001000  0x00000000
+
+The flash partition table for the JA76PF2 and JA76PF2HX is below.
+
+    RedBoot> fis list
+    Name              FLASH addr  Mem addr    Length      Entry point
+    RedBoot           0xBF000000  0xBF000000  0x00040000  0x00000000
+    vmlinux           0xBF040000  0x80060000  0x00160000  0x80060000
+    filesystem        0xBF1A0000  0x80051400  0x00DC0000  0x80051400
+    caldata           0xBF760000  0xBFF60000  0x00080000  0x80500000
+    FIS directory     0xBF7E0000  0xBFFE0000  0x0000F000  0x00000000
+    RedBoot config    0xBF7EF000  0xBFFEF000  0x00001000  0x00000000
+
+The caldata partition holds the network platform operation settings.
+
+
+___ Installing the Firmware on the Intellus ___
+
+The compressed kernel and jffs2 file system images are programmed to the flash
+using redboot flash image system (fis) commands. Redboot uses tftp transfer
+protocol for image retrieval.
+
+The default network settings for the JA73PF redboot configuration are:
+    Local IP address: 192.168.1.2
+    Local IP address mask: 255.255.255.0
+    Default server IP address: 192.168.1.1
+
+If a different local or default server IP is required for the LAN, it will be
+necessary to change the values using fconfig and rebooting for the changes to
+take effect.
+
+The following steps will reprogram the kernel and file system images on JA73PF and JA76PF.
+    
+    RedBoot> fis delete vmlinux
+    Delete image 'vmlinux' - continue (y/n)? y
+    ... Erase from 0xbf040000-0xbf1a0000: ......................
+    ... Erase from 0xbf7e0000-0xbf7f0000: .
+    ... Program from 0x80ff0000-0x81000000 at 0xbf7e0000: .
+    RedBoot> fis delete filesystem
+    Delete image 'filesystem' - continue (y/n)? y
+    ... Erase from 0xbf1a0000-0xbf760000: ............................................................................................
+    ... Erase from 0xbf7e0000-0xbf7f0000: .
+    ... Program from 0x80ff0000-0x81000000 at 0xbf7e0000: .
+    RedBoot> load -r -b 0x80500000 vmlinux_routing.bin.gz
+    Using default protocol (TFTP)
+    Raw file loaded 0x80500000-0x80644fd5, assumed entry at 0x80500000
+    RedBoot> fis create -e 0x80060000 -r 0x80060000 -l 0x160000 vmlinux
+    ... Erase from 0xbf040000-0xbf1a0000: ......................
+    ... Program from 0x80500000-0x80644fd6 at 0xbf040000: .....................
+    ... Erase from 0xbf7e0000-0xbf7f0000: .
+    ... Program from 0x80ff0000-0x81000000 at 0xbf7e0000: .
+    RedBoot> load -r -b 0x80500000 intellus_routing-jffs2
+    Using default protocol (TFTP)
+    Raw file loaded 0x80500000-0x80abffff, assumed entry at 0x80500000
+    RedBoot> fis create -b 0x80500000 -e 0 -l 0x5c0000 filesystem
+    ... Erase from 0xbf1a0000-0xbf760000: ............................................................................................
+    ... Program from 0x80500000-0x80ac0000 at 0xbf1a0000: ............................................................................
+    ................
+    ... Erase from 0xbf7e0000-0xbf7f0000: .
+    ... Program from 0x80ff0000-0x81000000 at 0xbf7e0000: .
+
+
+The following steps will reprogram the kernel and file system images on JA76PF2 and JA76PF2HX.
+
+    RedBoot> fis delete vmlinux
+    Delete image 'vmlinux' - continue (y/n)? y
+    ... Erase from 0xbf040000-0xbf1a0000: ......................
+    ... Erase from 0xbffe0000-0xbfff0000: .
+    ... Program from 0x80ff0000-0x81000000 at 0xbffe0000: .
+    RedBoot> fis delete filesystem
+    Delete image 'filesystem' - continue (y/n)? y
+    ... Erase from 0xbf1a0000-0xbff60000: ............................................................................................
+    ... Erase from 0xbffe0000-0xbfff0000: .
+    ... Program from 0x80ff0000-0x81000000 at 0xbf7e0000: .
+    RedBoot> load -r -b 0x80500000 vmlinux_routing.bin.gz
+    Using default protocol (TFTP)
+    Raw file loaded 0x80500000-0x80644fd5, assumed entry at 0x80500000
+    RedBoot> fis create -e 0x80060000 -r 0x80060000 -l 0x160000 vmlinux
+    ... Erase from 0xbf040000-0xbf1a0000: ......................
+    ... Program from 0x80500000-0x80644fd6 at 0xbf040000: .....................
+    ... Erase from 0xbffe0000-0xbfff0000: .
+    ... Program from 0x80ff0000-0x81000000 at 0xbffe0000: .
+    RedBoot> load -r -b 0x80500000 intellus_routing-jffs2
+    Using default protocol (TFTP)
+    Raw file loaded 0x80500000-0x80abffff, assumed entry at 0x80500000
+    RedBoot> fis create -b 0x80500000 -e 0 -l 0xdc0000 filesystem
+    ... Erase from 0xbf1a0000-0xbff60000: ............................................................................................
+    ... Program from 0x80500000-0x80ac0000 at 0xbf1a0000: ............................................................................
+    ................
+    ... Erase from 0xbffe0000-0xbfff0000: .
+    ... Program from 0x80ff0000-0x81000000 at 0xbffe0000: .
+
+
+___ Updating the Redboot Flash Image ___
+
+The boot loader should require few to no upgrades.  However the
+instructions below show the steps to upgrade the boot loader.  The boot loader
+loads itself into RAM on startup, therefore it is not necessary to load a RAM
+image as a step in the boot loader reprogramming.  The RAM image is included
+for JTAG loading on a non-bootable device.
+
+Below is the steps to update the ROM flash.  The redboot-[platform_name].rom 
+image must first be copied to a tftp server directory.
+
+Note: The boot script may need to be canceled when starting the RAM image
+      using CTRL-C before proceeding with the update.
+
+The following steps will reprogram the Redboot on JA73PF. Change the ROM image
+name when using other platform.
+
+    RedBoot> load -r -b 0x80600000 redboot-ja73pf.rom
+    Using default protocol (TFTP)
+    Raw file loaded 0x80600000-0x8063fc0f, assumed entry at 0x80600000
+    RedBoot> fis write -b 0x80600000 -f 0xbf000000 -l 0x40000
+    * CAUTION * about to program FLASH
+                at 0xbf000000..0xbf03ffff from 0x80600000 - continue (y/n)? y
+    ... Erase from 0xbf000000-0xbf040000: ....
+    ... Program from 0x80600000-0x80640000 at 0xbf000000: ....
+    RedBoot>
+
+
+___ OpenOCD JTAG Support ___
+
+The distribution includes modifications to support JTAG image loading to RAM.
+JTAG ram image loading of redboot-[platform_name].bin has been tested with 
+OpenOCD (0.4.0 or newer) using an Olimex ARM-USB-TINY jtag interface. [1] 
+The configuration file to support OpenOCD for the Intellus platforms is located
+in LSDK-ja73pf-7.3.0.429/openocd and the Win32 executable binary is located in
+LSDK-ja73pf-7.3.0.429/openocd/win32. OpenOCD release 0.4.0 or newer includes a
+patch to speed-up the file transfer time for mips processors.
+
+
+A successful jtag ram image upload is show below.
+
+    >cd LSDK-ja73pf-7.3.0.429/openocd
+    >openocd -f interface/olimex-jtag-tiny.cfg -f ar71xx.cfg
+
+On a Win32 system, copy the files in LSDK-ja73pf-7.3.0.429/openocd/win32 to a directory.
+Assume the files are located in C:\openocd. 
+    
+    C:\openocd\> openocd.exe -f intellus.cfg
+
+In another terminal type:
+    > telnet localhost 4444
+    Trying 127.0.0.1...
+    Connected to localhost.
+    Escape character is '^]'.
+    Open On-Chip Debugger
+    > reset init
+    JTAG tap: ar71xx.cpu tap/device found: 0x00000001 (mfg: 0x000, part: 0x0000, ver: 0x0)
+    JTAG Tap/device matched
+    target state: halted
+    target halted due to debug-request, pc: 0xbfc00000
+    > load_image LSDK-ja73pf-7.3.0.429/images/ja73pf/redboot.bin 0xa0500000
+    mips32_pracc_fastdata_xfer using 0xa0600000 for write handler
+    
+    254384 byte written at address 0xa0500000
+    downloaded 254384 byte in 2.880110s
+    > resume 0xa05000bc
+
+
+[1] http://www.olimex.com/dev/arm-usb-tiny.html

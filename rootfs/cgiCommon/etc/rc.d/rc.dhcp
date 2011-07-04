@@ -1,0 +1,76 @@
+#!/bin/sh
+
+#########################################
+# DHCP server - dnsmasq settings
+# DHCP_START
+# DHCP_END
+# DHCP_MAX_LEASETIME
+# DHCP_MAX_LEASES
+# DHCP_ENABLE
+#
+#########################################
+
+. /etc/ath/apcfg
+
+#IP_SEC=$(echo ${LAN_IPADDR} | awk -F"." '{printf $1"."$2"."$3}')
+LEASES_FILE="/tmp/dnsmasq.leases"
+
+#dnsmasq -i $INTERFACE -a $LAN_IPADDR -l $LEASES_FILE -F $IP_SEC.$DHCP_START,$IP_SEC.$DHCP_END,$DHCP_MAX_LEASETIME -X $DHCP_MAX_LEASES
+
+if [ "$UDHCPD" = "server" ]; then
+	if [ "$DHCP_IP_START" != "" ]; then
+		sed -i 's/^dhcp-range=.*$/dhcp-range='$DHCP_IP_START'/' /etc/dnsmasq.conf
+	fi
+
+	if [ "$DHCP_IP_END" != "" ]; then
+		sed -i 's/^dhcp-range.*$/&,'$DHCP_IP_END'/' /etc/dnsmasq.conf 
+	fi
+	
+	if [ "$DHCP_MASK" != "" ]; then
+		sed -i 's/dhcp-range.*$/&, '$DHCP_MASK'/' /etc/dnsmasq.conf
+	fi
+
+	if [ "$DHCP_LEASE_TIME" != "" ]; then
+		sed -i 's/dhcp-range.*$/&,'$DHCP_LEASE_TIME'h/' /etc/dnsmasq.conf
+	fi
+	
+	if [ "$DHCP_GATEWAY" != "" ]; then
+		sed -i 's/dhcp-option=3,.*/dhcp-option=3,'$DHCP_GATEWAY'/' /etc/dnsmasq.conf
+	fi
+
+	dnsmasq -u root -l $LEASES_FILE		
+fi
+
+
+#
+#DDNS Configuration
+#
+
+touch /tmp/inadyn.log
+
+if [ "$DDNS" = "enabled" ]; then
+	if [ "$User_Name" != "" ]; then
+		sed -i 's/username.*$/username '$User_Name'/' /etc/inadyn.conf
+	fi
+
+	if [ "$Password" != "" ]; then
+		sed -i 's/password.*$/password '$Password'/' /etc/inadyn.conf
+	fi
+
+	if [ "$Host_Name" != "" ]; then
+		sed -i 's/alias.*$/alias '$Host_Name'/'  /etc/inadyn.conf
+	fi
+
+	if [ "$Server_Address" != "" ]; then
+		sed -i 's/dyndns_system.*$/dyndns_system '$Server_Address'/' /etc/inadyn.conf
+	fi
+
+	inadyn &
+	
+fi
+
+
+
+
+
+

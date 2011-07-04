@@ -1,0 +1,4 @@
+config  INTELLUS
+    bool "Selects jjPlus INTELLUS JA73PF, JA76PF, JA76HX, etc boards"
+    depends on MACH_AR7100
+
