@@ -1,0 +1,80 @@
+<HTML><HEAD>
+<META http-equiv="Content-Type" content="text/html">
+<LINK REL="stylesheet" href="../styleSheet.css" type="text/css">
+<script type="text/javascript" src="/lang/b28n.js"></script>
+<script language="JavaScript" type="text/javascript">
+Butterlate.setTextDomain("atheros");
+
+function initTranslation()
+{
+	var e = document.getElementById("UPDATE");
+	e.value = _("admin update");
+	e = document.getElementById("COMMIT");
+	e.value = _("admin commit");
+	e = document.getElementById("RebootButton");
+	e.value = _("admin reboot");
+	e = document.getElementById("StartFan");
+	e.value = _("start fan");	
+	
+	e = document.getElementById("FanConfig");
+	e.innerHTML = _("fan config");
+	e = document.getElementById("FanStart");
+	e.innerHTML = _("fan start");
+	e = document.getElementById("FanStop");
+	e.innerHTML = _("fan stop");	
+}
+
+function initValue()
+{
+	initTranslation();
+}
+</script>
+</head>
+<body onload="initValue()">
+<FORM METHOD=POST>
+<p class="headind"><INPUT TYPE="SUBMIT" NAME="UPDATE" VALUE="Update" id="UPDATE">
+&nbsp&nbsp<INPUT TYPE="SUBMIT" NAME="COMMIT" VALUE="Commit" id="COMMIT">
+&nbsp&nbsp<INPUT TYPE="SUBMIT" NAME="RebootButton" VALUE="Reboot" id="RebootButton">
+&nbsp&nbsp<INPUT TYPE="SUBMIT" NAME="StartFan" VALUE="Start" id="StartFan"></p>
+<p class="topnavg" id="FanConfig">Fan Configuration</p>
+<table>
+<tr><td class="doctitle" id="FanStart">Start temperature</td>
+<td>
+<SELECT class="text2" NAME="FAN_START_TEMP">
+	<OPTION ~sFAN_START_TEMP:15000~ value=15000>15&deg;C(59&deg;F)
+	<OPTION ~sFAN_START_TEMP:20000~ value=20000>20&deg;C(68&deg;F)
+	<OPTION ~sFAN_START_TEMP:25000~ value=25000>25&deg;C(77&deg;F)
+	<OPTION ~sFAN_START_TEMP:30000~ value=30000>30&deg;C(86&deg;F)
+	<OPTION ~sFAN_START_TEMP:35000~ value=35000>35&deg;C(95&deg;F)
+	<OPTION ~sFAN_START_TEMP:40000~ value=40000>40&deg;C(104&deg;F)
+	<OPTION ~sFAN_START_TEMP:45000~ value=45000>45&deg;C(113&deg;F)
+	<OPTION ~sFAN_START_TEMP:50000~ value=50000>50&deg;C(122&deg;F)
+	<OPTION ~sFAN_START_TEMP:55000~ value=55000>55&deg;C(131&deg;F)
+	<OPTION ~sFAN_START_TEMP:60000~ value=60000>60&deg;C(140&deg;F)
+	<OPTION ~sFAN_START_TEMP:65000~ value=65000>65&deg;C(149&deg;F)
+	<OPTION ~sFAN_START_TEMP:70000~ value=70000>70&deg;C(158&deg;F)
+	<OPTION ~sFAN_START_TEMP:75000~ value=75000>75&deg;C(167&deg;F)
+	<OPTION ~sFAN_START_TEMP:80000~ value=80000>80&deg;C(176&deg;F)
+	<OPTION ~sFAN_START_TEMP:85000~ value=85000>85&deg;C(185&deg;F)
+</SELECT>
+<tr><td class="doctitle" id="FanStop">Stop temperature</td>
+<td>
+<SELECT class="text2" NAME="FAN_STOP_TEMP">
+	<OPTION ~sFAN_STOP_TEMP:15000~ value=15000>15&deg;C(59&deg;F)
+	<OPTION ~sFAN_STOP_TEMP:20000~ value=20000>20&deg;C(68&deg;F)
+	<OPTION ~sFAN_STOP_TEMP:25000~ value=25000>25&deg;C(77&deg;F)
+	<OPTION ~sFAN_STOP_TEMP:30000~ value=30000>30&deg;C(86&deg;F)
+	<OPTION ~sFAN_STOP_TEMP:35000~ value=35000>35&deg;C(95&deg;F)
+	<OPTION ~sFAN_STOP_TEMP:40000~ value=40000>40&deg;C(104&deg;F)
+	<OPTION ~sFAN_STOP_TEMP:45000~ value=45000>45&deg;C(113&deg;F)
+	<OPTION ~sFAN_STOP_TEMP:50000~ value=50000>50&deg;C(122&deg;F)
+	<OPTION ~sFAN_STOP_TEMP:55000~ value=55000>55&deg;C(131&deg;F)
+	<OPTION ~sFAN_STOP_TEMP:60000~ value=60000>60&deg;C(140&deg;F)
+	<OPTION ~sFAN_STOP_TEMP:65000~ value=65000>65&deg;C(149&deg;F)
+	<OPTION ~sFAN_STOP_TEMP:70000~ value=70000>70&deg;C(158&deg;F)
+	<OPTION ~sFAN_STOP_TEMP:75000~ value=75000>75&deg;C(167&deg;F)
+	<OPTION ~sFAN_STOP_TEMP:80000~ value=80000>80&deg;C(176&deg;F)
+	<OPTION ~sFAN_STOP_TEMP:85000~ value=85000>85&deg;C(185&deg;F)
+</SELECT>
+</table>
+</body></html>

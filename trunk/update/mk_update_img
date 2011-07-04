@@ -1,0 +1,35 @@
+#!/bin/sh
+IMAGE_FILE=$1
+UPDATE_SCRIPT=$2
+ROOT_GZ=$3
+ARCH=$4
+UPDATE_IMAGE=$5
+
+USAGE="$(basename $0) <gzipped image file> <platform-specific update script> <gzipped rootfs> <arch>"
+[ ! -f "$IMAGE_FILE" ] &&  echo -e "$USAGE\nImage file not found" && exit 1
+[ ! -f "$ROOT_GZ" ] &&  echo -e "$USAGE\nplatform-specific rootfs not found" && exit 1
+
+#make a self installing upgrade image 
+BLKSZ=512
+IMG_GZ=$(mktemp)
+[ ! -f "$IMG_GZ" ] && ( echo "cannot create compressed image file, exiting" ; exit )
+[ -z "$UPDATE_IMAGE" ] && UPDATE_IMAGE=$(echo $IMAGE_FILE | sed 's/\.[^.]*$/-update.img/')
+
+[ ! -f "$UPDATE_SCRIPT" ] && echo "script file not found, exiting" && exit 
+SCRIPT_SIZE=$(($(stat -L -c %s $UPDATE_SCRIPT) + 40)); # 40 >  BLKSZ + MD5SUM
+while [ "$BLKSZ" -lt "$SCRIPT_SIZE" ] ; do
+    BLKSZ=$((BLKSZ*2))
+done;
+
+gzip -c $IMAGE_FILE > $IMG_GZ
+
+IMG_SIZE=$(( ($(stat -L -c %s $IMG_GZ) + $BLKSZ)/$BLKSZ))
+
+DD="dd bs=$BLKSZ"
+
+#add the update script to the new image
+IMG_MD5SUM=$(md5sum $IMAGE_FILE | awk '{printf $1}')
+$DD if=$ROOT_GZ seek=$(($IMG_SIZE + 1)) of=$UPDATE_IMAGE
+$DD if=$IMG_GZ seek=1 conv=notrunc of=$UPDATE_IMAGE
+sed 's/__BLKSZ__/'$BLKSZ'/;s/__IMG_SIZE__/'$IMG_SIZE'/;s/__IMG_MD5SUM__/"'$IMG_MD5SUM'"/;s/__IMG_ARCH__/'$ARCH'/' $UPDATE_SCRIPT | $DD conv=notrunc of=$UPDATE_IMAGE
+rm $IMG_GZ

@@ -1,0 +1,7 @@
+user "~~GSM_USERNAME~"
+connect "/usr/sbin/chat -v -f /etc/ppp/chat/gsm-modem.chat"
+noccp
+noauth
+noipdefault
+usepeerdns
+defaultroute

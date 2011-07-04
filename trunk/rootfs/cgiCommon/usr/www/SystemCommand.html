@@ -1,0 +1,65 @@
+<html><head>
+<LINK REL="stylesheet" href="../styleSheet.css" type="text/css">
+<script type="text/javascript" src="/lang/b28n.js"></script>
+<script language="JavaScript" type="text/javascript">
+Butterlate.setTextDomain("atheros");
+
+function initTranslation()
+{
+	var e = document.getElementById("syscommandTitle");
+	e.innerHTML = _("syscommand title");
+	e = document.getElementById("syscommandIntroduction");
+	e.innerHTML = _("syscommand introduction");
+	e = document.getElementById("syscommandCommand");
+	e.innerHTML = _("syscommand command");
+	e = document.getElementById("syscommandApply");
+	e.value = _("admin apply");
+	e = document.getElementById("syscommandCancel");
+	e.value = _("admin cancel");
+}
+
+function formCheck()
+{
+	if( document.SystemCommand.command.value == "")
+	{
+		alert("Please specify a command.");
+		return false;
+	}
+
+	return true;
+}
+
+function setFocus()
+{
+	initTranslation();
+	document.SystemCommand.command.focus();
+}
+
+</script>
+
+</head>
+<body onload="setFocus()">
+<table><tr><td>
+<p class="topnavg" id="syscommandTitle">System Command</p>
+<p id="syscommandIntroduction" class="headind"> Run a system command as root</p>
+
+<!-- ----------------- System command ----------------- -->
+<form name="SystemCommand">
+<table border="1" cellpadding="2" cellspacing="1" style="width: 420px; height: 380px">
+<tr>
+  <td class="header" id="syscommandCommand">system command</td>
+  <td><input type="text" class="text2" id="command" 
+  			name="command" value="~~command~" size="30" maxlength="256"></td>
+</tr>
+<tr>
+<td colspan="2"><div style="overflow-y:scroll;height:380px;">
+	<p class="headind">~`cd / 2>/dev/null;~~command~ 2>/dev/null`~</p></div></td></tr>
+</table>
+<table>
+<input value="Apply" id="syscommandApply" name="SystemCommandSubmit" onclick="return formCheck()" type="submit"> &nbsp;&nbsp;
+<input value="Reset" id="syscommandCancel" name="reset" type="reset">
+</table>
+</table>
+</form>
+
+</body></html>

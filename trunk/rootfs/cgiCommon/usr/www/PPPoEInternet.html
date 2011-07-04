@@ -1,0 +1,380 @@
+<html><head>
+<link rel="stylesheet" href="../styleSheet.css" type="text/css">
+<script type="text/javascript" src="/lang/b28n.js"></script>
+<script language="JavaScript" type="text/javascript">
+Butterlate.setTextDomain("atheros");
+
+function atoi(str, num)
+{
+	var i = 1;
+	if(num != 1 )
+	{
+		while (i != num && str.length != 0)
+		{
+			if(str.charAt(0) == '.')
+			{
+				i++;
+			}
+			str = str.substring(1);
+		}
+	  	if(i != num )
+	  	{
+			return -1;
+		}
+	}
+	
+	for(i = 0; i < str.length; i++)
+	{
+		if(str.charAt(i) == '.')
+		{
+			str = str.substring(0, i);
+			break;
+		}
+	}
+	if(str.length == 0)
+	{
+		return -1;
+	}
+	return parseInt(str, 10);
+}
+
+function isOnlyNum(str)
+{
+	for (var i=0; i<str.length; i++)
+	{
+	    if(str.charAt(i) >= '0' && str.charAt(i) <= '9')
+	    {
+			continue;
+		}
+		return 0;
+	}
+	return 1;
+}
+
+function isAllNum(str)
+{
+	for (var i=0; i<str.length; i++)
+	{
+	    if((str.charAt(i) >= '0' && str.charAt(i) <= '9') || (str.charAt(i) == '.' ))
+	    {
+			continue;
+		}
+		return 0;
+	}
+	return 1;
+}
+
+function isPswRight(str)
+{
+	for (var i=0; i<str.length; i++)
+	{
+	    if(!(str.charAt(i) >= '0' && str.charAt(i) <= '9'))
+	    {
+			alert("Password shoule be all number!");
+			document.PPPoESettings.ClientPsw.focus();
+			return 0;
+		}
+	}
+	return 1;
+}
+
+function isUserRight(str)
+{
+	if(!((str.charAt(0) >= 'a' && str.charAt(0) <= 'z') || 
+		 (str.charAt(0) >= 'A' && str.charAt(0) <= "Z")))
+	{
+		alert("The first of the user name shoule be letters, like a-z or A-Z");
+		document.PPPoESettings.ClientUserName.focus();
+		return 0;
+	}
+	for(var i=1; i<str.length; i++)
+	{
+		if(!((str.charAt(i) >= '0' && str.charAt(i) <= '9') || 
+		     (str.charAt(i) >= 'a' && str.charAt(i) <= 'z') || 
+		     (str.charAt(i) >= 'A' && str.charAt(i) <= "Z")))
+		{
+			alert("Username only include number or letters");
+			document.PPPoESettings.ClientUserName.focus();
+			return 0;
+		}		     
+	}
+	return 1;
+} 
+
+function checkUserPsw()
+{
+	if(document.PPPoESettings.ClientUserName.value == "")
+	{
+		alert("Please input user name!");
+		document.PPPoESettings.ClientUserName.focus();
+		return false;
+	}
+	if(document.PPPoESettings.ClientPsw.value == "")
+	{
+		alert("Please input password!");
+		document.PPPoESettings.ClientPsw.focus();
+		return false;
+	}
+	if(isUserRight(document.PPPoESettings.ClientUserName.value) == 0 )
+	{
+		return false;
+	}
+	if(isPswRight(document.PPPoESettings.ClientPsw.value) == 0)
+	{
+		return false;
+	}
+	
+	return true;
+}
+
+function checkRange(str, num, mini, maxi)
+{
+	var d = atoi(str,num);
+	if(d > maxi || d < mini)
+	{
+		return false;
+	}
+	return true;
+}
+
+function checkIpAddr(field)
+{
+    var n = 0;
+
+    if(field.value == "")
+    {
+        alert("Error. IP address is empty.");
+        field.value = field.defaultValue;
+        field.focus();
+        return false;
+    }
+
+    if ( isAllNum(field.value) == 0) 
+    {
+        alert('It should be a [0-9] number.');
+        field.value = field.defaultValue;
+        field.focus();
+        return false;
+    }
+
+    if( (!checkRange(field.value,1,1,255)) ||
+        (!checkRange(field.value,2,0,255)) ||
+        (!checkRange(field.value,3,0,255)) ||
+        (!checkRange(field.value,4,1,254)) )
+	{
+        alert('IP format error.');
+        field.value = field.defaultValue;
+        field.focus();
+        return false;
+    }
+    for (var i=0; i< field.value.length; i++)
+    {
+	    if(field.value.charAt(i) == '.' )
+	    {
+            n++;
+        }
+    }
+    if(3 != n)
+    {
+		alert('IP format error.');
+		return false;	
+    }
+	
+   return true;
+}
+
+function SrvCheckValue()
+{
+    if(document.PPPoESettings.PPPoESrvButton.value == "disable")
+    {
+    	return true;
+    }
+    if(document.PPPoESettings.PPPoESrvIP.value == "")
+    {
+    	alert("Please input Server IP!");
+    	document.PPPoESettings.PPPoESrvIP.focus();
+    	return false;
+    }
+    if(!checkIpAddr(document.PPPoESettings.PPPoESrvIP))
+    {
+        document.PPPoESettings.PPPoESrvIP.focus();
+        return false;
+    }
+    if(document.PPPoESettings.ClientStartIP.value == "")
+    {
+    	alert("Please input client start IP!");
+    	document.PPPoESettings.ClientStartIP.focus();
+    	return false;
+    }    
+    if(!checkIpAddr(document.PPPoESettings.ClientStartIP))
+    {
+        document.PPPoESettings.ClientStartIP.focus();
+        return false;
+    }
+    if(document.PPPoESettings.ClientMaxNum.value == "")
+    {
+    	alert("Please input the allowed max addresses!");
+    	document.PPPoESettings.ClientMaxNum.focus();
+    	return false;
+    }
+    if(isOnlyNum(document.PPPoESettings.ClientMaxNum.value) == 0)
+	{
+		alert("It should be a [0-9] number!");
+		document.PPPoESettings.ClientMaxNum.focus();
+		return false;
+	}
+	if(document.PPPoESettings.PPPoEFirstDNS.value == "")
+	{
+		alert("Please input the DNS!");
+		document.PPPoESettings.PPPoEFirstDNS.focus();
+		return false;
+	}
+    else(!checkIpAddr(document.PPPoESettings.PPPoEFirstDNS))
+    {
+        document.PPPoESettings.PPPoEFirstDNS.focus();
+        return false;
+    }
+    if(document.PPPoESettings.PPPoESecondDNS == "")
+	{
+		return true;
+	}
+    else(!checkIpAddr(document.PPPoESettings.PPPoESecondDNS))
+    {
+        document.PPPoESettings.PPPoESecondDNS.focus();
+        return false;
+    }
+    
+    return true;
+}
+
+function updateState()
+{
+	if(document.PPPoESettings.PPPoESrvButton.value == "disable")
+	{
+		document.PPPoESettings.PPPoESrvIP.disabled = true;
+		document.PPPoESettings.ClientStartIP.disabled = true;
+		document.PPPoESettings.ClientMaxNum.disabled = true;
+		document.PPPoESettings.PPPoEFirstDNS.disabled = true;
+		document.PPPoESettings.PPPoESecondDNS.disabled = true;
+	}
+	else
+	{
+		document.PPPoESettings.PPPoESrvIP.disabled = false;
+		document.PPPoESettings.ClientStartIP.disabled = false;
+		document.PPPoESettings.ClientMaxNum.disabled = false;
+		document.PPPoESettings.PPPoEFirstDNS.disabled = false;
+		document.PPPoESettings.PPPoESecondDNS.disabled = false;
+	}
+}
+
+function initTranslation()
+{
+	document.getElementById("update").value = _("admin update");
+	document.getElementById("commit").value = _("admin commit");
+	document.getElementById("reboot").value = _("admin reboot");
+	document.getElementById("start").value = _("admin start");
+	document.getElementById("stop").value = _("admin stop");
+	
+	document.getElementById("PPPoESrvSettings").innerHTML = _("PPPoESrvSettings");
+	document.getElementById("PPPoEAction").innerHTML = _("admin action");
+	document.getElementById("PPPoESrvEn").innerHTML = _("pppoe SrvEnable");
+	document.getElementById("PPPoESrvEnable").innerHTML = _("admin enable");
+	document.getElementById("PPPoESrvDisable").innerHTML = _("admin disable");	
+	document.getElementById("pppoeSrvIP").innerHTML = _("pppoe SrvIP");
+	document.getElementById("PPPoEClientStart").innerHTML = _("pppoe CliStartIP");
+	document.getElementById("PPPoEClientNum").innerHTML = _("pppoe CliNum");
+	document.getElementById("pppoeFirstDNS").innerHTML = _("pppoe firstDNS");
+	document.getElementById("pppoeSecondDNS").innerHTML = _("pppoe secondDNS");
+	document.getElementById("PPPoEPswAuth").innerHTML = _("pppoe pswAuth");
+	document.getElementById("PPPoECliSettings").innerHTML = _("PPPoECliSettings");
+	document.getElementById("PPPoEClientUser").innerHTML = _("pppoe CliUser");
+	document.getElementById("PPPoEClientPsw").innerHTML = _("pppoe ClientPsw");
+	document.getElementById("PPPoECliAdd").value = _("pppoe CliAdd");
+	document.getElementById("PPPoECliModify").value = _("pppoe CliModify");	
+}
+
+function initValue()
+{
+	updateState();
+	initTranslation();
+}
+</script>
+</head>
+
+<body onload="initValue()">
+<form method="post" name="PPPoESettings">
+<p class="headind"><INPUT TYPE="SUBMIT" NAME="UPDATE" VALUE="Update" id="update" onclick="return SrvCheckValue()">
+&nbsp;&nbsp;<INPUT TYPE="SUBMIT" NAME="COMMIT" VALUE="Commit" id="commit" onclick="return SrvCheckValue()">
+&nbsp;&nbsp;<INPUT TYPE="SUBMIT" NAME="RebootButton" VALUE="Reboot" id="reboot">
+&nbsp;&nbsp;<INPUT TYPE="SUBMIT" NAME="StartButton" VALUE="Start" id="start">
+&nbsp;&nbsp;<INPUT TYPE="SUBMIT" NAME="StopButton" VALUE="Stop" id="stop"></p>
+<table><tr><td>
+<p id="PPPoESrvSettings" class="topnavg">PPPoE Server Settings</p>
+<p id="PPPoEAction" class="action">Action:These settings only work in Router mode!</p>
+<table width="340" border="1" cellpadding="2" cellspacing="1">
+<tr>
+	<td class="header" id="PPPoESrvEn">PPPoE Server</td>
+	<td><select style="{width:80px;}" name="PPPoESrvButton" onChange="updateState()">
+	<option ~sPPPoESrvButton:enable~ name="PPPoESrvEnable" id="PPPoESrvEnable" value="enable">Enable</option>
+	<option ~sPPPoESrvButton:disable~ name="PPPoESrvDisable" id="PPPoESrvDisable"value="disable">Disable</option>
+    </td>
+</tr>
+<tr>
+	<td class="header" id="pppoeSrvIP">Server IP
+	<td><INPUT type="text" id="PPPoESrvIP" name="PPPoESrvIP" value="~~PPPoESrvIP~"
+		       class="text2" size="20" maxlength="16"></td>
+</tr>
+<tr>
+	<td class="header" id="PPPoEClientStart">Start IP Addr
+	<td><INPUT type="text" id="ClientStartIP" name="ClientStartIP" value="~~ClientStartIP~"
+		       class="text2" size="20" maxlength="16"></td>
+</tr>
+<tr>
+	<td class="header" id="PPPoEClientNum">Allowed Max Addr
+	<td><INPUT type="text" id="ClientMaxNum" name="ClientMaxNum" value="~~ClientMaxNum~"
+		       class="text2" size="20" maxlength="4"></td>
+</tr>
+<tr>
+	<td class="header" id="pppoeFirstDNS">Primary DNS
+	<td><INPUT type="text" id="PPPoEFirstDNS" name="PPPoEFirstDNS" value="~~PPPoEFirstDNS~"
+		       class="text2" size="20" maxlength="16"></td>
+</tr>
+<tr>
+	<td class="header" id="pppoeSecondDNS">Secondary DNS
+	<td><INPUT type="text" id="PPPoESecondDNS" name="PPPoESecondDNS" value="~~PPPoESecondDNS~"
+		       class="text2" size="20" maxlength="16"></td>
+</tr>
+<tr>
+	<td class="header" id="PPPoEPswAuth">Psw Authencation</td>
+    <td><select style="{width:80px;}" class="headind" name="PswAuthen" id="PswAuthen">
+        <option ~spppoePswAuth:AUTO~ value="AUTO" id="pswAuthAUTO">AUTO</option>
+        <option ~spppoePswAuth:CHAP~ value="CHAP" id="pswAuthCHAP">CHAP</option>
+        <option ~spppoePswAuth:PAP~ value="PAP" id="pswAuthPAP">PAP</option>
+      </select></td>
+</tr>
+</table>
+<br/>
+
+<p id="PPPoECliSettings" class="topnavg">PPPoE Client Settings</p>
+<table width="340" border="1" cellpadding="2" cellspacing="1">
+<tr>
+	<td class="header" id="PPPoEClientUser">User Name
+	<td><INPUT type="text" id="ClientUserName" name="ClientUserName" class="text2" size="32" maxlength="32"></td>
+</tr>
+<tr>
+	<td class="header" id="PPPoEClientPsw">Password
+	<td><INPUT type="password" id="ClientPsw" name="ClientPsw" class="text2" size="32" maxlength="32"></td>
+</tr>
+</table>
+<table width="340">
+  <tr style="text-align:center">
+	<td><INPUT type="submit" name="PPPoECliAdd" id="PPPoECliAdd" value="Add" onclick="return checkUserPsw()">&nbsp;
+	    <INPUT type="submit" name="PPPoECliModify" id="PPPoECliModify" value="Modify" onclick="return checkUserPsw()"></td>
+  </tr>
+</table>
+</table>
+</form>
+</body>
+</html>
+
+

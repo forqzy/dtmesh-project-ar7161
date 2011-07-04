@@ -1,0 +1,17 @@
+<HTML><HEAD>
+<LINK REL="stylesheet" href="/styleSheet.css" type="text/css">
+<script>
+function start_upgrade(){
+	document.forms[0].submit();
+}
+
+</script>
+</head><body onLoad="start_upgrade()">
+<form action="/cgi-bin/uploadcfg" method=post>
+<p class="headind">
+<INPUT TYPE="hidden" NAME="cfgfile"   VALUE="<insert dirname><insert lastfilename>"></p>
+<INPUT TYPE="hidden" NAME="errorpage" VALUE="APUpgradeError.html"></p>
+<INPUT TYPE="hidden" NAME="refresh"   VALUE="5"></p>
+</form>
+</body>
+</html>

@@ -1,0 +1,25 @@
+#!/bin/sh
+# Copyright (C) 2009 jjPlus Corp.
+
+. /etc/ath/apcfg
+
+for T in filter nat; do
+    ebtables -t $T -F
+    ebtables -t $T -X
+done
+
+[ "$NETWORK_MODE" = "Router" -o "$AP_STARTMODE" != "client" -o "$BR_SNAT_MODE" = "0" ] && exit
+
+WMAC=$(ifconfig ath0 | sed -n 's/.*HWaddr \([0-9A-Fa-f:]*\).*/\1/p')
+
+echo "configuring ARP masquerade on ath0 to $WMAC source address"
+ebtables -t nat -A PREROUTING -i ath0 \
+   -j masq --ageing-time 900 --masq-target ACCEPT
+
+#record the original MAC before snat
+ebtables -t nat -A POSTROUTING -o ath0 \
+   -j masq --ageing-time 900 --masq-target CONTINUE
+
+#do the NAT
+ebtables -t nat -A POSTROUTING -o ath0 \
+   -j snat --snat-arp --to-src $WMAC --snat-target ACCEPT

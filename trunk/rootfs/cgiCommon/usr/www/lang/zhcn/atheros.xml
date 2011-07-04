@@ -1,0 +1,320 @@
+<?xml version="1.0"?>
+<po>
+<!--Chinese public-->
+  <message msgid="admin update" msgstr="更新" />
+  <message msgid="admin commit" msgstr="提交" />
+  <message msgid="admin reboot" msgstr="重启" />
+  <message msgid="admin start" msgstr="启动" />
+  <message msgid="admin stop" msgstr="停止" />
+  <message msgid="factory reset" msgstr="恢复出厂设置" />
+  <message msgid="admin apply" msgstr="确定" />
+  <message msgid="admin cancel" msgstr="取消" />  
+  <message msgid="admin reset" msgstr="重置" /> 
+  <message msgid="admin enable" msgstr="启用" />  
+  <message msgid="admin disable" msgstr="停用" />
+  <message msgid="admin action" msgstr="注意：该配置只在Router模式下起作用！"/> 
+    
+<!--Administration.html-->
+  <message msgid="adm language settings" msgstr="语言设置" />
+  <message msgid="adm language select" msgstr="选择语言" />
+  <message msgid="lang en" msgstr="英文" />
+  <message msgid="lang chinese" msgstr="中文(简体)" />
+ 
+  <message msgid="adm style settings" msgstr="风格设置" />
+  <message msgid="adm style select" msgstr="选择风格" />
+  <message msgid="style default" msgstr="默认风格" />
+  <message msgid="style 2" msgstr="风格2" />
+  <message msgid="style 3" msgstr="风格3" />
+  
+  <message msgid="adm settings" msgstr="管理者设置" />
+  <message msgid="adm account" msgstr="账户" />
+  <message msgid="adm password" msgstr="密码" />    
+
+  <message msgid="NTP settings" msgstr="网络时间设置" />
+  <message msgid="NTP action" msgstr="注意：时区同步只在Router模式下起作用!" />  
+  <message msgid="NTP current time" msgstr="当前时间" />
+  <message msgid="NTP time zone" msgstr="时区" />
+  <message msgid="man ntp mid island" msgstr="(GMT-11:00) 中途岛、萨摩亚" />
+  <message msgid="man ntp hawaii" msgstr="(GMT-10:00) 夏威夷" />
+  <message msgid="man ntp alaska" msgstr="(GMT-09:00) 阿拉斯加" />
+  <message msgid="man ntp pacific" msgstr="(GMT-08:00) 太平洋标准时间" />
+  <message msgid="man ntp mountain" msgstr="(GMT-07:00) 落矶山区时间" />
+  <message msgid="man ntp arizona" msgstr="(GMT-07:00) 亚利桑那" />
+  <message msgid="man ntp central" msgstr="(GMT-06:00) 中央时间" />
+  <message msgid="man ntp mid us" msgstr="(GMT-06:00) 中美洲" />
+  <message msgid="man ntp indiana east" msgstr="(GMT-05:00) 印第安纳州（东部）、哥伦比亚" />
+  <message msgid="man ntp eastern" msgstr="(GMT-05:00) 东部时区" />
+  <message msgid="man ntp atlantic" msgstr="(GMT-04:00) 大西洋标准时间、西巴西" />
+  <message msgid="man ntp bolivia" msgstr="(GMT-04:00) 玻利维亚、委内瑞拉" />
+  <message msgid="man ntp guyana" msgstr="(GMT-03:00) 盖亚纳" />
+  <message msgid="man ntp brazil east" msgstr="(GMT-03:00) 东巴西、格陵兰" />
+  <message msgid="man ntp mid atlantic" msgstr="(GMT-02:00) 中大西洋" />
+  <message msgid="man ntp azores islands" msgstr="(GMT-01:00) 亚速尔群岛" />
+  <message msgid="man ntp gambia" msgstr="(GMT) 甘比亚，赖比瑞亚、摩洛哥" />
+  <message msgid="man ntp england" msgstr="(GMT) 英格兰" />
+  <message msgid="man ntp czech republic" msgstr="(GMT+01:00) 捷克、N" />
+  <message msgid="man ntp germany" msgstr="(GMT+01:00) 德国" />
+  <message msgid="man ntp tunisia" msgstr="(GMT+01:00) 突尼西亚" />
+  <message msgid="man ntp greece" msgstr="(GMT+02:00) 希腊、乌克兰、土耳其" />
+  <message msgid="man ntp south africa" msgstr="(GMT+02:00) 南非" />
+  <message msgid="man ntp iraq" msgstr="(GMT+03:00) 伊拉克、约旦、科威特" />
+  <message msgid="man ntp moscow winter" msgstr="(GMT+03:00) 莫斯科冬令时间" />
+  <message msgid="man ntp armenia" msgstr="(GMT+04:00) 亚美尼亚" />
+  <message msgid="man ntp pakistan" msgstr="(GMT+05:00) 巴基斯坦、俄罗斯" />
+  <message msgid="man ntp bangladesh" msgstr="(GMT+06:00) 孟加拉、俄罗斯" />
+  <message msgid="man ntp thailand" msgstr="(GMT+07:00) 泰国、俄罗斯" />
+  <message msgid="man ntp chinacoast" msgstr="(GMT+08:00) 中国沿岸、香港" />
+  <message msgid="man ntp taipei" msgstr="(GMT+08:00) 台北" />
+  <message msgid="man ntp singapore" msgstr="(GMT+08:00) 新加坡" />
+  <message msgid="man ntp australia wa" msgstr="(GMT+08:00) 西澳洲" />
+  <message msgid="man ntp japan" msgstr="(GMT+09:00) 日本、韩国" />
+  <message msgid="man ntp korean" msgstr="(GMT+09:00) 朝鲜时区" />
+  <message msgid="man ntp guam" msgstr="(GMT+10:00) 关岛、俄罗斯" />
+  <message msgid="man ntp australia qld" msgstr="(GMT+10:00) 澳洲" />
+  <message msgid="man ntp solomon islands" msgstr="(GMT+11:00) 索罗门群岛" />
+  <message msgid="man ntp fiji" msgstr="(GMT+12:00) 斐济" />
+  <message msgid="man ntp newzealand" msgstr="(GMT+12:00) 新西兰" />    
+  <message msgid="NTP server ip" msgstr="网络时间服务器" />
+  <message msgid="NTP sync interval" msgstr="网络时间校准" />
+  <message msgid="NTP syn with host" msgstr="主机同步" />
+ 
+<!--CfgManagement.html-->
+  <message msgid="CfgManagement setting management" msgstr="配置管理" />
+  <message msgid="CfgManagement export settings" msgstr="导出设置" />
+  <message msgid="CfgManagement export button" msgstr="导出按钮" /> 
+  <message msgid="CfgManagement export" msgstr="导出" />
+  <message msgid="CfgManagement import settings" msgstr="导入设置" />
+  <message msgid="CfgManagement setting location" msgstr="导入位置" /> 
+  <message msgid="CfgManagement import button" msgstr="导入" />
+
+
+<!--SystemCommand.html-->
+<message msgid="syscommand title" msgstr="系统命令"/>
+<message msgid="syscommand introduction" msgstr="以root身分执行一个系统命令。"/>
+<message msgid="syscommand command" msgstr="系统命令："/>
+
+<!--AthSelect.html-->
+<message msgid="AthSelect configuration" msgstr="配置信息"/>
+<message msgid="AthSelect network" msgstr="网络设置"/>
+<message msgid="AthSelect radio" msgstr="无线网络设置"/>
+<message msgid="AthSelect pppoeSrv" msgstr="PPPoE服务器"/>
+<message msgid="AthSelect fan" msgstr="风扇"/>
+<message msgid="AthSelect gpio" msgstr="GPIO"/>
+<message msgid="AthSelect VAP config" msgstr="VAP配置"/>
+<message msgid="AthSelect status" msgstr="统计信息"/>
+<message msgid="AthSelect overview" msgstr="概况"/>
+<message msgid="AthSelect channel" msgstr="信道"/>
+<message msgid="AthSelect wlan" msgstr="无线局域网"/>
+<message msgid="AthSelect temperature" msgstr="温度信息"/>
+<message msgid="AthSelect system" msgstr="系统管理"/>
+<message msgid="AthSelect firmware upgrade" msgstr="固件更新"/>
+<message msgid="AthSelect administration" msgstr="管理者设置"/>
+<message msgid="AthSelect management" msgstr="配置管理"/>
+<message msgid="AthSelect systemcommand" msgstr="系统指令"/>
+<message msgid="AthSelect firewall" msgstr="防火墙"/>
+<message msgid="AthSelect port forwarding" msgstr="端口转发"/>
+<message msgid="AthSelect routing config" msgstr="高级路由配置"/>
+<!---APBasicConfig.html-->
+<message msgid="basic AP config" msgstr="基本节点配置"/>
+<message msgid="basic bridge mode" msgstr="桥接模式"/>
+<message msgid="wan proto" msgstr="广域网联机模式"/>
+<message msgid="startup mode" msgstr="启动模式"/>
+<message msgid="local IP settings" msgstr="本地IP配置"/>
+<message msgid="local IP" msgstr="IP地址"/>
+<message msgid="local mask" msgstr="子网掩码"/>
+<message msgid="local gateway" msgstr="网关"/>
+<message msgid="dhcp type" msgstr="DHCP类型"/>
+<message msgid="dhcp start" msgstr="起始IP地址"/>
+<message msgid="dhcp end" msgstr="结束IP地址"/>
+<message msgid="dhcp mask" msgstr="子网掩码"/>
+<message msgid="dhcp gateway" msgstr="网关地址"/>
+<message msgid="dhcp lease time" msgstr="释放时间"/>
+<message msgid="ddns" msgstr="动态域名服务设置"/>
+<message msgid="ddns user" msgstr="账户"/>
+<message msgid="ddns password" msgstr="口令"/>
+<message msgid="ddns host name" msgstr="动态域名"/>
+<message msgid="ddns server address" msgstr="动态域名服务提供商"/>
+<message msgid="wan IP setting" msgstr="静态广域网设置"/>
+<message msgid="wan IP address" msgstr="IP地址"/>
+<message msgid="wan IP mask" msgstr="子网掩码"/>
+<message msgid="wan primary dns" msgstr="首选DNS"/>
+<message msgid="wan second dns" msgstr="其它DNS"/>
+<message msgid="pppoe settings" msgstr="PPPoE模式"/>
+<message msgid="pppoe user" msgstr="用户名"/>
+<message msgid="pppoe password" msgstr="密码"/>
+<message msgid="pppoe repassword" msgstr="确认密码"/>
+<message msgid="pppoe opmode" msgstr="运行模式"/>
+<message msgid="pppoe manual" msgstr="Manual"/>
+<message msgid="pppoe keep alive" msgstr="Keep Alive"/>
+<message msgid="pppoe on demand" msgstr="On Demand"/>
+
+<!--APFanConfig.html-->
+<message msgid="fan config" msgstr="风扇配置"/>
+<message msgid="fan start" msgstr="启动温度"/>
+<message msgid="fan stop" msgstr="停止温度"/>    
+<message msgid="start fan" msgstr="启动"/>   
+       
+<!--APGPIOConfig.html-->
+<message msgid="GPIO config" msgstr="GPIO配置"/>
+<message msgid="GPIO direction" msgstr="方向"/>
+<message msgid="GPIO level" msgstr="GPIO水平"/>
+   
+<!--APStatistics.html-->    
+<message msgid="statistics" msgstr="统计信息"/>         
+
+<!--APStatus.html-->
+<message msgid="System Status" msgstr="系统状态"/>     
+
+<!--APUpgrade.html-->
+<message msgid="firmware upgrade" msgstr="开始固件升级"/>
+<message msgid="firmware success" msgstr="成功!"/>
+<message msgid="file upload" msgstr="更新文件:"/>
+<message msgid="bytes upload" msgstr="更新字节:"/>
+
+<!--APUpgradeLoad.html-->
+<message msgid="firm upload" msgstr="上传"/>
+<message msgid="firm upgrade" msgstr="固件更新"/>
+<message msgid="firm file" msgstr="镜像文件"/>
+
+<!--APUpgradeRedirect.html-->
+<message msgid="Upgrade Status" msgstr="更新状态"/>
+<message msgid="Upgrade Info" msgstr="状态更新马上出现，请不要拔掉电源。"/>
+
+<!--VAPcfg.html-->
+<message msgid="VAP config" msgstr="虚拟AP/基站设置"/>
+<message msgid="VAP ESSID" msgstr="ESSID号"/>
+<message msgid="VAP vlanId" msgstr="虚拟局域网号"/>
+<message msgid="VAP vlanBridge" msgstr="虚拟局域网桥"/>       
+<message msgid="VAP mode" msgstr="虚拟节点模式"/>   
+<message msgid="VAP RootAPMac" msgstr="MAC地址"/>         
+<message msgid="VAP radio" msgstr="无线设置"/>
+<message msgid="VAP channel" msgstr="频段"/>
+<message msgid="admin mode" msgstr="模式"/>
+<message msgid="VAP GatingIndex" msgstr="索引"/>
+<message msgid="VAP aggregation" msgstr="帧聚合"/>
+<message msgid="VAP aggFrame" msgstr="聚合帧数"/>
+<message msgid="VAP aggSize" msgstr="聚合帧大小"/>
+<message msgid="VAP aggMinSize" msgstr="最小聚合帧"/>
+<message msgid="VAP channel width" msgstr="带宽"/>
+<message msgid="VAP TXMask" msgstr="TX ChainMask"/>
+<message msgid="VAP RXMask" msgstr="RX ChainMask"/>
+<message msgid="VAP security" msgstr="安全设置"/>
+<message msgid="VAP security open" msgstr="开放的"/>
+<message msgid="VAP no security" msgstr="未启用安全设置"/>
+<message msgid="VAP WEPSecurity" msgstr="简单的有线等效保密（WEP）安全设置 (64或128比特密钥)"/>
+<message msgid="VAP WEPMode" msgstr="WEP认证方式"/>
+<message msgid="VAP key1" msgstr="密钥 1"/>
+<message msgid="VAP key2" msgstr="密钥 2"/>
+<message msgid="VAP key3" msgstr="密钥 3"/>
+<message msgid="VAP key4" msgstr="密钥 4"/>
+<message msgid="VAP PriKey" msgstr="关键密钥"/>
+<message msgid="VAP WPA" msgstr="Wi-Fi网络安全存取(WPA)"/>       
+<message msgid="VAP WPAIntroduce" msgstr="对个人/企业安全性要求更高"/>   
+<message msgid="VAP WPAmode" msgstr="WPA模式:"/>
+<message msgid="VAP cypher" msgstr="加密方式:"/>   
+<message msgid="VAP tkip" msgstr="TKIP"/>     
+<message msgid="VAP ccmp" msgstr="CCMP"/>
+<message msgid="VAP WPAReInt" msgstr="WPA Rekey Int:"/>
+<message msgid="VAP WEPReInt" msgstr="WEP Rekey Int:"/>
+<message msgid="VAP PSKey" msgstr="个人共享密钥"/>
+<message msgid="VAP PSK key" msgstr="预先共享密钥(PSK)"/>
+<message msgid="VAP ER" msgstr="企业/RADIUS支持"/>
+<message msgid="VAP RSNPreauth" msgstr="强健网络安全(RSN)预认证"/>       
+<message msgid="VAP EAPRP" msgstr="EAP重认证周期:"/>   
+<message msgid="VAP AuthServer" msgstr="认证服务器:"/>
+<message msgid="VAP SharedSecret" msgstr="共享密钥:"/>   
+<message msgid="VAP WiFiSettings" msgstr="WiFi保护设置"/>       
+<message msgid="VAP WiFiPS" msgstr="WiFi保护设置"/>   
+<message msgid="VAP VAPTIE" msgstr="VAP TIE"/>     
+<message msgid="VAP APPIN" msgstr="个人识别码(PIN):"/>
+<message msgid="VAP device" msgstr="设备名称:"/>   
+<message msgid="VAP enrollee" msgstr="参与者设置"/>       
+<message msgid="VAP enrolleePin" msgstr="参与者的个人识别码:"/>   
+<message msgid="VAP SoftPS" msgstr="Soft Push Button:"/>     
+
+<!--APChannel.html-->
+<message msgid="channel available" msgstr="可用信道:"/>     
+
+
+<!--PortForward.html-->
+<message msgid="forward title" msgstr="虚拟服务器设置"/>
+<message msgid="forward introduction" msgstr="最大可配置32个虚拟服务器。"/>
+<message msgid="forward server setting" msgstr="虚拟服务器设置"/>
+<message msgid="forward server ipaddr" msgstr="IP地址"/>
+<message msgid="forward port range" msgstr="端口范围"/>       
+<message msgid="forward protocol" msgstr="协议"/>   
+<message msgid="forward comment" msgstr="注解"/>
+<message msgid="firewall del select" msgstr="选择删除"/>   
+<message msgid="forward current virtual server" msgstr="当前系统的虚拟服务器："/>       
+<message msgid="forward no" msgstr="编号"/>   
+
+<!--APTemperature.html-->
+<message msgid="Current board temperature:" msgstr="当前板子温度："/>
+<!--RoutingConfig.html-->
+<message msgid="routing title" msgstr="静态路由设置"/>
+<message msgid="routing Introduction" msgstr="新增路由规则"/>
+<message msgid="routing add rule" msgstr="添加路由"/>
+<message msgid="routing routing dest" msgstr="目的IP地址"/>
+<message msgid="routing range" msgstr="Host/Net"/>
+<message msgid="routing netmask" msgstr="子网掩码"/>
+<message msgid="routing gateway" msgstr="网关"/>
+<message msgid="routing interface" msgstr="端口"/>
+<message msgid="routing custom" msgstr="定制"/>
+<message msgid="routing comment" msgstr="备注"/>
+<message msgid="routing del title" msgstr="当前路由规则表"/>
+<message msgid="routing Number" msgstr="编号"/>
+<message msgid="routing del dest" msgstr="目标IP"/>
+<message msgid="routing del netmask" msgstr="子网掩码"/>
+<message msgid="routing del gateway" msgstr="网关"/>
+<message msgid="routing del flags" msgstr="Flags"/>
+<message msgid="routing del metric" msgstr="路由跳数"/>
+<message msgid="routing del ref" msgstr="参照"/>
+<message msgid="routing del use" msgstr="使用"/>
+<message msgid="routing del interface" msgstr="端口"/>
+<message msgid="routing del comment" msgstr="备注"/>
+<message msgid="routing del" msgstr="删除"/>
+<message msgid="routing del reset" msgstr="重置"/>
+<message msgid="routing host" msgstr="Host"/>
+<message msgid="routing net" msgstr="Net"/>
+<message msgid="routing LAN" msgstr="LAN"/>
+<message msgid="routing WAN" msgstr="WAN"/>
+
+<!--PPPoEInternet.html-->
+<message msgid="PPPoESrvSettings" msgstr="PPPoE服务器设置"/>
+<message msgid="pppoe SrvEnable" msgstr="PPPoE服务器"/>
+<message msgid="pppoe SrvIP" msgstr="服务器IP地址"/>
+<message msgid="pppoe CliStartIP" msgstr="起始IP地址"/>
+<message msgid="pppoe CliNum" msgstr="总地址数"/>
+<message msgid="pppoe firstDNS" msgstr="主DNS服务器"/>       
+<message msgid="pppoe secondDNS" msgstr="备DNS服务器"/>   
+<message msgid="pppoe pswAuth" msgstr="认证方式"/>
+<message msgid="PPPoECliSettings" msgstr="PPPoE客户端设置"/>   
+<message msgid="pppoe CliUser" msgstr="用户名"/>       
+<message msgid="pppoe ClientPsw" msgstr="密码"/>   
+<message msgid="pppoe CliAdd" msgstr="增加"/>       
+<message msgid="pppoe CliModify" msgstr="修改"/>   
+
+<!--DMZ.html-->
+<message msgid="dmz title" msgstr="DMZ设置"/>
+<message msgid="dmz introduction" msgstr="您可以建立一个隔离区（DMZ）来区分内部网络与Internet。"/>
+<message msgid="dmz settings" msgstr="DMZ设置"/>
+<message msgid="dmz ipaddr" msgstr="DMZ IP地址"/>
+
+<!--APRadio.html-->
+<message msgid="radio config" msgstr="无线AP设置"/>
+<message msgid="radio1 config" msgstr="无线配置 1"/>
+<message msgid="radio2 config" msgstr="无线配置 2"/>
+<message msgid="radio channel" msgstr="频段"/>
+<message msgid="admin mode" msgstr="方式"/>
+<message msgid="radio select1" msgstr="方式1（2.4GHz）"/>
+<message msgid="radio select2" msgstr="方式2（5.0GHz）"/>
+<message msgid="radio utility" msgstr="应用配置"/>
+<message msgid="radio GatingIndex" msgstr="索引"/>
+<message msgid="radio aggregation" msgstr="帧聚合"/>       
+<message msgid="radio aggFrame" msgstr="聚合帧数"/>   
+<message msgid="radio aggSize" msgstr="聚合帧大小"/>
+<message msgid="radio aggMinSize" msgstr="最小聚合帧"/>   
+<message msgid="radio channel width" msgstr="带宽"/>       
+<message msgid="radio TXMask" msgstr="TX ChainMask"/>   
+<message msgid="radio RXMask" msgstr="RX ChainMask"/>  
+</po>

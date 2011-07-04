@@ -1,0 +1,18 @@
+#!/bin/sh
+
+[ -n "$dns" ] && echo "nameserver $dns" >> /tmp/resolv.conf
+
+if [ -n "$broadcast" ]; then
+/sbin/ifconfig $interface $ip broadcast $broadcast netmask $subnet up
+else
+    /sbin/ifconfig $interface $ip netmask $subnet up
+fi
+
+route add default gw $router dev $interface
+
+##add status to /tmp
+cat > /tmp/udhcpc.status << EOF
+$ip
+$subnet
+$boardcast
+EOF

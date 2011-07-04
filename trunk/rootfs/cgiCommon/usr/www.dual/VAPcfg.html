@@ -1,0 +1,217 @@
+<HTML><HEAD>
+<LINK REL="stylesheet" href="../styleSheet.css" type="text/css">
+<script type="text/javascript" src="/lang/b28n.js"></script>
+<script language="JavaScript" type="text/javascript">
+Butterlate.setTextDomain("atheros");
+
+function initTranslation()
+{
+	document.getElementById("update").value = _("admin update");
+	document.getElementById("commit").value = _("admin commit");
+	document.getElementById("reboot").value = _("admin reboot");
+	document.getElementById("start").value = _("admin start");
+	document.getElementById("stop").value = _("admin stop");
+	
+	document.getElementById("VAPCfg").innerHTML = _("VAP config");
+	document.getElementById("ESSID").innerHTML = _("VAP ESSID");	
+	document.getElementById("VlanID").innerHTML = _("VAP vlanId");	
+	document.getElementById("VlanBridge").innerHTML = _("VAP vlanBridge");
+	document.getElementById("VAPMode").innerHTML = _("VAP mode");	
+	document.getElementById("RootAPMac").innerHTML = _("VAP RootAPMac");
+/*	document.getElementById("VAPradio").innerHTML = _("VAP radio");
+	document.getElementById("channel").innerHTML = _("VAP channel");
+	document.getElementById("Radiomode").innerHTML = _("admin mode");
+	document.getElementById("GatingIndex").innerHTML = _("VAP GatingIndex");
+	document.getElementById("Aggregation").innerHTML =_("VAP aggregation");
+	document.getElementById("AggFrame").innerHTML =_("VAP aggFrame");	
+	document.getElementById("AggSize").innerHTML =_("VAP aggSize");		
+	document.getElementById("AggMinSize").innerHTML =_("VAP aggMinSize");		
+	document.getElementById("ChannelWidth").innerHTML =_("VAP channel width");		
+	document.getElementById("TXMask").innerHTML =_("VAP TXMask");		
+	document.getElementById("RXMask").innerHTML =_("VAP RXMask");*/
+
+	document.getElementById("security").innerHTML = _("VAP security");
+	document.getElementById("NoSecurity").innerHTML = _("VAP no security");
+	document.getElementById("WEPSecurity").innerHTML = _("VAP WEPSecurity");	
+	document.getElementById("mode").innerHTML = _("VAP WEPMode");
+	document.getElementById("key1").innerHTML = _("VAP key1");
+	document.getElementById("key2").innerHTML = _("VAP key2");
+	document.getElementById("key3").innerHTML = _("VAP key3");
+	document.getElementById("key4").innerHTML = _("VAP key4");
+	document.getElementById("WPAIntroduce").innerHTML = _("VAP WPAIntroduce");
+	document.getElementById("WPAmode").innerHTML = _("VAP WPAmode");		
+	document.getElementById("cypher").innerHTML = _("VAP cypher");
+	document.getElementById("WPAReInt").innerHTML = _("VAP WPAReInt");
+	document.getElementById("WEPReInt").innerHTML = _("VAP WEPReInt");
+	document.getElementById("RSNPreauth").innerHTML = _("VAP RSNPreauth");	
+	document.getElementById("EAPRP").innerHTML = _("VAP EAPRP");
+	document.getElementById("AuthServer").innerHTML = _("VAP AuthServer");	
+	document.getElementById("SharedSecret").innerHTML = _("VAP SharedSecret");
+	document.getElementById("WiFiSettings").innerHTML = _("VAP WiFiSettings");	
+	document.getElementById("WiFiPS").innerHTML = _("VAP WiFiPS");
+	document.getElementById("VAPTIE").innerHTML = _("VAP VAPTIE");
+	document.getElementById("APPIN").innerHTML = _("VAP APPIN");	
+	document.getElementById("device").innerHTML = _("VAP device");
+	document.getElementById("enrollee").innerHTML = _("VAP enrollee");		
+	document.getElementById("enrolleePin").innerHTML = _("VAP enrolleePin");
+	document.getElementById("SoftPS").innerHTML = _("VAP SoftPS");	
+}
+
+function initValue()
+{
+	initTranslation();
+}
+</script>
+</head>
+
+<body onload="initValue()">
+<FORM METHOD=POST>
+<input type="hidden" name="INDEX" value=~~INDEX~>
+<p class="headind"><INPUT TYPE="SUBMIT" NAME="UPDATE" VALUE="Update" id="update">
+&nbsp;&nbsp;<INPUT TYPE="SUBMIT" NAME="COMMIT" VALUE="Commit" id="commit">
+&nbsp;&nbsp;<INPUT TYPE="SUBMIT" NAME="RebootButton" VALUE="Reboot" id="reboot">
+&nbsp;&nbsp;<INPUT TYPE="SUBMIT" NAME="StartButton" VALUE="Start" id="start">
+&nbsp;&nbsp;<INPUT TYPE="SUBMIT" NAME="StopButton" VALUE="Stop" id="stop"></p>
+<table>
+	<tr><td class="vap" id="VAPCfg">Virtual AP/Station Configuration for
+	<td class="vap">VAP ~~INDEX~
+</table>
+<table>
+<tr><td class="header" id="ESSID">ESSID String
+<td><INPUT type="text" id="AP_SSID~#~" name="AP_SSID~#~"
+           class="text2" size="32" maxlength="32"
+           value="~~AP_SSID#~">
+
+<td><a class="header">Radio
+<td class="headind">
+<INPUT TYPE="radio" name="AP_RADIO_ID~#~" ~cAP_RADIO_ID#:0~ value=0>Radio 1&nbsp&nbsp
+<INPUT TYPE="radio" name="AP_RADIO_ID~#~" ~cAP_RADIO_ID#:1~ value=1>Radio 2<br>
+
+<tr><td class="header" id="VlanID">VLAN ID
+<td><INPUT type="text" id="AP_VLAN~#~" name="AP_VLAN~#~"
+           class="text2" size="8" maxlength="5"
+           value="~~AP_VLAN#~">
+<td class="header" id="VlanBridge">VLAN Bridge
+<td><INPUT type="text" id="AP_BRNAME~#~" name="AP_BRNAME~#~"
+           class="text2" size="8" maxlength="5"
+           value="~~AP_BRNAME#~">
+<tr><td class="header" id="VAPMode">VAP Mode
+<td class="headind" colspan=3 >
+<INPUT TYPE="radio" name="AP_MODE~#~" ~cAP_MODE#:ap~ value=ap id="ap">Access Point&nbsp;
+<INPUT TYPE="radio" name="AP_MODE~#~" ~cAP_MODE#:sta~ value=sta id="sta">Station&nbsp;
+<INPUT TYPE="radio" name="AP_MODE~#~" ~cAP_MODE#:ap-wds~ value=ap-wds id="ap-wds">WDS Access Point&nbsp;
+<INPUT TYPE="radio" name="AP_MODE~#~" ~cAP_MODE#:sta-wds~ value=sta-wds id="sta-wds">WDS Station<br>
+<tr><td><td class="headind" id="RootAPMac">Root AP Mac Address
+<td colspan=2><INPUT type="text" id="ROOTAP_MAC~#~" name="ROOTAP_MAC~#~"
+           class="text2" size="32" maxlength="32" value="~~ROOTAP_MAC#~">
+</table>
+
+<table><tr><td>
+<p class="topnavg" id="security">Security Settings</p>
+<table>
+<tr><td class="header" align="TOP"><INPUT TYPE="radio" name="AP_SECMODE~#~" ~cAP_SECMODE#:None~ value=None>Open</td>
+<td class="headerBLK" colspan=2><hr><p id="NoSecurity"> No Security Applied</p>
+<tr><td>
+<tr><td class="header" align="TOP">
+<INPUT TYPE="radio" name="AP_SECMODE~#~" ~cAP_SECMODE#:WEP~ value=WEP>WEP</td>
+<td class="headerBLK" colspan=2><hr><p id="WEPSecurity">Simple WEP Security (64 or 128 bit hardware key)</p>
+<tr><td><td class="headind" id="mode"> MODE:
+<td class="headind">
+<INPUT TYPE="radio" name="AP_WEP_MODE_~@~" ~cAP_WEP_MODE_@:1~ value=1 id="open">Open
+<INPUT TYPE="radio" name="AP_WEP_MODE_~@~" ~cAP_WEP_MODE_@:2~ value=2 id="shared">Shared
+<INPUT TYPE="radio" name="AP_WEP_MODE_~@~" ~cAP_WEP_MODE_@:4~ value=4 id="auto">Auto
+<tr><td><td class="headind" id="key1">Key 1
+<td class="headind"><INPUT type="text" id="WEP_RADIO_NUM~@~_KEY_1" name="WEP_RADIO_NUM~@~_KEY_1"
+class="text2" size="30" maxlength="32" value="~~WEP_RADIO_NUM@_KEY_1~">
+<INPUT TYPE="radio" name="AP_PRIMARY_KEY_~@~" ~cAP_PRIMARY_KEY_@:1~ value=1> Primary Key
+<tr><td><td class="headind" id="key2">Key 2
+<td class="headind"><INPUT type="text" id="WEP_RADIO_NUM~@~_KEY_2" name="WEP_RADIO_NUM~@~_KEY_2" 
+class="text2" size="30" maxlength="32" value="~~WEP_RADIO_NUM@_KEY_2~">
+<INPUT TYPE="radio" name="AP_PRIMARY_KEY_~@~" ~cAP_PRIMARY_KEY_@:2~ value=2> Primary Key
+<tr><td><td class="headind" id="key3">Key 3
+<td class="headind"><INPUT type="text" id="WEP_RADIO_NUM~@~_KEY_3" name="WEP_RADIO_NUM~@~_KEY_3" 
+class="text2" size="30" maxlength="32" value="~~WEP_RADIO_NUM@_KEY_3~">
+<INPUT TYPE="radio" name="AP_PRIMARY_KEY_~@~" ~cAP_PRIMARY_KEY_@:3~ value=3> Primary Key
+<tr><td><td class="headind" id="key4">Key 4
+<td class="headind"><INPUT type="text" id="WEP_RADIO_NUM~@~_KEY_4" name="WEP_RADIO_NUM~@~_KEY_4"
+class="text2" size="30" maxlength="32" value="~~WEP_RADIO_NUM@_KEY_4~">
+<INPUT TYPE="radio" name="AP_PRIMARY_KEY_~@~" ~cAP_PRIMARY_KEY_@:4~ value=4> Primary Key
+
+<tr><td class="header" align="TOP"><INPUT TYPE="radio" name="AP_SECMODE~#~" ~cAP_SECMODE#:WPA~ value=WPA>
+WPA</td>
+<td class="headerBLK" colspan=2><hr><p id="WPAIntroduce">Enhanced Security for Personal/Enterprise</p>
+<tr><td><td class="headind" id="WPAmode"> MODE:
+<td class="headind">
+<INPUT TYPE="radio" name="AP_WPA~#~" ~cAP_WPA#:0~ value=0 id="802.1x">802.1x&nbsp;
+<INPUT TYPE="radio" name="AP_WPA~#~" ~cAP_WPA#:1~ value=1 id="wpa">WPA&nbsp;
+<INPUT TYPE="radio" name="AP_WPA~#~" ~cAP_WPA#:2~ value=2 id="wpa2">WPA 2&nbsp;
+<INPUT TYPE="radio" name="AP_WPA~#~" ~cAP_WPA#:3~ value=3 id="modeauto">Auto&nbsp;
+<tr><td><td class="headind" id="cypher"> CYPHER:
+<td class="headind">
+<INPUT TYPE="radio" name="AP_CYPHER~#~" ~cAP_CYPHER#:TKIP~ value="TKIP" id="tkip">TKIP
+<INPUT TYPE="radio" name="AP_CYPHER~#~" ~cAP_CYPHER#:CCMP~ value="CCMP" id="ccmp">CCMP
+<INPUT TYPE="radio" name="AP_CYPHER~#~" ~cAP_CYPHER#:TKIP CCMP~ value="TKIP CCMP" id="cypherauto">Auto&nbsp;
+<tr><td><td class="headind" id="WPAReInt">WPA Rekey Int:<td class="headind"><INPUT type="text" id="AP_WPA_GROUP_REKEY~#~"
+               name="AP_WPA_GROUP_REKEY~#~" class="text2" size="18" maxlength="16" value="~~AP_WPA_GROUP_REKEY#~">
+&nbsp;&nbsp;WPA Master Rekey: <INPUT type="text" id="AP_WPA_GMK_REKEY~#~"
+               name="AP_WPA_GMK_REKEY~#~" class="text2" size="18" maxlength="16" value="~~AP_WPA_GMK_REKEY#~">
+<tr><td><td class="headind" id="WEPReInt">WEP Rekey Int:<td class="headind"><INPUT type="text" id="AP_WEP_REKEY~#~"
+               name="AP_WEP_REKEY~#~" class="text2" size="18" maxlength="16" value="~~AP_WEP_REKEY#~"> (802.1x mode Only)
+<tr><td class="headerBLK" colspan=3>&nbsp;&nbsp;&nbsp;&nbsp; <INPUT TYPE="radio" name="AP_SECFILE~#~" ~cAP_SECFILE#:PSK~ value="PSK">Personal Shared Key
+<tr><td><td class="headind" id="PSK-key">
+PSK KEY<td> <INPUT type="text" id="PSK_KEY~#~" name="PSK_KEY~#~"
+               class="text2" size="66" maxlength="64"
+               value="~~PSK_KEY#~">
+
+<tr><td class="headerBLK" colspan=3>
+&nbsp;&nbsp;&nbsp;&nbsp;<INPUT TYPE="radio" name="AP_SECFILE~#~" ~cAP_SECFILE#:EAP~ value="EAP" >Enterprise/RADIUS support
+<tr><td><td class="headind" id="RSNPreauth">RSN Preauth<td class="headind">
+<INPUT TYPE="radio" name="AP_RSN_ENA_PREAUTH~#~" ~cAP_RSN_ENA_PREAUTH#:0~ value="0">Disable
+<INPUT TYPE="radio" name="AP_RSN_ENA_PREAUTH~#~" ~cAP_RSN_ENA_PREAUTH#:1~ value="1">Enable
+&nbsp;&nbsp;Interface: <INPUT type="text" id="AP_WPA_PREAUTH_IF~#~" name="AP_WPA_PREAUTH_IF~#~"
+               class="text2" size="18" maxlength="16" value="~~AP_WPA_PREAUTH_IF#~">
+<tr><td><td class="headind" id="EAPRP">EAP Reauth Period:<td class="headind"><INPUT type="text" id="AP_EAP_REAUTH_PER~#~"
+               name="AP_EAP_REAUTH_PER~#~" class="text2" size="18" maxlength="16" value="~~AP_EAP_REAUTH_PER#~">
+<tr><td><td class="headind" id="AuthServer"> Auth Server:<td class="headind"><INPUT type="text" id="AP_AUTH_SERVER~#~"
+               name="AP_AUTH_SERVER~#~" class="text2" size="18" maxlength="16" value="~~AP_AUTH_SERVER#~">
+&nbsp;&nbsp;&nbsp;&nbsp; Port: <INPUT type="text" id="AP_AUTH_PORT~#~" name="AP_AUTH_PORT~#~"
+               class="text2" size="10" maxlength="6" value="~~AP_AUTH_PORT#~">
+<tr><td><td class="headind" id="SharedSecret"> Shared Secret:<td><INPUT type="text" id="AP_AUTH_SECRET~#~" 
+               name="AP_AUTH_SECRET~#~" class="text2" size="66" maxlength="64" 
+               value="~~AP_AUTH_SECRET#~">
+</table>
+
+<p class="topnavg" id="WiFiSettings">WiFi Protected Setup</p>
+<table>
+<tr><td class="header" align="TOP">
+<INPUT TYPE="radio" name="WPS_ENABLE~#~" ~cWPS_ENABLE#:1~ value=1>Enable
+<INPUT TYPE="radio" name="WPS_ENABLE~#~" ~cWPS_ENABLE#:0~ value=0>Disable</td>
+<td class="headerBLK"><hr></td></tr>
+<tr><td><td>
+<p class="headerBLK" id="WiFiPS"> WiFi Protected Setup</p>
+<table>
+<tr><td class="headind" id="VAPTIE">VAP TIE<td><INPUT type="text" id="WPS_VAP_TIE~#~"  
+               name="WPS_VAP_TIE~#~" class="text2" size="32" maxlength="32" 
+               value="~~WPS_VAP_TIE#~"></td>
+<tr><td class="headind" id="APPIN"> AP PIN:<td><INPUT type="text" id="WSC_PIN" 
+               name="WSC_PIN" class="text2" size="20" maxlength="12" 
+               value="~~WSC_PIN:12345670~"></td>
+<tr><td class="headind" id="device">Device Name:<td><INPUT type="text" id="WSC_NAME" 
+               name="WSC_NAME" class="text2" size="32" maxlength="32" 
+               value="~~WSC_NAME:AtherosAp~"></td>
+</table>
+<p class="headerBLK" colspan=2 id="enrollee">Enrollee configuration</p>
+
+<table>
+<tr><td class="headind" id="enrolleePin">Enrollee's PIN:
+		<td><input type="text" id="AP_ENROLLEE" name="AP_ENROLLEE" class="text2" 
+		size="15" maxlength="15" value="~~AP_ENROLLEE~">&nbsp;&nbsp;
+		<input TYPE="SUBMIT" NAME="StartPINMethod" VALUE="StartPINMethod">
+<tr><td class="headind" id="SoftPS">Soft Push Button:
+		<td calss="headind"><input type="SUBMIT" NAME="StartPBC" value="StartPBC" >
+<tr><td>&nbsp;
+</table>
+</table>
+</table>
+</body>
+</html>

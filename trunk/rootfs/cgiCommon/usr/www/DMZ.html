@@ -1,0 +1,212 @@
+<html><head>
+<link rel="stylesheet" href="../styleSheet.css" type="text/css">
+<script type="text/javascript" src="/lang/b28n.js"></script>
+<script language="JavaScript" type="text/javascript">
+Butterlate.setTextDomain("atheros");
+
+function atoi(str, num)
+{
+	var i = 1;
+	if(num != 1 )
+	{
+		while (i != num && str.length != 0)
+		{
+			if(str.charAt(0) == '.')
+			{
+				i++;
+			}
+			str = str.substring(1);
+		}
+	  	if(i != num )
+	  	{
+			return -1;
+		}
+	}
+	
+	for(i = 0; i < str.length; i++)
+	{
+		if(str.charAt(i) == '.')
+		{
+			str = str.substring(0, i);
+			break;
+		}
+	}
+	if(str.length == 0)
+	{
+		return -1;
+	}
+	return parseInt(str, 10);
+}
+
+function isAllNum(str)
+{
+	var n = 0;
+	for (var i=0; i<str.length; i++)
+	{
+	    if((str.charAt(i) >= '0' && str.charAt(i) <= '9') || (str.charAt(i) == '.' ))
+	    {
+			continue;
+		}
+		return 0;
+	}
+
+	return 1;
+}
+
+
+function checkRange(str, num, mini, maxi)
+{
+	var d = atoi(str,num);
+	if(d > maxi || d < mini)
+	{
+		return false;
+	}
+	return true;
+}
+
+function checkIpAddr(field)
+{
+	var n = 0;
+	
+    if(field.value == "")
+    {
+        return false;
+    }
+
+    if (isAllNum(field.value) == 0) 
+    {
+        return false;
+    }
+
+    if( (!checkRange(field.value,1,1,255)) ||
+        (!checkRange(field.value,2,0,255)) ||
+        (!checkRange(field.value,3,0,255)) ||
+        (!checkRange(field.value,4,1,254)) )
+	{
+        return false;
+    }
+    for (var i=0; i< field.value.length; i++)
+	{
+	    if(field.value.charAt(i) == '.' )
+	    {
+			n++;
+		}
+	}
+	if(3 != n)
+	{
+		return false;	
+	}	
+    return true;
+}
+
+function formCheck()
+{
+	if(!document.DMZ.DMZEnabled.options.selectedIndex)
+	{
+		// user choose disable
+		return true;
+	}
+
+	if(document.DMZ.DMZIPAddress.value == "")
+	{
+		alert("Not set a ip address.");
+		document.DMZ.DMZIPAddress.focus();
+		return false;
+	}
+
+	if(!checkIpAddr(document.DMZ.DMZIPAddress))
+	{
+		alert("IP format error!");
+		document.DMZ.DMZIPAddress.focus();
+		return false;
+	}
+
+	return true;
+}
+
+
+function initTranslation()
+{
+/*    var e = document.getElementById("update");
+	e.value = _("admin update");
+	e = document.getElementById("commit");
+	e.value = _("admin commit");
+	e = document.getElementById("reboot");
+	e.value = _("admin reboot");
+	e = document.getElementById("start");
+	e.value = _("admin start");
+	e = document.getElementById("stop");
+	e.value = _("admin stop");
+*/
+	var e = document.getElementById("dmzTitle");
+	e.innerHTML = _("dmz title");
+	e = document.getElementById("dmzAction");
+	e.innerHTML = _("admin action");	
+	e = document.getElementById("dmzIntroduction");
+	e.innerHTML = _("dmz introduction");
+
+	e = document.getElementById("dmzSettings");
+	e.innerHTML = _("dmz settings");
+	e = document.getElementById("dmzDisable");
+	e.innerHTML = _("admin disable");
+	e = document.getElementById("dmzEnable");
+	e.innerHTML = _("admin enable");
+	e = document.getElementById("dmzIPAddr");
+	e.innerHTML = _("dmz ipaddr");
+	e = document.getElementById("dmzApply");
+	e.value = _("admin apply");
+	e = document.getElementById("dmzReset");
+	e.value = _("admin reset");
+}
+
+function updateState()
+{
+	initTranslation();
+	if(document.DMZ.DMZEnabled.options.selectedIndex == 1)
+	{
+	    document.DMZ.DMZIPAddress.disabled = false;
+	}
+	else
+	{
+		document.DMZ.DMZIPAddress.disabled = true;
+	}
+}
+</script>
+</head>
+
+<body onload="updateState()">
+<form method="post" name="DMZ">
+<!--<p class="headind"><INPUT TYPE="SUBMIT" NAME="UPDATE" VALUE="Update" id="update">
+&nbsp;&nbsp;<INPUT TYPE="SUBMIT" NAME="COMMIT" VALUE="Commit" id="commit">
+&nbsp;&nbsp;<INPUT TYPE="SUBMIT" NAME="RebootButton" VALUE="Reboot" id="reboot">
+&nbsp;&nbsp;<INPUT TYPE="SUBMIT" NAME="StartButton" VALUE="Start" id="start">
+&nbsp;&nbsp;<INPUT TYPE="SUBMIT" NAME="StopButton" VALUE="Stop" id="stop"></p>-->
+<table><tr><td>
+<p class="topnavg" id="dmzTitle" >DMZ Settings</p>
+<p id="dmzAction" class="action">
+	Action:These settings only work in Router mode!</p>
+<p id="dmzIntroduction" class="headind">You may setup a De-militarized Zone(DMZ) to separate internal network and Internet.</p>
+<table width="400" border="1" cellpadding="2" cellspacing="1">
+<tr>
+	<td class="header" id="dmzSettings">DMZ Settings</td>
+	<td>
+	<select name="DMZEnabled" onChange="updateState()">
+		<option ~sDMZEnabled:0~ value="0" id="dmzDisable">Disable</option>
+		<option ~sDMZEnabled:1~ value="1" id="dmzEnable">Enable</option>
+    </select></td>	
+</tr>
+<tr>
+	<td class="header" id="dmzIPAddr">DMZ IP Address
+	<td><input type="text" id="DMZIPAddress" name="DMZIPAddress"
+		size="20" maxlength="16" value="~~DMZIPAddress~">
+</tr>
+</table>
+<table width="400">
+    <tr style="text-align:center">
+		<td><input type="submit" value="Apply" id="dmzApply" name="dmzApply" onClick="return formCheck()">
+		    <input type="reset"  value="Reset" id="dmzReset" name="reset"></td>
+	</tr>
+</table>
+</form>
+</body>
+</html>

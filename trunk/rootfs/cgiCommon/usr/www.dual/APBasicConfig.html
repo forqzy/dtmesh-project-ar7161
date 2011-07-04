@@ -1,0 +1,514 @@
+<HTML><HEAD>
+<LINK REL="stylesheet" href="../styleSheet.css" type="text/css">
+<script language="JavaScript" type="text/javascript" src="/lang/b28n.js"></script>
+<script language="JavaScript" type="text/javascript">
+Butterlate.setTextDomain("atheros");
+
+function atoi(str, num)
+{
+	var i = 1;
+	if(num != 1 )
+	{
+		while (i != num && str.length != 0)
+		{
+			if(str.charAt(0) == '.')
+			{
+				i++;
+			}
+			str = str.substring(1);
+		}
+	  	if(i != num )
+	  	{
+			return -1;
+		}
+	}
+	
+	for(i = 0; i < str.length; i++)
+	{
+		if(str.charAt(i) == '.')
+		{
+			str = str.substring(0, i);
+			break;
+		}
+	}
+	if(str.length == 0)
+	{
+		return -1;
+	}
+	return parseInt(str, 10);
+}
+
+function isOnlyNum(str)
+{
+	for (var i=0; i<str.length; i++) 
+	{
+		if (str.charAt(i) >= '0' && str.charAt(i) <= '9')
+			continue;
+		return 0;
+	}
+	return 1;
+}
+
+function isAllNum(str)
+{
+	for (var i=0; i<str.length; i++) 
+	{
+		if ((str.charAt(i) >= '0' && str.charAt(i) <= '9') || (str.charAt(i) == '.'))
+			continue;
+		return 0;
+	}
+	return 1;
+}
+
+function checkRange(str, num, mini, maxi)
+{
+	var d = atoi(str,num);
+	if(d > maxi || d < mini)
+	{
+		return false;
+	}
+	return true;
+}
+
+function checkIpAddr(field)
+{
+    var n = 0;
+    
+	if(field.value != "")
+	{
+		if (isAllNum(field.value) == 0) 
+		{
+		    alert('It should be a [0-9] number.');
+		    field.value = field.defaultValue;
+		    field.focus();
+		    return false;
+		}
+
+		if( (!checkRange(field.value,1,1,255)) ||
+		    (!checkRange(field.value,2,0,255)) ||
+		    (!checkRange(field.value,3,0,255)) ||
+		    (!checkRange(field.value,4,1,254)) )
+		{
+		    alert('IP format error.');
+		    field.value = field.defaultValue;
+		    field.focus();
+		    return false;
+		}
+		
+		for (var i=0; i< field.value.length; i++)
+		{
+			if(field.value.charAt(i) == '.' )
+			{
+		        n++;
+		    }
+		}
+		if(3 != n)
+		{
+			alert('IP format error.');
+			field.focus();
+			return false;	
+		}
+    }
+    
+    return true;
+}
+
+function checkMaskAddr(field)
+{
+    var n = 0;
+    
+	if(field.value != "")
+	{
+		if (isAllNum(field.value) == 0) 
+		{
+		    alert('It should be a [0-9] number.');
+		    field.value = field.defaultValue;
+		    field.focus();
+		    return false;
+		}
+
+		if( (!checkRange(field.value,1,1,255)) ||
+		    (!checkRange(field.value,2,0,255)) ||
+		    (!checkRange(field.value,3,0,255)) ||
+		    (!checkRange(field.value,4,0,255)) )
+		{
+		    alert('IP format error.');
+		    field.value = field.defaultValue;
+		    field.focus();
+		    return false;
+		}
+		
+		for (var i=0; i< field.value.length; i++)
+		{
+			if(field.value.charAt(i) == '.' )
+			{
+		        n++;
+		    }
+		}
+		if(3 != n)
+		{
+			alert('IP format error.');
+			field.focus();
+			return false;	
+		}
+    }
+    
+    return true;
+}
+
+function Checkform()
+{
+	if(!checkIpAddr(document.network.LAN_IPADDR))
+	{
+		return false;
+	}
+	if(!checkMaskAddr(document.network.LAN_NETMASK))
+	{
+		return false;
+	}
+	if(!checkIpAddr(document.network.LAN_GATEWAY))
+	{
+		return false;
+	}
+	if(!checkIpAddr(document.network.DHCP_IP_START))
+	{
+		return false;
+	}
+	if(!checkIpAddr(document.network.DHCP_IP_END))
+	{
+		return false;
+	}
+	if(!checkMaskAddr(document.network.DHCP_MASK))
+	{
+		return false;
+	}
+	if(!checkIpAddr(document.network.DHCP_GATEWAY))
+	{
+		return false;
+	}
+	if(isOnlyNum(document.network.DHCP_LEASE_TIME) == 0)
+	{
+		return false;
+	}
+	if(!checkIpAddr(document.network.WAN_IPADDR))
+	{
+		return false;
+	}
+	if(!checkMaskAddr(document.network.WAN_NETMASK))
+	{
+		return false;
+	}
+	if(!checkIpAddr(document.network.PRIDNS))
+	{
+		return false;
+	}	
+	if(!checkIpAddr(document.network.SECDNS))
+	{
+		return false;
+	}
+	if (document.network.WAN_PPPOE_PASS.value != document.network.WAN_PPPOE_REPASS.value)
+	{
+		alert("Password mismatched!");
+		return false;
+	}
+	if (document.network.WAN_PPPOE_OPMode.value == "KeepAlive")
+	{
+		if (document.network.WAN_PPPOE_RedialPeriod.value == "")
+		{
+			alert("Please specify Redial Period");
+			document.network.WAN_PPPOE_RedialPeriod.focus();
+			return false;
+		}
+		if (isOnlyNum(document.network.WAN_PPPOE_RedialPeriod.value) == 0)
+		{
+			alert("Invalid PPPOE Redial Period value! It should all be numbers!");
+			document.network.WAN_PPPOE_RedialPeriod.focus();
+			return false;		
+		}
+	}
+	else if (document.network.WAN_PPPOE_OPMode.value == "OnDemand")
+	{
+		if (document.network.WAN_PPPOE_IdleTime.value == "")
+		{
+			alert("Please specify Idle Time!");
+			document.network.WAN_PPPOE_OPMode.focus();
+			return false;
+		}
+		if (isOnlyNum(document.network.WAN_PPPOE_IdleTime.value) == 0)
+		{
+			alert("Invalid PPPOE Idle Time value! It should all be numbers!");
+			document.network.WAN_PPPOE_OPMode.focus();
+			return false;		
+		}		
+	}
+	
+	return true;
+}
+
+function PPPOEOPModeSwitch()
+{
+	document.network.WAN_PPPOE_RedialPeriod.disabled = true;
+	document.network.WAN_PPPOE_IdleTime.disabled = true;
+	if (document.network.WAN_PPPOE_OPMode.value == "KeepAlive")
+	{
+		document.network.WAN_PPPOE_RedialPeriod.disabled = false;
+	}
+	else if (document.network.WAN_PPPOE_OPMode.value == "OnDemand")
+	{
+		document.network.WAN_PPPOE_IdleTime.disabled = false;
+	}
+}
+
+function initTranslation()
+{
+	var e = document.getElementById("update");
+	e.value = _("admin update");
+	e = document.getElementById("commit");
+	e.value = _("admin commit");
+	e = document.getElementById("reboot");
+	e.value = _("admin reboot");
+	e = document.getElementById("start");
+	e.value = _("admin start");
+	e = document.getElementById("stop");
+	e.value = _("admin stop");
+	e = document.getElementById("FactoryReset");
+	e.value = _("factory reset");
+	
+	e = document.getElementById("APConfig");
+	e.innerHTML = _("basic AP config");
+	e = document.getElementById("BridgeMode");
+	e.innerHTML = _("basic bridge mode");
+	e = document.getElementById("WANPROTO");
+	e.innerHTML = _("wan proto");
+	e = document.getElementById("StartMode");
+	e.innerHTML = _("startup mode");
+	
+	e = document.getElementById("LocalIPSettings");
+	e.innerHTML = _("local IP settings");
+	e = document.getElementById("localIP");
+	e.innerHTML = _("local IP");	
+	e = document.getElementById("localmask");
+	e.innerHTML = _("local mask");	
+	e = document.getElementById("localgateway");
+	e.innerHTML = _("local gateway");
+
+	e = document.getElementById("dhcptype");
+	e.innerHTML = _("dhcp type");
+	e = document.getElementById("dhcpstart");
+	e.innerHTML = _("dhcp start");
+	e = document.getElementById("dhcpend");
+	e.innerHTML = _("dhcp end");
+	e = document.getElementById("dhcpmask");
+	e.innerHTML = _("dhcp mask");
+	e = document.getElementById("dhcpgateway");
+	e.innerHTML = _("dhcp gateway");
+	e = document.getElementById("dhcpleasetime");
+	e.innerHTML = _("dhcp lease time");
+
+	e = document.getElementById("ddns");
+	e.innerHTML = _("ddns");
+	e = document.getElementById("ddnsuser");
+	e.innerHTML = _("ddns user");
+	e = document.getElementById("ddnspwd");
+	e.innerHTML = _("ddns password");
+	e = document.getElementById("ddnshostname");
+	e.innerHTML = _("ddns host name");	
+	e = document.getElementById("ddnsserver");
+	e.innerHTML = _("ddns server address");	
+
+	e = document.getElementById("wanIPSettings");
+	e.innerHTML = _("wan IP setting");	
+	e = document.getElementById("wanIP");
+	e.innerHTML = _("wan IP address");	
+	e = document.getElementById("wanMask");
+	e.innerHTML = _("wan IP mask");	
+	e = document.getElementById("wanFirstDns");
+	e.innerHTML = _("wan primary dns");	
+	e = document.getElementById("wanSecondDns");
+	e.innerHTML = _("wan second dns");	
+
+	e = document.getElementById("PPPOESettings");
+	e.innerHTML = _("pppoe settings");	
+	e = document.getElementById("pppoeUser");
+	e.innerHTML = _("pppoe user");	
+	e = document.getElementById("pppoePwd");
+	e.innerHTML = _("pppoe password");	
+	e = document.getElementById("pppoePwd2");
+	e.innerHTML = _("pppoe repassword");	
+	e = document.getElementById("pppoeOpMode");
+	e.innerHTML = _("pppoe opmode");	
+	e = document.getElementById("pppoeManual");
+	e.innerHTML = _("pppoe manual");
+	e = document.getElementById("pppoeKeepAlive");
+	e.innerHTML = _("pppoe keep alive");		
+	e = document.getElementById("pppoeOnDemand");
+	e.innerHTML = _("pppoe on demand");
+}
+
+function initValue()
+{	
+	initTranslation();
+	PPPOEOPModeSwitch();
+}
+
+</script>
+</head>
+
+<body onLoad="initValue()">
+<FORM METHOD=POST name="network">
+<p class="headind"><INPUT TYPE="SUBMIT" NAME="UPDATE" VALUE="Update" id="update" onClick="return Checkform()">
+&nbsp&nbsp<INPUT TYPE="SUBMIT" NAME="COMMIT" VALUE="Commit" id="commit" onClick="return Checkform()">
+&nbsp&nbsp<INPUT TYPE="SUBMIT" NAME="RebootButton" VALUE="Reboot" id="reboot">
+&nbsp&nbsp<INPUT TYPE="SUBMIT" NAME="StartButton" VALUE="Start" id="start">
+&nbsp&nbsp<INPUT TYPE="SUBMIT" NAME="StopButton" VALUE="Stop" id="stop">
+&nbsp&nbsp<INPUT TYPE="SUBMIT" NAME="FactoryResetButton" VALUE="FactoryReset" id="FactoryReset"></p>
+
+<table>
+<tr><td colspan=2 class="topnavg" id="APConfig">Basic AP Configuration</td></tr>
+<tr><td class="header" id="BridgeMode">Bridge Mode:&nbsp
+  <td class="headind">
+    <INPUT type="radio" name="NETWORK_MODE" ~cNETWORK_MODE:Bridge~ value=Bridge id="bridge"> Bridged&nbsp
+    <INPUT type="radio" name="NETWORK_MODE" ~cNETWORK_MODE:Router~ value=Router id="router"> Router&nbsp
+<tr><td class="header" id="WANPROTO">WAN_PROTO:&nbsp
+  <td class="headind">
+    <INPUT type="radio" name="WAN_PROTO" ~cWAN_PROTO:Static~ value=Static id="static"> Static&nbsp
+    <INPUT type="radio" name="WAN_PROTO" ~cWAN_PROTO:DHCP~ value=DHCP id="dhcp"> DHCP&nbsp
+    <INPUT type="radio" name="WAN_PROTO" ~cWAN_PROTO:PPPOE~ value=PPPOE id="pppoe"> PPPOE&nbsp
+    <INPUT type="radio" name="WAN_PROTO" ~cWAN_PROTO:3G~ value=3G id="3G"> 3G&nbsp
+<tr><td class="header" id="StartMode">Startup Mode:
+  <td class="headind">
+    <INPUT type="radio" name="AP_STARTMODE" ~cAP_STARTMODE:standard~ value=standard id="standard"> Standard&nbsp
+    <INPUT type="radio" name="AP_STARTMODE" ~cAP_STARTMODE:rootap~ value=rootap id="rootap"> RootAP&nbsp
+    <INPUT type="radio" name="AP_STARTMODE" ~cAP_STARTMODE:repeater~ value=repeater id="repeater"> Repeater&nbsp
+    <INPUT type="radio" name="AP_STARTMODE" ~cAP_STARTMODE:client~ value=client id="client"> Client&nbsp
+    <INPUT type="radio" name="AP_STARTMODE" ~cAP_STARTMODE:client_auto~ value=client_auto> Client_auto&nbsp
+    <INPUT type="radio" name="AP_STARTMODE" ~cAP_STARTMODE:multi~ value=multi id="multi"> Multi&nbsp
+    <INPUT type="radio" name="AP_STARTMODE" ~cAP_STARTMODE:multivlan~ value=multivlan id="multivlan"> Multi VLAN&nbsp
+    <INPUT type="radio" name="AP_STARTMODE" ~cAP_STARTMODE:dual~ value=dual id="dual"> Dual Concurrent&nbsp
+</table>
+
+<table>
+<tr><td align="top">
+<table>
+<tr><td colspan=2 class=topnavg id="LocalIPSettings">Local IP settings
+<tr><td class="header" id="localIP">Local IP Addr
+<td><INPUT type="text" id="LAN_IPADDR" name="LAN_IPADDR"
+           class="text2" size="20" maxlength="16"
+           value="~~LAN_IPADDR~">
+<tr><td class="header" id="localmask">Local Netmask 
+<td><INPUT type="text" id="LAN_NETMASK" name="LAN_NETMASK"
+           class="text2" size="20" maxlength="16"
+           value="~~LAN_NETMASK~">
+<tr><td class="header" id="localgateway">Gateway IP
+<td><INPUT type="text" id="LAN_GATEWAY" name="LAN_GATEWAY"
+           class="text2" size="20" maxlength="16"
+           value="~~LAN_GATEWAY~">
+</table>           
+<table>           
+<tr><td colspan=1 class="header" id="dhcptype">DHCP Type:&nbsp<td class="headind">
+<INPUT type="radio" name="UDHCPD" ~cUDHCPD:server~ value=server id="dhcpserver"> Server&nbsp
+<INPUT type="radio" name="UDHCPD" ~cUDHCPD:disable~ value=disable id="dhcpdisable"> Disable&nbsp
+<tr><td class="headind" id="dhcpstart">Start IP Addr
+<td><INPUT type="text" id="DHCP_IP_START" name="DHCP_IP_START"
+           class="text2" size="20" maxlength="16"
+           value="~~DHCP_IP_START~">
+<tr><td class="headind" id="dhcpend">End IP Addr
+<td><INPUT type="text" id="DHCP_IP_END" name="DHCP_IP_END"
+           class="text2" size="20" maxlength="16"
+           value="~~DHCP_IP_END~">
+<tr><td class="headind" id="dhcpmask">Subnet Mask
+<td><INPUT type="text" id="DHCP_MASK" name="DHCP_MASK"
+           class="text2" size="20" maxlength="16"
+           value="~~DHCP_MASK~">
+<tr><td class="headind" id="dhcpgateway">Default Gateway
+<td><INPUT type="text" id="DHCP_GATEWAY" name="DHCP_GATEWAY"
+           class="text2" size="20" maxlength="16"
+           value="~~DHCP_GATEWAY~">
+<tr><td class="headind" id="dhcpleasetime">Lease Time
+<td><INPUT type="text" id="DHCP_LEASE_TIME" name="DHCP_LEASE_TIME"
+           class="text2" size="20" maxlength="16"
+           value="~~DHCP_LEASE_TIME~">
+<tr><td colspan=1 class="header" id="ddns">DDNS:&nbsp<td class="headind">
+<INPUT type="radio" name="DDNS" ~cDDNS:enabled~ value=enabled id="ddnsenable"> Enabled&nbsp
+<INPUT type="radio" name="DDNS" ~cDDNS:disabled~ value=disabled id="ddnsdisable"> Disabled&nbsp
+</td></tr>
+<tr><td class="headind" id="ddnsuser">User Name
+<td><INPUT type="text" id="User_Name" name="User_Name"
+           class="text2" size="20" maxlength="32"
+           value="~~User_Name~">
+<tr><td class="headind" id="ddnspwd">Password
+<td><INPUT type="password" id="Password" name="Password"
+           class="text2" size="20" maxlength="32"
+           value="~~Password~">
+<tr><td class="headind" id="ddnshostname">Host Name
+<td><INPUT type="text" id="Host_Name" name="Host_Name"
+           class="text2" size="20" maxlength="50"
+           value="~~Host_Name~">
+<tr><td class="headind" id="ddnsserver">Server Address
+</td>
+<td><SELECT class="headind" NAME="Server_Address">
+	<OPTION ~sServer_Address:dyndns@dyndns.org~ value=dyndns@dyndns.org>dyndns@dyndns.org
+    <OPTION ~sServer_Address:statdns@dyndns.org~ value=stat@dyndns.org>statdns@dyndns.org
+    <OPTION ~sServer_Address:customdns@dyndns.org~ value=customdns@dyndns.org>customdns@dyndns.org
+    <OPTION ~sServer_Address:dyndns@3322.org~ value=dyndns@3322.org>dyndns@3322.org
+    <OPTION ~sServer_Address:default@freedns.afraid.org~ value=default@freedns.afraid.org>default@freedns.afraid.org      
+    <OPTION ~sServer_Address:default@zoneedit.com~ value=default@zoneedit.com>default@zoneedit.com
+    <OPTION ~sServer_Address:default@no-ip.com~ value=default@no-ip.com>default@no-ip.com 
+</SELECT></td></tr>           
+</table>
+<td align=top valign="top">
+<table>
+<tr><td colspan=2 class=topnavg id="wanIPSettings">WAN IP settings
+<tr><td class="header" id="wanIP">WAN IP Addr
+<td><INPUT type="text" id="WAN_IPADDR" name="WAN_IPADDR"
+           class="text2" size="20" maxlength="16"
+           value="~~WAN_IPADDR~">
+<tr><td class="header" id="wanMask">Local Netmask 
+<td><INPUT type="text" id="WAN_NETMASK" name="WAN_NETMASK"
+           class="text2" size="20" maxlength="16"
+           value="~~WAN_NETMASK~">
+<tr><td class="header" id="wanFirstDns">Primary DNS
+<td><INPUT type="text" id="PRIDNS" name="PRIDNS"
+           class="text2" size="20" maxlength="16"
+           value="~~PRIDNS~">
+<tr><td class="header" id="wanSecondDns">Secondary DNS
+<td><INPUT type="text" id="SECDNS" name="SECDNS"
+           class="text2" size="20" maxlength="16"
+           value="~~SECDNS~">
+</table>
+
+<!-- ----------------- PPPOE Mode ----------------- -->
+<p class="topnavg" id="PPPOESettings">PPPoE Settings</p>
+<table width="360" border="1" cellpadding="2" cellspacing="1"> 
+<tr><td class="header" id="pppoeUser">User Name</td>
+<td><INPUT type="text" id="WAN_PPPOE_USER" name="WAN_PPPOE_USER"
+           class="text2" size="32" maxlength="48"
+           value="~~WAN_PPPOE_USER~"></td></tr>
+<tr><td class="header" id="pppoePwd">Password</td>           
+<td><INPUT type="password" id="WAN_PPPOE_PASS" name="WAN_PPPOE_PASS"
+           class="text2" size="32" maxlength="48"
+           value="~~WAN_PPPOE_PASS~"></td></tr>
+<tr><td class="header" id="pppoePwd2">Verify Password</td>
+<td><input type="password" id="WAN_PPPOE_REPASS" name="WAN_PPPOE_REPASS"
+		   class="text2" size="32" maxlenth="48"
+           value="~~WAN_PPPOE_REPASS~"></td></tr>
+<tr><td class="header" rowspan="2" id="pppoeOpMode">Operation Mode</td>
+  <td><select style="{width:120px;}" class="headind" name="WAN_PPPOE_OPMode" onChange="PPPOEOPModeSwitch()">
+      <option ~sWAN_PPPOE_OPMode:Manual~  name="Manual" value="Manual" id="pppoeManual">Manual</option>
+      <option ~sWAN_PPPOE_OPMode:KeepAlive~ name="KeepAlive" value="KeepAlive" id="pppoeKeepAlive">Keep Alive</option>
+      <option ~sWAN_PPPOE_OPMode:OnDemand~  name="OnDemand" value="OnDemand" id="pppoeOnDemand">On Demand</option>
+</td></tr>
+<tr><td class="text2">
+    Keep Alive Mode: Redial Period
+    <input type="text" class="text2" name="WAN_PPPOE_RedialPeriod" maxlength="5" size="3" 
+    		value="~~WAN_PPPOE_RedialPeriod~">seconds
+    <br/>
+    On Demand Mode: Idle Time
+    <input type="text" class="text2" name="WAN_PPPOE_IdleTime" maxlength="5" size="3" 
+    		value="~~WAN_PPPOE_IdleTime~">minutes
+</td></tr>           
+</table>
+</table>
+</FORM>
+
+</body></html>

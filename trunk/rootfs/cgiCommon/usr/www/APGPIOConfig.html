@@ -1,0 +1,97 @@
+<HTML><HEAD>
+<LINK REL="stylesheet" href="../styleSheet.css" type="text/css">
+<script type="text/javascript" src="/lang/b28n.js"></script>
+<script language="JavaScript" type="text/javascript">
+Butterlate.setTextDomain("atheros");
+
+function initTranslation()
+{
+	var e = document.getElementById("UPDATE");
+	e.value = _("admin update");
+	e = document.getElementById("COMMIT");
+	e.value = _("admin commit");
+	e = document.getElementById("RebootButton");
+	e.value = _("admin reboot");
+	e = document.getElementById("StartButton");
+	e.value = _("admin start");	
+
+	e = document.getElementById("GPIOConfig");
+	e.innerHTML = _("GPIO config");
+	e = document.getElementById("GPIODirection");
+	e.innerHTML = _("GPIO direction");
+	e = document.getElementById("GPIOLevel");
+	e.innerHTML = _("GPIO level");
+}	
+
+function GPIO7_LEVEL_DISABLE(){
+  document.GPIO.GPIO7_LEVEL[0].disabled=true;
+  document.GPIO.GPIO7_LEVEL[1].disabled=true;
+}
+
+function GPIO7_LEVEL_ENABLE(){
+  document.GPIO.GPIO7_LEVEL[0].disabled=false;
+  document.GPIO.GPIO7_LEVEL[1].disabled=false;
+}
+
+function GPIO8_LEVEL_DISABLE(){
+  document.GPIO.GPIO8_LEVEL[0].disabled=true;
+  document.GPIO.GPIO8_LEVEL[1].disabled=true;
+}
+
+function GPIO8_LEVEL_ENABLE(){
+  document.GPIO.GPIO8_LEVEL[0].disabled=false;
+  document.GPIO.GPIO8_LEVEL[1].disabled=false;
+}
+
+function PRELOAD(){
+  var GPIO7_DIR="~~GPIO7_DIR~";
+  var GPIO8_DIR="~~GPIO8_DIR~";
+  
+  initTranslation();
+  
+  if(GPIO7_DIR == 0)  GPIO7_LEVEL_DISABLE();
+  
+  if(GPIO8_DIR == 0)  GPIO8_LEVEL_DISABLE();
+}
+</script>
+
+</head><body onLoad="PRELOAD();">
+<FORM name="GPIO" METHOD=POST>
+<p class="headind"><INPUT TYPE="SUBMIT" NAME="UPDATE" VALUE="Update" id="UPDATE">
+&nbsp&nbsp<INPUT TYPE="SUBMIT" NAME="COMMIT" VALUE="Commit" id="COMMIT">
+&nbsp&nbsp<INPUT TYPE="SUBMIT" NAME="RebootButton" VALUE="Reboot" id="RebootButton">
+&nbsp&nbsp<INPUT NAME="StartGPIO" TYPE="SUBMIT" VALUE="Start" id="StartButton">
+</p>
+<p class="topnavg" id="GPIOConfig">GPIO Configuration</p>
+  <table width="500" border="0">
+    <tr>
+      <td width="94">&nbsp;</td>
+      <td width="200" class="doctitle">GPIO7</td>
+      <td width="200" class="doctitle">GPIO8</td>
+    </tr>
+    <tr>
+      <td class="header" id="GPIODirection">Direction</td>
+      <td class="headind"><label><input name="GPIO7_DIR" ~cGPIO7_DIR:0~ type="radio" value="0" onClick="GPIO7_LEVEL_DISABLE();" id="input7">
+      Input</label>
+      <label><input name="GPIO7_DIR" ~cGPIO7_DIR:1~ type="radio" value="1" onClick="GPIO7_LEVEL_ENABLE();" id="output7">
+      Output</label></td>
+      <td class="headind"><label><input name="GPIO8_DIR" ~cGPIO8_DIR:0~ type="radio" value="0" onClick="GPIO8_LEVEL_DISABLE();" id="input8">
+      Input</label>
+      <label><input name="GPIO8_DIR" ~cGPIO8_DIR:1~ type="radio" value="1" onClick="GPIO8_LEVEL_ENABLE();" id="output8">
+      Output</label></td>
+    </tr>
+    <tr>
+      <td class="header" id="GPIOLevel">GPIO Level </td>
+      <td class="headind"><input name="GPIO7_LEVEL" ~cGPIO7_LEVEL:1~ type="radio" value="1" id="high7">
+        High
+          <input name="GPIO7_LEVEL" ~cGPIO7_LEVEL:0~ type="radio" value="0" id="low7">
+      Low</td>
+      <td class="headind"><input name="GPIO8_LEVEL" ~cGPIO8_LEVEL:1~ type="radio" value="1" id="high8">
+        High
+          <input name="GPIO8_LEVEL" ~cGPIO8_LEVEL:0~ type="radio" value="0" id="low8">
+      Low</td>
+    </tr>
+  </table>
+</form>
+<p>&nbsp;</p>
+</body></html>

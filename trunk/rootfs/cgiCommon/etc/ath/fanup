@@ -1,0 +1,5 @@
+#!/bin/sh
+
+. /etc/ath/apcfg
+echo $FAN_START_TEMP > /sys/class/hwmon/hwmon0/device/temp1_max
+echo $FAN_STOP_TEMP > /sys/class/hwmon/hwmon0/device/temp1_max_hyst

@@ -1,0 +1,25 @@
+<HTML><HEAD>
+<LINK REL="stylesheet" href="../styleSheet.css" type="text/css">
+<script type="text/javascript" src="/lang/b28n.js"></script>
+<script language="JavaScript" type="text/javascript">
+Butterlate.setTextDomain("atheros");
+
+function initTranslation()
+{
+	var e = document.getElementById("AvailableChannel");
+	e.innerHTML = _("channel available");
+}
+function initValue()
+{
+	initTranslation();
+}	
+</script>
+
+</head>
+<body onload="initValue()">
+<p class="topnavg" id="AvailableChannel">Available Channels</p>
+<p class="header">2.4 GHz Band Channel Selection</p>
+<p class="textout">~`wlanconfig ath0 list channel 2>/dev/null`~</p>
+<p class="header">5.0 GHz Band Channel Selection</p>
+<p class="textout">~`wlanconfig ath1 list channel 2>/dev/null`~</p>
+</body></html>

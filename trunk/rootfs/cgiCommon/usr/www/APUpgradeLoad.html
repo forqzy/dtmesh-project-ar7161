@@ -1,0 +1,34 @@
+<HTML><HEAD>
+<LINK REL="stylesheet" href="../styleSheet.css" type="text/css">
+<script type="text/javascript" src="/lang/b28n.js"></script>
+<script language="JavaScript" type="text/javascript">
+Butterlate.setTextDomain("atheros");
+
+function initTranslation()
+{
+	var e = document.getElementById("upload");
+	e.value = _("firm upload");
+	e = document.getElementById("firmUpgrade");
+	e.innerHTML = _("firm upgrade");
+	e = document.getElementById("firmFile");
+	e.innerHTML = _("firm file");
+}
+
+function initValue()
+{
+	initTranslation();
+}
+</script>
+
+</head>
+<body onload="initValue()">
+<form action="cgi-bin/upload" enctype="multipart/form-data" method=post>
+<p class="headind"><INPUT TYPE="SUBMIT" NAME="UPLOAD FILE" VALUE="Upload" id="upload"></p>
+<INPUT TYPE="hidden" NAME="Config" VALUE="Upgrade"></p>
+<p class="topnavg" id="firmUpgrade">Firmware Upgrade</p>
+<table>
+<tr><td class="header" id="firmFile">Image File</td>
+<td><input type=file class="text2" name=Whatever></td>
+</tr></table>
+</form>
+</body></html>
