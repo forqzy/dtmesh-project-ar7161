@@ -34,6 +34,9 @@
 #include <stdarg.h>
 #include <unistd.h>
 #include <sys/reboot.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 #ifdef CONFIG_NVRAM
 #define NVRAM  "/dev/nvram"
@@ -42,6 +45,15 @@
 #define NVRAM  "/dev/caldata"
 #define NVRAM_OFFSET (32 * 1024)
 #endif
+
+#define PORT_FORWARD_CHAIN	"port_forward"
+#define PROTO_TCP		1
+#define PROTO_UDP		2
+#define PROTO_TCP_UDP	3
+#define MaxRulesCount   32
+
+#define DMZ_CHAIN       "dmz"
+#define DMZ_PORT        80
 
 /*
 ** local definitions
@@ -603,7 +615,7 @@ char *expandOutput(char *inBuff, char *outBuff)
             wasSpace = 0;
             inBuff++;
         }
-        else if ( *inBuff == ' ' )
+        else if ( *inBuff == 0 )
         {
             if(wasSpace)
             {
@@ -1138,6 +1150,14 @@ void writeParameters(char *name,char *mode,unsigned long offset)
                 continue;
             if( !strcmp(config.Param[i].Name,"INDEX") )
                 continue;
+            if( !strcmp(config.Param[i].Name,"dmzApply") )
+                continue;
+            if( !strcmp(config.Param[i].Name,"PortForwardApply") )
+                continue;
+            if( !strcmp(config.Param[i].Name,"deleteSelPortForward") )
+                continue;
+            if( !strcmp(config.Param[i].Name,"NTPApply") )
+                continue;                
             if( config.Param[i].Val[0] == 0)
                 continue;
 
@@ -1656,6 +1676,1397 @@ int getRadioID(int index)
 		return (-1);
 }
 
+
+/**************************************************************************/	
+/*************************add for port forwarding**************************/
+/**************************************************************************/
+/*
+ * description: return WAN interface name
+ *              0 = bridge, 1 = gateway, 2 = wirelss isp
+ */
+char* getWanIfName(void)
+{
+	char valBuff[128] = {0};
+	char *if_name     = "br0";
+
+	CFG_get_by_name("NETWORK_MODE",valBuff);
+	if (NULL == valBuff)
+	{
+		return if_name;
+	}
+	if (!strcmp(valBuff, "Bridge"))
+	{
+		if_name = "br0";
+	}
+	else if (!strcmp(valBuff, "Router")) 
+	{
+		if_name = "eth1";
+	}
+	else
+	{
+		memset(valBuff, 0, sizeof(valBuff));
+	    CFG_get_by_name("WAN_PROTO",valBuff);
+	    if (!strcmp(valBuff, "PPPOE"))
+    	{
+        	if_name = "ppp0";
+		}
+	}
+
+	return if_name;
+}
+/*
+ * description: return LAN interface name
+ */
+char* getLanIfName(void)
+{
+	char mode[128] = {0};
+	char num_s[10]={0};
+	CFG_get_by_name("OperationMode",mode);
+	static char *if_name = "br0";
+
+	if (NULL == mode)
+		return if_name;
+	if (!strncmp(mode, "0", 2))
+		if_name = "br0";
+	else if (!strncmp(mode, "1", 2)) {
+#if defined CONFIG_RAETH_ROUTER || defined CONFIG_MAC_TO_MAC_MODE || defined CONFIG_RT_3052_ESW
+		if_name = "br0";
+#elif defined  CONFIG_ICPLUS_PHY && CONFIG_RT2860V2_AP_MBSS
+		CFG_get_by_name("BssidNum",num_s);
+		if(atoi(num_s) > 1)	// multiple ssid
+			if_name = "br0";
+		else
+			if_name = "ra0";
+#else
+		if_name = "ra0";
+#endif
+	}
+	else if (!strncmp(mode, "2", 2)) {
+		if_name = "eth2";
+	}
+	else if (!strncmp(mode, "3", 2)) {
+		if_name = "br0";
+	}
+	return if_name;
+}
+int isIpValid(char *str)
+{
+	struct in_addr addr;	// for examination
+
+	if(!(inet_aton(str, &addr)))
+	{
+		printf("isIpValid(): %s is not a valid IP address.\n", str);
+		return 0;
+	}
+	return 1;
+}
+
+/*
+ * substitution of getNthValue which dosen't destroy the original value
+ */
+int getNthValueSafe(int index, char *value, char delimit, char *result, int len)
+{
+    int  i          = 0;
+    int  result_len = 0;
+    char *begin     = NULL;
+    char *end       = NULL;
+
+    if(!value || !result || !len)
+    {
+        return -1;
+	}
+	
+    begin = value;
+    end = strchr(begin, delimit);
+
+    while(i < index && end)
+    {
+        begin = end + 1;
+        end = strchr(begin, delimit);
+        i++;
+    }
+
+    //no delimit
+    if(!end)
+    {
+		if(i == index)
+		{
+			end = begin + strlen(begin);
+			result_len = (len-1) < (end-begin) ? (len-1) : (end-begin);
+		}
+		else
+		{
+			return -1;
+		}
+	}
+	else
+	{
+		result_len = (len-1) < (end-begin)? (len-1) : (end-begin);
+	}
+	
+	memcpy(result, begin, result_len );
+	*(result+ result_len ) = '\0';
+
+	return 0;
+}
+
+
+void makePortForwardRule(char *wan_name, char *ip_address, char *proto, int prf_int, int prt_int)
+{
+	char buf[128] = {0};
+//	char val[70]; 
+//	char cmd[140] = {0};
+	
+	snprintf(buf, sizeof(buf), "iptables -t nat -A %s -i %s -p %s --dport %d:%d -j DNAT --to %s", 
+	         PORT_FORWARD_CHAIN, wan_name, proto, prf_int, prt_int, ip_address);
+	system(buf);
+		
+/*	snprintf(buf, sizeof(buf), "iptables -A FORWARD -d %s -p %s --dport %d:%d -j ACCEPT", ip_address, proto, prf_int, prt_int);
+	system(buf);
+				
+	CFG_get_by_name("LAN_IPADDR", val);
+	if(!val || !strlen(val))
+	{
+		snprintf(buf, sizeof(buf), "iptables -t nat -A POSTROUTING -d %s -p %s --dport %d:%d -j SNAT",	ip_address, proto, prf_int, prt_int);		
+	}
+	else
+	{
+		snprintf(buf, sizeof(buf), "iptables -t nat -A POSTROUTING -d %s -p %s --dport %d:%d -j SNAT --to %s",	ip_address, proto, prf_int, prt_int, val);		
+	}
+	
+	system(buf);*/
+	return;
+}
+
+void iptablesPortForwardRun()
+{
+	int  i              = 0;
+	int  rule_count     = 0;
+	int  prf_int        = 0;
+	int  prt_int        = 0;
+	int  proto          = 0;
+	char cmd[128]       = {0};
+	char wan_name[16]   = {0};
+	char pfe[8]         = {0};
+	char ip_address[32] = {0};
+	char prf[8]         = {0};
+	char prt[8]         = {0};
+	char protocol[8]    = {0};
+    char rule[70]       = {0};
+    char value[MaxRulesCount][70] = {0};	
+    
+	CFG_get_by_name("PortForwardEnabled", pfe);
+	if(!pfe || !atoi(pfe))
+	{
+        return;
+	}
+
+	for(i = 0, rule_count = 0; i < MaxRulesCount; i++)
+	{
+		snprintf(cmd, sizeof(cmd),"PortForwardRules%d", i);
+		CFG_get_by_name(cmd,rule);
+		if(!rule || !strlen(rule))
+		{
+			continue;
+	    }
+	    else
+	    {
+	    	strcpy(value[rule_count++], rule);
+	    }
+    }
+    if(rule_count == 0)
+    {
+		// there is no PortForwardRules        
+        return;
+	}
+
+	strncpy(wan_name, getWanIfName(), sizeof(wan_name)-1);
+	for(i = 0; i < rule_count; i++)
+	{
+		// get ip address
+		if( getNthValueSafe(0, value[i], ',', ip_address, sizeof(ip_address)) == -1 )
+		{
+			printf("prf = %s\n", prf);	
+			continue;
+		}
+		if(!isIpValid(ip_address))
+		{
+			continue;
+		}
+		// get port range "from"
+		if( getNthValueSafe(1, value[i], ',', prf, sizeof(prf)) == -1 )
+		{
+			printf("prf = %s\n", prf);	
+			continue;
+		}
+		if( (prf_int = atoi(prf)) == 0 || prf_int > 65535)
+		{
+			continue;
+		}
+		// get port range "to"
+		if( getNthValueSafe(2, value[i], ',', prt, sizeof(prt)) == -1 )
+		{
+			printf("prt = %s\n", prt);	
+			continue;
+		}
+		if( (prt_int = atoi(prt)) > 65535)
+		{
+			continue;
+		}
+		// get protocol
+		if( getNthValueSafe(3, value[i], ',', protocol, sizeof(protocol)) == -1 )
+		{
+			continue;
+		}
+		proto = atoi(protocol);
+		switch(proto)
+		{
+			case PROTO_TCP:
+			{
+				makePortForwardRule(wan_name, ip_address, "tcp", prf_int, prt_int);
+				break;
+			}
+			case PROTO_UDP:
+			{
+				makePortForwardRule(wan_name, ip_address, "udp", prf_int, prt_int);
+				break;
+			}
+			case PROTO_TCP_UDP:
+			{
+				makePortForwardRule(wan_name, ip_address, "tcp", prf_int, prt_int);
+				makePortForwardRule(wan_name, ip_address, "udp", prf_int, prt_int);
+				break;
+			}
+			default:
+			{
+				continue;
+			}
+		}
+	}
+}
+
+void iptablesPortForwardFlush()
+{
+	char cmd[120] = {0};
+    snprintf(cmd, 120, "iptables -t nat -F %s ",PORT_FORWARD_CHAIN);
+    system(cmd);
+}
+
+/*
+ * ASP function
+ */
+int showPortForwardRulesASP()
+{
+	int  i              = 0;
+	int  rule_count     = 0;
+	int  prf_int        = 0;
+	int  prt_int        = 0;
+	int  proto          = 0;
+	char ip_address[32] = {0};
+	char prf[8]         = {0};
+	char prt[8]         = {0};
+	char protocol[8]    = {0};
+	char comment[33]    = {0};
+	char name[32]       = {0};
+	char rule[70]       = {0};
+	char value[MaxRulesCount][70] = {0};	
+	
+	for(i = 0, rule_count = 0; i < MaxRulesCount; i++)
+	{
+		snprintf(name, sizeof(name),"PortForwardRules%d", i);
+		CFG_get_by_name(name,rule);
+		if(!rule || !strlen(rule))
+		{
+			continue;
+	    }
+	    else
+	    {
+	    	strcpy(value[rule_count++], rule);
+	    }
+    }
+
+	/*
+	 * format is : [ip],[port_from],[port_to],[protocol],[comment],;
+	 */
+	for(i = 0; i < rule_count; i++)
+	{
+		// get ip address
+		if( getNthValueSafe(0, value[i], ',', ip_address, sizeof(ip_address)) == -1 )
+		{
+			continue;
+		}
+		if(!isIpValid(ip_address))
+		{
+			continue;
+		}
+
+		// get port range "from"
+		if( getNthValueSafe(1, value[i], ',', prf, sizeof(prf)) == -1 )
+		{
+			continue;
+		}
+		if( (prf_int = atoi(prf)) == 0 || prf_int > 65535)
+		{
+			continue;
+		}
+
+		// get port range "to"
+		if( getNthValueSafe(2, value[i], ',', prt, sizeof(prt)) == -1 )
+		{
+			continue;
+		}
+		if((prt_int = atoi(prt)) == 0 || prt_int > 65535)
+		{
+			continue;
+		}
+
+		// get protocol
+		if( getNthValueSafe(3, value[i], ',', protocol, sizeof(protocol)) == -1 )
+		{
+			continue;
+		}
+		proto = atoi(protocol);
+		switch(proto)
+		{
+			case PROTO_TCP:
+			case PROTO_UDP:
+			case PROTO_TCP_UDP:
+			{
+				break;
+			}
+			default:
+			{	
+				continue;
+			}
+		}
+
+		if( getNthValueSafe(4, value[i], ',', comment, sizeof(comment)) == -1 )
+		{
+			continue;
+		}
+
+		printf("<tr>\n");
+		// output No.
+		printf("<td> %d&nbsp; <input type=\"checkbox\" name=\"delRule%d\"> </td>\n", i+1, i);
+
+		// output IP address
+		printf("<td align=center> %s </td>\n", ip_address);
+
+		// output Port Range
+		if(prt_int)
+		{
+			printf("<td align=center> %d - %d </td>\n", prf_int, prt_int);
+		}
+		else
+		{
+			printf("<td align=center> %d </td>\n", prf_int);
+		}
+		// output Protocol
+        switch(proto)
+        {
+            case PROTO_TCP:
+			{	
+				printf("<td align=center> TCP </td>\n");
+				break;
+			}
+            case PROTO_UDP:
+			{
+				printf("<td align=center> UDP </td>\n");
+				break;
+			}
+            case PROTO_TCP_UDP:
+			{	
+				printf("<td align=center> TCP&UDP </td>\n");
+				break;
+			}
+		}
+
+		// output Comment
+		if(strlen(comment))
+		{
+			printf("<td align=center> %s</td>\n", comment);
+		}
+		else
+		{
+			printf("<td align=center> &nbsp; </td>\n");
+		}
+		printf("</tr>\n");
+	}
+	printf("</table>\n");
+	printf("</form>\n");
+   printf("</body></html>\n");
+
+	return 0;	
+}
+
+void portForward()
+{
+	int  i               = 0;
+	int  prf_int         = 0;
+	int  prt_int         = 0;
+	int  proto           = 0;
+	char pfe[8]          = {0};
+	char ip_address[32]  = {0};
+	char prf[8]          = {0};
+	char prt[8]          = {0};
+	char protocol[8]     = {0};
+	char comment[36]     = {0};
+	int  old_prf_int     = 0;
+	int  old_prt_int     = 0;
+	int  old_proto       = 0;
+	char old_ip[32]      = {0};
+	char old_prf[8]      = {0};
+	char old_prt[8]      = {0};
+	char old_protocol[8] = {0};
+	char cmd[128]        = {0};          
+	char rule[70]        = {0};
+	char valBuff[70]     = {0};
+
+	CFG_get_by_name("PortForwardEnabled", pfe);	
+	CFG_get_by_name("PortForward_ip_address", ip_address);
+	CFG_get_by_name("PortForward_fromPort", prf);
+	CFG_get_by_name("PortForward_toPort", prt);
+	CFG_get_by_name("PortForward_protocol", protocol);
+	CFG_get_by_name("PortForward_comment", comment);
+
+	if(!pfe || !strlen(pfe))
+	{
+		return;
+	}
+	if(!atoi(pfe))
+	{
+		iptablesPortForwardFlush();		//disable
+		return;
+	}
+
+	if(!strlen(ip_address) && !strlen(prf) && !strlen(prt) && !strlen(comment))
+	{	
+		// user choose nothing but press "apply" only
+		iptablesPortForwardFlush();
+		iptablesPortForwardRun();
+		return;
+	}
+
+	if(!ip_address && !strlen(ip_address))
+	{
+		return;
+	}
+	if(!isIpValid(ip_address))
+	{
+		return;
+	}
+	// we dont trust user input.....
+	if(!prf && !strlen(prf))
+	{
+		return;
+	}
+	if(!(prf_int = atoi(prf)) || (prf_int > 65535))
+	{
+		return;
+	}
+
+	if(!prt && !strlen(prt))
+	{
+		return;
+	}
+	if(!(prt_int = atoi(prt)) || (prt_int > 65535))
+	{
+		return;
+	}
+	if(prt_int < prf_int)
+	{
+		return;
+	}
+
+	if(!strcmp(protocol, "TCP"))
+	{
+		proto = PROTO_TCP;
+	}
+	else if(!strcmp(protocol, "UDP"))
+	{
+		proto = PROTO_UDP;
+	}
+	else if(!strcmp(protocol, "TCPUDP"))
+	{
+		proto = PROTO_TCP_UDP;
+	}
+	else
+	{
+		return;
+	}
+	
+	if(strlen(comment) > 32)
+	{
+		return;
+	}
+	/* i know you will try to break our box... ;) */
+	if(strchr(comment, ','))
+	{
+		return;
+	}
+	
+	for (i = 0; i < MaxRulesCount; i++)
+	{
+		snprintf(cmd, sizeof(cmd), "PortForwardRules%d", i);
+		CFG_get_by_name(cmd, valBuff);
+		if( valBuff && strlen(valBuff) )
+		{
+			// get ip address
+			if( getNthValueSafe(0, valBuff, ',', old_ip, sizeof(old_ip)) == -1 )
+			{
+				continue;
+			}
+			if(!isIpValid(old_ip))
+			{
+				continue;
+			}
+
+			// get port range "from"
+			if( getNthValueSafe(1, valBuff, ',', old_prf, sizeof(old_prf)) == -1 )
+			{
+				continue;
+			}
+			if((old_prf_int = atoi(old_prf)) == 0 || old_prf_int > 65535)
+			{
+				continue;
+			}
+
+			// get port range "to"
+			if( getNthValueSafe(2, valBuff, ',', old_prt, sizeof(old_prt)) == -1 )
+			{
+				continue;
+			}
+			if((old_prt_int = atoi(prt)) == 0 || old_prt_int > 65535)
+			{
+				continue;
+			}
+
+			// get protocol
+			if( getNthValueSafe(3, valBuff, ',', old_protocol, sizeof(old_protocol)) == -1 )
+			{
+				continue;
+			}
+			old_proto = atoi(old_protocol);
+			
+			if((old_ip == ip_address) && (old_prf_int == prf_int) && (old_prt_int == prt_int) && (old_proto == proto))
+			{
+				printf("Already have this configuration!\n");
+				break;
+			}
+		}
+		else
+		{
+			sprintf(rule, "%s,%d,%d,%d,%s", ip_address, prf_int, prt_int, proto, comment);
+			CFG_set_by_name(cmd, rule);
+			writeParameters("/tmp/.apcfg","w+",0);
+			writeParameters(NVRAM,"w+", NVRAM_OFFSET);
+			break;
+		}
+	}
+
+	iptablesPortForwardFlush();
+	iptablesPortForwardRun();
+
+	return;				
+}
+
+void portForwardDelete()
+{
+	int  i            = 0;
+	int  j            = 0;
+	int  flag         = 0;   //mark if some rules to delete
+	int  delete_count = 0;
+	int  rule_count   = 0;   //count the number of portForwardRules
+	char name_buf[16] = {0};
+	char val[32]      = {0};
+	char cmd[128]     = {0};
+	char rule[70]     = {0};
+	char delRule[MaxRulesCount][32] = {0};
+	int  delRuleNum = 0;
+	
+		
+	for(i = 0, rule_count = 0; i < MaxRulesCount; i++)
+	{
+		memset(cmd, 0, sizeof(cmd));
+		memset(rule, 0, sizeof(rule));			
+
+		sprintf(cmd, "PortForwardRules%d", i);
+		CFG_get_by_name(cmd,rule);
+		if(!rule || !strlen(rule))
+		{	
+			continue;
+	    }
+	    else
+	    {
+			rule_count++;
+	    }
+    }
+    if(rule_count == 0)
+    {
+		// there is no PortForwardRules        
+        return ;
+	}				
+
+	for(i = 0; i < rule_count; i++)
+	{
+		snprintf(name_buf, 16, "delRule%d", i);
+		CFG_get_by_name(name_buf,val);
+		if(!val || !strlen(val))
+		{
+			continue;
+		}
+		else //delete this record
+		{
+			if (0 == flag)
+			{
+				flag = 1;
+			}
+			
+			for(j = 0, delete_count = 0; j < MaxRulesCount; j++)
+			{
+				memset(cmd, 0, sizeof(cmd));
+				memset(rule, 0, sizeof(rule));
+				
+				snprintf(cmd,sizeof(cmd),"PortForwardRules%d",j);
+				CFG_get_by_name(cmd, rule);
+				if( !rule || !strlen(rule))
+				{
+					continue;
+				}
+				else
+				{
+					delete_count++;									
+					if( i == (delete_count-1) )
+					{	
+						strcpy(delRule[delRuleNum++], cmd);
+						CFG_remove_by_name(name_buf);
+						break;
+					}
+				}
+			}
+			
+		}
+	}
+
+    if(0 == flag)
+    {
+        printf("You didn't select any rules to delete.<br>\n");
+        return;
+    }
+	
+	for (j = 0; j < delRuleNum; j++)
+	{
+		CFG_remove_by_name(delRule[j]);
+	}
+	
+	writeParameters("/tmp/.apcfg","w+",0);
+	writeParameters(NVRAM,"w+", NVRAM_OFFSET);
+	// restart iptables if it is running
+	CFG_get_by_name("PortForwardEnabled",val);
+	if(val && atoi(val))
+	{
+		iptablesPortForwardFlush();
+		iptablesPortForwardRun();
+	}
+
+	return;
+}
+
+/**************************************************************************/	
+/*************************end for port forwarding**************************/
+/**************************************************************************/
+/*
+ * make run system
+ */
+int RoutingRun(char *dest,char *hostnet,char *netmask,char *gateway,char *interface,char *custom_interface,char *comment)
+{
+	
+	char true_interface[20]={0};
+	char cmd[256] = {0};
+	char result[256] = {0};
+
+	FILE *fp;
+	if( !dest || !strlen(dest))
+	return;
+	strcat(cmd, "route add ");
+	
+	// host or net?
+	if(!strcmp(hostnet, "net"))
+		strcat(cmd, "-net ");
+	else
+		strcat(cmd, "-host ");
+
+	// destination
+	if(!strlen(dest))
+	{
+		return 0;
+	}
+	strcat(cmd, dest);
+	strcat(cmd, " ");
+
+	// netmask
+	if(strlen(netmask) )
+		sprintf(cmd, "%s netmask %s", cmd, netmask);
+	else
+		netmask = "255.255.255.255";
+
+	//gateway
+	if(strlen(gateway))
+		sprintf(cmd, "%s gw %s", cmd, gateway);
+	else
+		gateway = "0.0.0.0";
+
+	//interface
+	/*if(strlen(interface)){
+		if (!strcmp(interface, "WAN")){
+			strncpy(true_interface, getWanIfName(), sizeof(true_interface)-1);
+		}else if (!strcmp(interface, "Custom")){
+			if(!strlen(custom_interface))
+				return;
+			strcpy(true_interface, custom_interface);
+		}else	// LAN & unknown
+			strncpy(true_interface, getLanIfName(), sizeof(true_interface)-1);
+	}else{
+		interface = "LAN";
+		strncpy(true_interface,getLanIfName(), sizeof(true_interface)-1);
+	}
+	sprintf(cmd, "%s dev %s ", cmd, true_interface);*/
+	strcat(cmd, " ");
+	strcat(cmd, "2>&1 ");
+	fp = popen(cmd, "r");
+	fgets(result, sizeof(result), fp);
+	pclose(fp);
+	if(!strlen(result)){
+	// success, write down to the flash
+   	 system(cmd);
+		return 1;
+	}else{
+		return 0;
+	}
+}
+/*
+ * Add paramper 
+ */
+int AddRouting(void)
+{
+	
+	char dest[20]={0};
+	char hostnet[5]={0};
+	char netmask[20]={0};
+	char gateway[20]={0};
+	char interface[10]={0};
+	char true_interface[20]={0};
+	char custom_interface[20]={0};
+	char comment[20]={0};
+	char tmp[30]={0};
+
+	int i=0;
+	int index=-1;//第一个空位置 
+	char cmd[256] = {0};
+	char valBuff[1024] = {0};
+	FILE *fp;
+	CFG_get_by_name("dest", dest);
+	CFG_get_by_name("hostnet", hostnet);
+	CFG_get_by_name("netmask", netmask);
+	CFG_get_by_name("gateway", gateway);
+	CFG_get_by_name("interface", interface);
+	CFG_get_by_name("custom_interface", custom_interface);
+	CFG_get_by_name("comment", comment);
+	if( !dest || !strlen(dest))
+	return;
+	// netmask
+	if(!strlen(netmask))
+	strcpy(netmask,"255.255.255.255");
+	//gateway
+	if(!strlen(gateway))
+	strcpy(gateway,"0.0.0.0");
+	//interface
+	if(strlen(interface)){
+		if (!strcmp(interface, "WAN")){
+			strncpy(true_interface,getWanIfName(),sizeof(true_interface)-1);
+		}else if (!strcmp(interface, "Custom")){
+			if(!strlen(custom_interface))
+				return;
+			strcpy(true_interface,custom_interface);	
+		}else	// LAN & unknown
+		strncpy(true_interface,getLanIfName(),sizeof(true_interface)-1);
+	}else{
+		strcpy(interface,"LAN");
+		strncpy(true_interface,getLanIfName(),sizeof(true_interface)-1);
+	}
+	for(i=0;i<MaxRulesCount;i++)
+	{
+		snprintf(cmd, sizeof(cmd), "RoutingRules%d", i);
+		CFG_get_by_name(cmd, valBuff);
+		if(valBuff && strlen(valBuff) )
+		{
+			// get dest
+			if( getNthValueSafe(0, valBuff, ',', tmp, sizeof(tmp)) == -1 )
+			{ 
+				continue;
+			}
+			if(strcmp(dest,tmp))
+			{
+				continue;
+			}
+			// get netmask
+			if( getNthValueSafe(1, valBuff, ',', tmp, sizeof(tmp)) == -1 )
+			{ 
+				continue;
+			}
+			if(strcmp(netmask,tmp))
+			{
+				continue;
+			}
+			// get gateway
+			if( getNthValueSafe(2, valBuff, ',', tmp, sizeof(tmp)) == -1 )
+			{ 
+				continue;
+			}
+			if(strcmp(gateway,tmp))
+			{
+				continue;
+			}
+			// get interface
+			if( getNthValueSafe(3, valBuff, ',', tmp, sizeof(tmp)) == -1 )
+			{ 
+				continue;
+			}
+			if(strcmp(interface,tmp))
+			{
+				continue;
+			}
+			// get true_interface
+			if( getNthValueSafe(4, valBuff, ',', tmp, sizeof(tmp)) == -1 )
+			{ 
+				continue;
+			}
+			if(strcmp(true_interface,tmp))
+			{
+				continue;
+			}
+			// get custom_interface
+			if( getNthValueSafe(5, valBuff, ',', tmp, sizeof(tmp)) == -1 )
+			{ 
+				continue;
+			}
+			if(strcmp(custom_interface,tmp))
+			{
+				continue;
+			}
+			// get hostnet
+			if( getNthValueSafe(6, valBuff, ',', tmp, sizeof(tmp)) == -1 )
+			{ 
+				continue;
+			}
+			if(strcmp(hostnet,tmp))
+			{
+				continue;
+			}
+
+			printf("Already have this configuration!\n");
+			return;
+		}
+		else if(index==-1)
+		{
+			index=i;
+		}	
+	}
+	//不存在
+	if(index!=-1)
+	{
+		char tmp[1024]={0};
+		snprintf(cmd, sizeof(cmd), "RoutingRules%d", index);
+		sprintf(tmp, "%s,%s,%s,%s,%s,%s,%s,%s",  dest, netmask, gateway, interface, true_interface, custom_interface, hostnet,comment);
+		CFG_set_by_name(cmd, tmp);
+		if(RoutingRun(dest,hostnet,netmask,gateway,interface,custom_interface,comment))
+		{
+			writeParameters("/tmp/.apcfg","w+",0);	
+			return 1;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	else if(index>32 || index==-1)
+	{
+		printf("Max config number 32!\n");
+		return 0;
+	}
+}
+ int removeRoutingRule(char *dest, char *netmask, char *hostnet)
+{
+	char cmd[1024];
+	strcpy(cmd, "route del ");
+	
+	// host or net?
+	if(!strcmp(hostnet,"net"))
+		strcat(cmd, " -net ");
+	else
+		strcat(cmd, " -host ");
+	// destination
+	strcat(cmd, dest);
+	strcat(cmd, " ");
+	// netmask
+	if(!strcmp(hostnet,"net"))
+	{
+		sprintf(cmd, "%s netmask %s", cmd, netmask);
+	}
+	//interface
+	//sprintf(cmd, "%s dev %s ", cmd, ifname);
+	system(cmd);
+	return 1;
+}
+int DelRouting(void)
+{
+	int  i            = 0;
+	char cmd[128]     = {0};
+	char rule[70]     = {0};
+	char dest[20]={0};
+	char netmask[20]={0};
+	char  hostnet[20]={0};
+
+	for(i = 0;i < MaxRulesCount; i++)
+	{
+		memset(cmd, 0, sizeof(cmd));
+		memset(rule, 0, sizeof(rule));
+		sprintf(cmd, "delRouting%d", i);
+		CFG_get_by_name(cmd,rule);
+		if(!rule || !strlen(rule))
+		{	
+			continue;
+	   	}
+		else
+		{
+			CFG_remove_by_name(cmd);
+			memset(cmd, 0, sizeof(cmd));
+			memset(rule, 0, sizeof(rule));
+
+			sprintf(cmd, "RoutingRules%d", i);
+			CFG_get_by_name(cmd,rule);
+			if(!rule || !strlen(rule))
+			{
+				continue;
+			}
+			else
+			{
+				if( getNthValueSafe(0, rule, ',', dest, sizeof(dest)) == -1 )
+				{ 
+					continue;
+				}
+			
+				// get netmask
+				if( getNthValueSafe(1, rule, ',', netmask, sizeof(netmask)) == -1 )
+				{ 
+					continue;
+				}
+				//hostnet
+				if( getNthValueSafe(6, rule, ',', hostnet, sizeof(hostnet)) == -1 )
+				{ 
+					continue;
+				}
+				removeRoutingRule(dest, netmask, hostnet);		
+				CFG_remove_by_name(cmd);
+			}	
+		}
+    	}
+	writeParameters("/tmp/.apcfg","w+",0);	
+	return 1;
+}
+int ShowRouting(void)
+{
+	int  i   = 0;
+	int  index = 0;
+	char dest[20]={0};
+	char hostnet[5]={0};
+	char netmask[20]={0};
+	char gateway[20]={0};
+	char interface[10]={0};
+	char true_interface[20]={0};
+	char custom_interface[20]={0};
+	char comment[20]={0};
+	char name[30]={0};
+	char valBuff[70]     = {0};
+	for(i = 0;  i < MaxRulesCount; i++)
+	{
+		snprintf(name, sizeof(name),"RoutingRules%d", i);
+		CFG_get_by_name(name,valBuff);
+		if(!valBuff || !strlen(valBuff))
+		{
+			continue;
+	    	}
+		else
+		{
+			//打印
+			// get dest
+			if( getNthValueSafe(0, valBuff, ',', dest, sizeof(dest)) == -1 )
+			{ 
+				continue;
+			}
+			
+			// get netmask
+			if( getNthValueSafe(1, valBuff, ',', netmask, sizeof(netmask)) == -1 )
+			{ 
+				continue;
+			}
+			
+			// get gateway
+			if( getNthValueSafe(2, valBuff, ',', gateway, sizeof(gateway)) == -1 )
+			{ 
+				continue;
+			}
+			
+			// get interface
+			if( getNthValueSafe(3, valBuff, ',', interface, sizeof(interface)) == -1 )
+			{ 
+				continue;
+			}
+			
+			// get true_interface
+			if( getNthValueSafe(4, valBuff, ',', true_interface, sizeof(true_interface)) == -1 )
+			{ 
+				continue;
+			}
+			
+			// get custom_interface
+			if( getNthValueSafe(5, valBuff, ',', custom_interface, sizeof(custom_interface)) == -1 )
+			{ 
+				continue;
+			}
+			//comment
+			if( getNthValueSafe(7, valBuff, ',', comment, sizeof(comment)) == -1 )
+			{ 
+				continue;
+			}
+			//comment
+			if( getNthValueSafe(6, valBuff, ',', hostnet, sizeof(hostnet)) == -1 )
+			{ 
+				continue;
+			}
+			printf("<tr>");
+			printf("<td> %d&nbsp; <input type=\"checkbox\" name=\"delRouting%d\"> </td>", index++,i);
+			printf("<td align=\"center\">%s</td>", dest);
+			printf("<td align=\"center\">%s</td>", netmask);
+			printf("<td align=\"center\">%s</td>", gateway);
+			printf("<td align=\"center\">U</td>");
+			printf("<td align=\"center\">0</td>");
+			printf("<td align=\"center\">0</td>");
+			printf("<td align=\"center\">0</td>");
+			printf("<td align=\"center\">%s(%s)</td>",interface,true_interface);
+			printf("<td align=\"center\">%s</td>", comment);
+			printf("</tr>");
+		 }
+	}
+	printf("</tbody></table>");
+	return 0;	
+}
+/**************************************************************************/	
+/***********************end for Static Routing Settings********************/
+/************************add pppoe client *********************************/
+int getLineNum(FILE *fp)
+{
+	int  line = 0;
+	char c, cb ='\0';
+	
+	while((c = getc(fp)) != EOF)
+	{
+		if(c == '\n')
+		{
+			line++;
+		}
+		cb = c;
+	}
+	if(cb != '\n')
+	{
+		line++;
+	}
+	
+	return line;
+}
+
+int AddPPPoEClient()
+{
+	char user[70] = {0};
+	char auth[70] = {0};
+	char cmd[200] = {0};
+	char num[70]  = {0};
+	char psw[70]  = {0};
+	FILE *fp      = NULL;
+	char *p       = NULL;
+	int  n        = 0;  //record number of users(+2)
+	int  len      = 0;
+	
+	CFG_get_by_name("ClientMaxNum", num);
+	CFG_get_by_name("ClientUserName", user);
+	if(!user || !strlen(user))
+	{
+		printf("get pppoe client ClientUserName failed!\n");
+		return 1;		
+	}
+	
+	len = strlen(user);
+	CFG_get_by_name("PswAuthen", auth);
+	if (!auth || !strlen(auth))
+	{
+		printf("get PswAuthen failed!\n");
+		return 1;
+	}
+	else if(auth == "PAP")
+	{
+		//remove extra blank lines	
+		system("sed -i \'/^s*$/d\' /etc/ppp/pap-secrets");	
+		fp = fopen("/etc/ppp/pap-secrets", "r");
+		if(fp == NULL)
+		{
+			printf("Open pap-secrets failed!\n");
+			return 1;
+		}
+		
+		//get file line numbers
+		n = getLineNum(fp); 
+		if(n >= atoi(num)+2)
+		{
+			printf("Exceeds the max allowed users!\n");
+			return 1;
+		}
+		
+		//relocate the file pointer
+		fseek(fp, 0L, SEEK_SET);   
+		while(!feof(fp))
+		{
+			if(fgets(cmd,sizeof(cmd),fp))
+			{
+				p = strstr(cmd, user);
+				if((NULL != p) && (*(p-1) == ' ') && (*(p+len) == ' '))
+				{
+					fclose(fp);
+					printf("Already has this user!\n");
+					return 1;
+				}
+			}
+		}
+		
+        // if no this user, add user
+		CFG_get_by_name("ClientPsw",psw);
+		sprintf(cmd, "echo \"  %s   *   %s   *\" >> /etc/ppp/pap-secrets", user, psw);
+		system(cmd);
+	}
+	else
+	{
+		//remove extra blank lines
+		system("sed -i \'/^s*$/d\' /etc/ppp/chap-secrets");
+		
+		fp = fopen("/etc/ppp/chap-secrets", "r");
+		if(fp == NULL)
+		{
+			printf("Open chap-secrets failed!\n");
+			return 1;		
+		}
+		
+		n = getLineNum(fp);
+		if(n >= atoi(num) + 2)
+		{
+			printf("Exceeds the max allowed users!\n");
+			return 1;
+		}
+		
+		//relocate the file pointer
+		fseek(fp, 0L, SEEK_SET);
+		while(!feof(fp))
+		{
+			if( NULL != fgets(cmd,sizeof(cmd),fp))
+			{
+				p = strstr(cmd, user);
+				if((NULL != p) && (*(p-1) == ' ') && (*(p+len) == ' '))
+				{
+					fclose(fp);
+					printf("Already has this user!\n");
+					return 1;
+				}
+			}
+		}
+		
+		// if no this user, add user
+		CFG_get_by_name("ClientPsw",psw);
+		sprintf(cmd,"echo \"  %s   *   %s   *\" >> /etc/ppp/chap-secrets", user, psw);
+		system(cmd);
+	}
+
+	fclose(fp);
+	return 0;
+}
+
+int ModifyPPPoEClient()
+{
+	char user[70] = {0};
+	char auth[70] = {0};
+	char cmd[200] = {0};
+	char psw[70]  = {0};
+	char *p       = NULL;
+	FILE *fp      = NULL;
+	int  len      = 0;
+		
+	CFG_get_by_name("ClientUserName", user);
+	if(!user || !strlen(user))
+	{
+		printf("get pppoe client ClientUserName failed!\n");
+		return 1;		
+	}
+	
+	len = strlen(user);
+	CFG_get_by_name("PswAuthen", auth);
+	if (!auth || !strlen(auth))
+	{
+		printf("get PswAuthen failed!\n");
+		return 1;
+	}
+	else if(auth == "PAP")
+	{
+		fp = fopen("/etc/ppp/pap-secrets", "r");
+		if(fp == NULL)
+		{
+			printf("Open pap-secrets failed!\n");
+			return 1;
+		}
+		while(!feof(fp))
+		{
+			if(fgets(cmd,sizeof(cmd),fp))
+			{
+				p = strstr(cmd, user);
+				if((NULL != p) && (*(p-1) == ' ') && (*(p+len) == ' '))
+				{
+					CFG_get_by_name("ClientPsw",psw);
+					sprintf(cmd, "sed -i \'s/%s   .*$/%s   *   %s   */\' /etc/ppp/pap-secrets", user, user, psw);
+					system(cmd);
+					fclose(fp);
+					return 0;
+				}
+			}
+		}
+		fclose(fp);
+		printf("Don't has this user!\n");
+		return 1;
+	}
+	else
+	{
+		fp = fopen("/etc/ppp/chap-secrets", "r");
+		if(fp == NULL)
+		{
+			printf("Open chap-secrets failed!\n");
+			return 1;		
+		}
+		while(!feof(fp))
+		{
+			if(fgets(cmd,sizeof(cmd),fp))
+			{
+				p = strstr(cmd, user);
+				if((NULL != p) && (*(p-1) == ' ') && (*(p+len) == ' '))
+				{
+					CFG_get_by_name("ClientPsw",psw);
+					sprintf(cmd, "sed -i \'s/%s   .*$/%s   *   %s   */\' /etc/ppp/chap-secrets", user, user, psw);
+					system(cmd);
+					fclose(fp);
+					return 0;
+				}
+			}
+		}
+		
+		fclose(fp);
+		printf("Don't has this user!\n");
+		return 1;		
+	}
+	
+	return 0;
+}
+/**************************end for pppoe client *****************************/
+
+/************************* Modify web style *****************************/
+
+int ChangeStyle()
+{
+	char val[70]  = {0};
+	
+	CFG_get_by_name("StyleSelection", val);
+	if(!val || !strlen(val))
+	{
+		printf("get web style failed!\n");
+		return 1;		
+	}
+	if(strcmp(val,"default") == 0 || strcmp(val,"默认风格") == 0)
+	{
+		system("cp /usr/www/style/default/styleSheet.css  /usr/www/");
+	}
+	else if (strcmp(val,"style2") == 0 || strcmp(val,"风格2") == 0)
+	{
+		system("cp /usr/www/style/style2/styleSheet.css  /usr/www/");
+	}
+    else if (strcmp(val,"style3") == 0 || strcmp(val,"风格3") == 0)
+	{
+		system("cp /usr/www/style/style3/styleSheet.css  /usr/www/");
+	}
+	else
+	{
+		system("cp /usr/www/style/default/styleSheet.css  /usr/www/");
+		printf("Get web style error!");
+		return 1;
+	}
+	printf("<script>");
+	printf("parent.selector.location.reload();");
+	printf("parent.title.location.reload();");
+	printf("</script>");
+	return 0;
+}
+
+/******************************* Add DMZ ***********************************/
+void iptablesDMZFlush()
+{
+	char cmd[120] = {0};
+    snprintf(cmd, 120, "iptables -t nat -F %s ",DMZ_CHAIN);
+    system(cmd);
+}
+
+void makeDMZRule(char *buf, int len, char *wan_name, char *ip_address)
+{
+	/* iptables -t nat -A PREROUTING -i br0 -j DNAT --to 5.6.7.8 */
+	snprintf(buf, len, "iptables -t nat -A %s -j DNAT -i %s -p udp --dport ! %d --to %s", DMZ_CHAIN, wan_name, DMZ_PORT, ip_address);
+	system(buf);
+	snprintf(buf, len, "iptables -t nat -A %s -j DNAT -i %s -p tcp --dport ! %d --to %s", DMZ_CHAIN, wan_name, DMZ_PORT, ip_address);
+	system(buf);
+}
+
+void iptablesDMZRun()
+{
+    char pfe[70]   = {0};
+    char ip[32]    = {0};
+    char cmd[1024] = {0};
+    
+	CFG_get_by_name("DMZEnabled", pfe);
+	if(!pfe || !atoi(pfe))
+	{
+        return;
+	}    
+    CFG_get_by_name("DMZIPAddress", ip);
+	if(!ip || !atoi(ip))
+	{
+        return;
+	}    
+    
+    makeDMZRule(cmd, sizeof(cmd), getWanIfName(), ip);
+	return;
+}
+
+void iptablesDMZ()
+{
+	iptablesDMZFlush();
+	iptablesDMZRun();
+    writeParameters(NVRAM,"w+", NVRAM_OFFSET);
+    writeParameters("/tmp/.apcfg","w+",0);
+}
+
+/******************************* End DMZ ***********************************/
+
+
 /*****************************************************************************
 **
 ** /brief Main
@@ -1718,6 +3129,7 @@ int main(int argc,char **argv)
     char            *nextField;
     char            *update;
     FILE            *f;
+	char            cmd[70];
 
     /*
     ** Code Begins.
@@ -2113,33 +3525,55 @@ int main(int argc,char **argv)
 
 	sync();
 
+	/*Add for NTP processing by wcy: 2011-03-08*/
+    if(strcmp(CFG_get_by_name("NTPSetTime",valBuff),"Sync with host") == 0 || strcmp(CFG_get_by_name("NTPSetTime",valBuff),"主机同步") == 0)
+    {
+   		CFG_get_by_name("NTPTime",valBuff);
+   		if(valBuff != "")
+   		{
+   			snprintf(cmd, sizeof(cmd), "date -s %s", valBuff);
+   			Execute_cmd(cmd, rspBuff);
+   		}
+   		else
+   		{
+   			printf("Error: set current time failed!\n");
+   		}
+    }
+    
+    if(strcmp(CFG_get_by_name("NTPApply",valBuff),"Apply") == 0 || strcmp(CFG_get_by_name("NTPApply",valBuff),"确定") == 0)
+    {
+        writeParameters("/tmp/.apcfg","w+",0);
+        system("/etc/rc.d/ntp.sh"); /*Run ntp.sh script --- ntpclient*/
+    }
+	/*end for NTP processing*/
+
     /*
     ** Now, look for the update and/or commit strings to send to either
     ** the temp file or the flash file
     */
 
-    if(strcmp(CFG_get_by_name("COMMIT",valBuff),"Commit") == 0 )
+    if(strcmp(CFG_get_by_name("COMMIT",valBuff),"Commit") == 0 || strcmp(CFG_get_by_name("COMMIT",valBuff),"提交") == 0)
     {
         writeParameters(NVRAM,"w+", NVRAM_OFFSET);
         writeParameters("/tmp/.apcfg","w+",0);
     }
 
-    if(strcmp(CFG_get_by_name("UPDATE",valBuff),"Update") == 0 )
+    if(strcmp(CFG_get_by_name("UPDATE",valBuff),"Update") == 0 || strcmp(CFG_get_by_name("UPDATE",valBuff),"更新") == 0 )
     {
         writeParameters("/tmp/.apcfg","w+",0);
     }
 
-    if(strcmp(CFG_get_by_name("StopButton",valBuff),"Stop") == 0 )
+    if(strcmp(CFG_get_by_name("StopButton",valBuff),"Stop") == 0 || strcmp(CFG_get_by_name("StopButton",valBuff),"停止") == 0 )
     {
         Execute_cmd("apdown > /dev/null 2>&1", rspBuff);
     }
 
-    if(strcmp(CFG_get_by_name("StartButton",valBuff),"Start") == 0 )
+    if(strcmp(CFG_get_by_name("StartButton",valBuff),"Start") == 0 || strcmp(CFG_get_by_name("StartButton",valBuff),"启动") == 0 )
     {
         Execute_cmd("apup > /dev/null 2>&1", rspBuff);
     }
 
-    if(strcmp(CFG_get_by_name("FactoryResetButton",valBuff),"FactoryReset") == 0 )
+    if(strcmp(CFG_get_by_name("FactoryResetButton",valBuff),"FactoryReset") == 0 || strcmp(CFG_get_by_name("FactoryResetButton",valBuff),"恢复出厂设置") == 0 )
     {
         Execute_cmd("cfg -x", rspBuff);
         sleep(1);
@@ -2163,15 +3597,90 @@ int main(int argc,char **argv)
         sprintf(cmd, "wpatalk -v ath0 configthem");
         Execute_cmd(cmd, rspBuff);
     }
-    if(strcmp(CFG_get_by_name("StartGPIO",valBuff),"Start") == 0 )
+    if(strcmp(CFG_get_by_name("StartGPIO",valBuff),"Start") == 0 || strcmp(CFG_get_by_name("StartGPIO",valBuff),"启动") == 0)
     {
-	Execute_cmd("gpio > /dev/null 2>&1", rspBuff);
+		Execute_cmd("gpio > /dev/null 2>&1", rspBuff);
     }
-    if(strcmp(CFG_get_by_name("StartFan",valBuff),"StartFan") == 0 )
+    if(strcmp(CFG_get_by_name("StartFan",valBuff),"StartFan") == 0 || strcmp(CFG_get_by_name("StartFan",valBuff),"启动") == 0)
     {
-	Execute_cmd("fanup > /dev/null 2>&1", rspBuff);
+		Execute_cmd("fanup > /dev/null 2>&1", rspBuff);
     }
 #endif /* #ifndef ATH_SINGLE_CFG */
+
+
+/*************************add for port forwarding**************************/
+
+	//setup iptables chain PORT_FORWARD_CHAIN
+		
+	if(strcmp(CFG_get_by_name("PortForwardApply",valBuff),"Apply") == 0 || strcmp(CFG_get_by_name("PortForwardApply",valBuff),"确定") == 0 )
+	{
+		portForward();
+	}
+	
+	if(strcmp(CFG_get_by_name("deleteSelPortForward",valBuff),"Delete Selected") == 0 
+	|| strcmp(CFG_get_by_name("deleteSelPortForward",valBuff),"选择删除") == 0)
+	{
+		portForwardDelete();
+	}
+
+	if(strcmp(argv[0],"PortForward") == 0)
+	{
+		showPortForwardRulesASP();
+	}
+
+/*************************end for port forwarding**************************/
+
+	if((strcmp(CFG_get_by_name("PPPoECliAdd",valBuff),"Add") == 0) || 
+	   (strcmp(CFG_get_by_name("PPPoECliAdd",valBuff),"增加") == 0 ))
+	{
+		AddPPPoEClient();	
+	}
+	
+	if((strcmp(CFG_get_by_name("PPPoECliModify",valBuff),"Modify") == 0) || 
+	   (strcmp(CFG_get_by_name("PPPoECliModify",valBuff),"修改") == 0 ))
+	{
+		ModifyPPPoEClient();
+	}
+	
+/*********************** Modify the web style ******************************/	
+	if((strcmp(CFG_get_by_name("styleApply",valBuff),"Apply") == 0) || 
+	   (strcmp(CFG_get_by_name("styleApply",valBuff),"确定") == 0 ))
+	{
+		ChangeStyle();
+	}
+
+/***************************** add for DMZ *********************************/
+	if(strcmp(CFG_get_by_name("dmzApply",valBuff),"Apply") == 0 || 
+	   strcmp(CFG_get_by_name("dmzApply",valBuff),"确定") == 0 )
+	{
+		iptablesDMZ();
+	}
+/*************************add for Static Routing Settings**************************/
+	CFG_get_by_name("AddroutingConfigApply",valBuff);
+	if(strcmp(valBuff,"Apply") == 0 || 
+	   strcmp(valBuff,"确定") == 0 )
+	{
+		if(AddRouting())
+		{
+			writeParameters(NVRAM,"w+", NVRAM_OFFSET);
+		}
+	
+	}
+	CFG_get_by_name("deleteRoutingConfig",valBuff);
+	if(strcmp(valBuff,"Delete") == 0 || 
+	   strcmp(valBuff,"删除") == 0 )
+	{
+		if(DelRouting())
+		{
+ 			writeParameters(NVRAM,"w+", NVRAM_OFFSET);
+		}		
+	}
+	if(strcmp(argv[0],"RoutingConfig")==0)
+	{
+		ShowRouting();
+	}
+/*************************end for Static Routing Settings**************************/
+
     exit(0);
 }
 
