@@ -4,6 +4,73 @@
 <script language="JavaScript" type="text/javascript">
 Butterlate.setTextDomain("atheros");
 
+function changeMode()
+{       
+    if(document.network.NETWORK_MODE[0].checked)
+    {
+        document.getElementById("WANPROTO").style.visibility = "hidden";
+        document.getElementById("WANPROTO").style.display = "none";
+        document.getElementById("WANPROTO").style.disabled = true;
+        document.getElementById("proto").style.visibility = "hidden";
+        document.getElementById("proto").style.display = "none";
+        document.getElementById("proto").style.disabled = true;
+        document.getElementById("PPPOESettings").style.visibility="hidden";
+        document.getElementById("PPPOESettings").style.display = "none";
+        document.getElementById("PPPOESettings").style.disabled = true;
+        document.getElementById("wan_pppoe").style.visibility="hidden";
+        document.getElementById("wan_pppoe").style.display = "none";
+        document.getElementById("wan_pppoe").style.disabled = true;
+        document.getElementById("wan_static").style.visibility="hidden";
+        document.getElementById("wan_static").style.display = "none";
+        document.getElementById("wan_static").style.disabled = true;
+    }
+    else if(document.network.NETWORK_MODE[1].checked)
+    {
+        document.getElementById("WANPROTO").style.visibility = "visible";
+        document.getElementById("WANPROTO").style.display = "inline";
+        document.getElementById("WANPROTO").style.disabled = false;
+        document.getElementById("proto").style.visibility = "visible";
+        document.getElementById("proto").style.display = "table-cell";
+        document.getElementById("proto").style.disabled = false;
+        if(document.network.WAN_PROTO[0].checked)
+        {
+            document.getElementById("PPPOESettings").style.visibility="hidden";
+            document.getElementById("PPPOESettings").style.display = "none";
+            document.getElementById("PPPOESettings").style.disabled = true;
+            document.getElementById("wan_pppoe").style.visibility="hidden";
+            document.getElementById("wan_pppoe").style.display = "none";
+            document.getElementById("wan_pppoe").style.disabled = true;
+            document.getElementById("wan_static").style.visibility="visible";
+            document.getElementById("wan_static").style.display = "table-row";
+            document.getElementById("wan_static").style.disabled = false;
+        }
+        else if(document.network.WAN_PROTO[2].checked)
+        {
+            document.getElementById("wan_static").style.visibility="hidden";
+            document.getElementById("wan_static").style.display = "none";
+            document.getElementById("wan_static").style.disabled = true;
+            document.getElementById("PPPOESettings").style.visibility="visible";
+            document.getElementById("PPPOESettings").style.display = "inline";
+            document.getElementById("PPPOESettings").style.disabled = false;
+            document.getElementById("wan_pppoe").style.visibility="visible";
+            document.getElementById("wan_pppoe").style.display = "table";
+            document.getElementById("wan_pppoe").style.disabled = false;
+       }
+       else 
+       {
+            document.getElementById("wan_static").style.visibility="hidden";
+            document.getElementById("wan_static").style.display = "none";
+            document.getElementById("wan_static").style.disabled = true;
+            document.getElementById("PPPOESettings").style.visibility="hidden";
+            document.getElementById("PPPOESettings").style.display = "none";
+            document.getElementById("PPPOESettings").style.disabled = true;
+            document.getElementById("wan_pppoe").style.visibility="hidden";
+            document.getElementById("wan_pppoe").style.display = "none";
+            document.getElementById("wan_pppoe").style.disabled = true;
+        }
+    }
+}
+
 function atoi(str, num)
 {
 	var i = 1;
@@ -206,6 +273,7 @@ function Checkform()
 	{
 		return false;
 	}
+
 	if (document.network.WAN_PPPOE_PASS.value != document.network.WAN_PPPOE_REPASS.value)
 	{
 		alert("Password mismatched!");
@@ -347,8 +415,9 @@ function initTranslation()
 
 function initValue()
 {	
-	initTranslation();
-	PPPOEOPModeSwitch();
+    initTranslation();
+    PPPOEOPModeSwitch();
+    changeMode();
 }
 
 </script>
@@ -367,14 +436,14 @@ function initValue()
 <tr><td colspan=2 class="topnavg" id="APConfig">Basic AP Configuration</td></tr>
 <tr><td class="header" id="BridgeMode">Bridge Mode:&nbsp
   <td class="headind">
-    <INPUT type="radio" name="NETWORK_MODE" ~cNETWORK_MODE:Bridge~ value=Bridge id="bridge"> Bridged&nbsp
-    <INPUT type="radio" name="NETWORK_MODE" ~cNETWORK_MODE:Router~ value=Router id="router"> Router&nbsp
-<tr><td class="header" id="WANPROTO">WAN_PROTO:&nbsp
-  <td class="headind">
-    <INPUT type="radio" name="WAN_PROTO" ~cWAN_PROTO:Static~ value=Static id="static"> Static&nbsp
-    <INPUT type="radio" name="WAN_PROTO" ~cWAN_PROTO:DHCP~ value=DHCP id="dhcp"> DHCP&nbsp
-    <INPUT type="radio" name="WAN_PROTO" ~cWAN_PROTO:PPPOE~ value=PPPOE id="pppoe"> PPPOE&nbsp
-    <INPUT type="radio" name="WAN_PROTO" ~cWAN_PROTO:3G~ value=3G id="3G"> 3G&nbsp
+    <INPUT type="radio" name="NETWORK_MODE" ~cNETWORK_MODE:Bridge~ value="Bridge" id="bridge" onClick="changeMode()"> Bridged&nbsp
+    <INPUT type="radio" name="NETWORK_MODE" ~cNETWORK_MODE:Router~ value="Router" id="router" onClick="changeMode()"> Router&nbsp
+<tr><td class="header" id="WANPROTO" >WAN_PROTO:&nbsp
+ <td class="headind" id="proto">
+    <INPUT type="radio" name="WAN_PROTO" ~cWAN_PROTO:Static~ value=Static id="static" onClick="changeMode()"> Static&nbsp
+    <INPUT type="radio" name="WAN_PROTO" ~cWAN_PROTO:DHCP~ value=DHCP id="dhcp" onClick="changeMode()"> DHCP&nbsp
+    <INPUT type="radio" name="WAN_PROTO" ~cWAN_PROTO:PPPOE~ value=PPPOE id="pppoe" onClick="changeMode()"> PPPOE&nbsp
+    <INPUT type="radio" name="WAN_PROTO" ~cWAN_PROTO:3G~ value=3G id="3G" onClick="changeMode()"> 3G&nbsp
 <tr><td class="header" id="StartMode">Startup Mode:
   <td class="headind">
     <INPUT type="radio" name="AP_STARTMODE" ~cAP_STARTMODE:standard~ value=standard id="standard"> Standard&nbsp
@@ -403,8 +472,8 @@ function initValue()
 <td><INPUT type="text" id="LAN_GATEWAY" name="LAN_GATEWAY"
            class="text2" size="20" maxlength="16"
            value="~~LAN_GATEWAY~">
-</table>           
-<table>           
+</table> 
+<table>          
 <tr><td colspan=1 class="header" id="dhcptype">DHCP Type:&nbsp<td class="headind">
 <INPUT type="radio" name="UDHCPD" ~cUDHCPD:server~ value=server id="dhcpserver"> Server&nbsp
 <INPUT type="radio" name="UDHCPD" ~cUDHCPD:disable~ value=disable id="dhcpdisable"> Disable&nbsp
@@ -428,6 +497,8 @@ function initValue()
 <td><INPUT type="text" id="DHCP_LEASE_TIME" name="DHCP_LEASE_TIME"
            class="text2" size="20" maxlength="16"
            value="~~DHCP_LEASE_TIME~">
+</table>
+<table>
 <tr><td colspan=1 class="header" id="ddns">DDNS:&nbsp<td class="headind">
 <INPUT type="radio" name="DDNS" ~cDDNS:enabled~ value=enabled id="ddnsenable"> Enabled&nbsp
 <INPUT type="radio" name="DDNS" ~cDDNS:disabled~ value=disabled id="ddnsdisable"> Disabled&nbsp
@@ -457,7 +528,7 @@ function initValue()
 </SELECT></td></tr>           
 </table>
 <td align=top valign="top">
-<table>
+<table id="wan_static">
 <tr><td colspan=2 class=topnavg id="wanIPSettings">WAN IP settings
 <tr><td class="header" id="wanIP">WAN IP Addr
 <td><INPUT type="text" id="WAN_IPADDR" name="WAN_IPADDR"
@@ -479,7 +550,7 @@ function initValue()
 
 <!-- ----------------- PPPOE Mode ----------------- -->
 <p class="topnavg" id="PPPOESettings">PPPoE Settings</p>
-<table width="360" border="1" cellpadding="2" cellspacing="1"> 
+<table border="1" cellpadding="2" cellspacing="1" id="wan_pppoe"> 
 <tr><td class="header" id="pppoeUser">User Name</td>
 <td><INPUT type="text" id="WAN_PPPOE_USER" name="WAN_PPPOE_USER"
            class="text2" size="32" maxlength="48"
