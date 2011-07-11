@@ -8,9 +8,6 @@ function changeMode()
 {       
     if(document.network.NETWORK_MODE[0].checked)
     {
-        document.getElementById("WANPROTO").style.visibility = "hidden";
-        document.getElementById("WANPROTO").style.display = "none";
-        document.getElementById("WANPROTO").style.disabled = true;
         document.getElementById("proto").style.visibility = "hidden";
         document.getElementById("proto").style.display = "none";
         document.getElementById("proto").style.disabled = true;
@@ -23,11 +20,8 @@ function changeMode()
     }
     else if(document.network.NETWORK_MODE[1].checked)
     {
-        document.getElementById("WANPROTO").style.visibility = "visible";
-        document.getElementById("WANPROTO").style.display = "inline";
-        document.getElementById("WANPROTO").style.disabled = false;
         document.getElementById("proto").style.visibility = "visible";
-        document.getElementById("proto").style.display = "table-cell";
+        document.getElementById("proto").style.display = "table-row";
         document.getElementById("proto").style.disabled = false;
         if(document.network.WAN_PROTO[0].checked)
         {
@@ -423,25 +417,25 @@ function initValue()
 <table>
 <tr><td colspan=2 class="topnavg" id="APConfig">Basic AP Configuration</td></tr>
 <tr><td class="header" id="BridgeMode">Bridge Mode:&nbsp
-  <td class="headind">
-    <INPUT type="radio" name="NETWORK_MODE" ~cNETWORK_MODE:Bridge~ value="Bridge" id="bridge" onClick="changeMode()"> Bridged&nbsp
-    <INPUT type="radio" name="NETWORK_MODE" ~cNETWORK_MODE:Router~ value="Router" id="router" onClick="changeMode()"> Router&nbsp
-<tr><td class="header" id="WANPROTO" >WAN_PROTO:&nbsp
- <td class="headind" id="proto">
-    <INPUT type="radio" name="WAN_PROTO" ~cWAN_PROTO:Static~ value=Static id="static" onClick="changeMode()"> Static&nbsp
-    <INPUT type="radio" name="WAN_PROTO" ~cWAN_PROTO:DHCP~ value=DHCP id="dhcp" onClick="changeMode()"> DHCP&nbsp
-    <INPUT type="radio" name="WAN_PROTO" ~cWAN_PROTO:PPPOE~ value=PPPOE id="pppoe" onClick="changeMode()"> PPPOE&nbsp
-    <INPUT type="radio" name="WAN_PROTO" ~cWAN_PROTO:3G~ value=3G id="3G" onClick="changeMode()"> 3G&nbsp
+  <td class="headind"  onClick="changeMode()">
+    <INPUT type="radio" name="NETWORK_MODE" ~cNETWORK_MODE:Bridge~ value="Bridge"> Bridged&nbsp
+    <INPUT type="radio" name="NETWORK_MODE" ~cNETWORK_MODE:Router~ value="Router"> Router&nbsp
+<tr id="proto" onClick="changeMode()"><td class="header" id="WANPROTO" >WAN_PROTO:&nbsp
+ <td class="headind">
+    <INPUT type="radio" name="WAN_PROTO" ~cWAN_PROTO:Static~ value=Static> Static&nbsp
+    <INPUT type="radio" name="WAN_PROTO" ~cWAN_PROTO:DHCP~ value=DHCP> DHCP&nbsp
+    <INPUT type="radio" name="WAN_PROTO" ~cWAN_PROTO:PPPOE~ value=PPPOE> PPPOE&nbsp
+    <INPUT type="radio" name="WAN_PROTO" ~cWAN_PROTO:3G~ value=3G id="3G"> 3G&nbsp
 <tr><td class="header" id="StartMode">Startup Mode:
   <td class="headind">
-    <INPUT type="radio" name="AP_STARTMODE" ~cAP_STARTMODE:standard~ value=standard id="standard"> Standard&nbsp
-    <INPUT type="radio" name="AP_STARTMODE" ~cAP_STARTMODE:rootap~ value=rootap id="rootap"> RootAP&nbsp
-    <INPUT type="radio" name="AP_STARTMODE" ~cAP_STARTMODE:repeater~ value=repeater id="repeater"> Repeater&nbsp
-    <INPUT type="radio" name="AP_STARTMODE" ~cAP_STARTMODE:client~ value=client id="client"> Client&nbsp
+    <INPUT type="radio" name="AP_STARTMODE" ~cAP_STARTMODE:standard~ value=standard> Standard&nbsp
+    <INPUT type="radio" name="AP_STARTMODE" ~cAP_STARTMODE:rootap~ value=rootap> RootAP&nbsp
+    <INPUT type="radio" name="AP_STARTMODE" ~cAP_STARTMODE:repeater~ value=repeater> Repeater&nbsp
+    <INPUT type="radio" name="AP_STARTMODE" ~cAP_STARTMODE:client~ value=client> Client&nbsp
     <INPUT type="radio" name="AP_STARTMODE" ~cAP_STARTMODE:client_auto~ value=client_auto> Client_auto&nbsp
-    <INPUT type="radio" name="AP_STARTMODE" ~cAP_STARTMODE:multi~ value=multi id="multi"> Multi&nbsp
-    <INPUT type="radio" name="AP_STARTMODE" ~cAP_STARTMODE:multivlan~ value=multivlan id="multivlan"> Multi VLAN&nbsp
-    <INPUT type="radio" name="AP_STARTMODE" ~cAP_STARTMODE:dual~ value=dual id="dual"> Dual Concurrent&nbsp
+    <INPUT type="radio" name="AP_STARTMODE" ~cAP_STARTMODE:multi~ value=multi> Multi&nbsp
+    <INPUT type="radio" name="AP_STARTMODE" ~cAP_STARTMODE:multivlan~ value=multivlan> Multi VLAN&nbsp
+    <INPUT type="radio" name="AP_STARTMODE" ~cAP_STARTMODE:dual~ value=dual> Dual Concurrent&nbsp
 </table>
 
 <table>
@@ -517,7 +511,7 @@ function initValue()
 </table>
 <td align=top valign="top">
 <table id="wan_static">
-<tr><td colspan=2 class=topnavg id="wanIPSettings">WAN IP settings
+<tr><th colspan=2 class=topnavg id="wanIPSettings">WAN IP settings
 <tr><td class="header" id="wanIP">WAN IP Addr
 <td><INPUT type="text" id="WAN_IPADDR" name="WAN_IPADDR"
            class="text2" size="20" maxlength="16"
@@ -538,7 +532,7 @@ function initValue()
 
 <!-- ----------------- PPPOE Mode ----------------- -->
 <table border="1" cellpadding="2" cellspacing="1" id="wan_pppoe">
-<tr><td class="topnavg" id="PPPOESettings" colspan=2>PPPoE Settings
+<tr><th class="topnavg" id="PPPOESettings" colspan=2>PPPoE Settings
 <tr><td class="header" id="pppoeUser">User Name</td>
 <td><INPUT type="text" id="WAN_PPPOE_USER" name="WAN_PPPOE_USER"
            class="text2" size="32" maxlength="48"

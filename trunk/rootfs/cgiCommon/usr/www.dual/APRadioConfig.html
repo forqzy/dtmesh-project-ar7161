@@ -15,6 +15,10 @@ function initTranslation()
 	document.getElementById("RadioConfig").innerHTML = _("radio config");
 	document.getElementById("RadioConfig_1").innerHTML = _("radio1 config");
 	document.getElementById("RadioConfig_2").innerHTML = _("radio2 config");
+	document.getElementById("radio1_select1").innerHTML = _("radio select1");
+	document.getElementById("radio2_select1").innerHTML = _("radio select1");
+	document.getElementById("radio1_select2").innerHTML = _("radio select2");	
+	document.getElementById("radio2_select2").innerHTML = _("radio select2");
 	document.getElementById("radio1_channel").innerHTML = _("radio channel");
 	document.getElementById("radio1_mode").innerHTML = _("admin mode");
 	document.getElementById("radio2_channel").innerHTML = _("radio channel");
@@ -50,8 +54,8 @@ function initValue()
 <p class="vap" id="RadioConfig">AP Radio Configuration</p>
 <table>
 <tr><td colspan=4 class="topnavg" id="RadioConfig_1">Radio 1 Configuration</td>
-<INPUT TYPE="radio" name="Radio_1_Selection" ~cRadio_1_Selection:0~ value=0>Selection 1 (2.4 GHz)&nbsp&nbsp&nbsp&nbsp
-<INPUT TYPE="radio" name="Radio_1_Selection" ~cRadio_1_Selection:1~ Value=1>Selection 2 (5.0 GHz)
+<tr><td><td class="doctitle" id="radio1_select1"><INPUT TYPE="radio" name="Radio_1_Selection" ~cRadio_1_Selection:0~ value=0>Selection 1 (2.4 GHz)&nbsp&nbsp&nbsp&nbsp
+    <td><td class="doctitle" id="radio1_select2"><INPUT TYPE="radio" name="Radio_1_Selection" ~cRadio_1_Selection:1~ Value=1>Selection 2 (5.0 GHz)
 <tr><td class="header" id="radio1_channel">Channel
 <td><INPUT type="text" id="AP_PRIMARY_CH_FAN" name="AP_PRIMARY_CH_FAN"
            class="text2" size="20" maxlength="16"
@@ -78,8 +82,8 @@ function initValue()
 
 <table>
 <tr><td colspan=4 class="topnavg" id="RadioConfig_2">Radio 2 Configuration</td>
-<INPUT TYPE="radio" name="Radio_2_Selection" ~cRadio_2_Selection:0~ value=0>Selection 1 (2.4 GHz)&nbsp&nbsp&nbsp&nbsp
-<INPUT TYPE="radio" name="Radio_2_Selection" ~cRadio_2_Selection:1~ value=1>Selection 2 (5.0 GHz)
+<tr><td><td class="doctitle" id="radio2_select1"><INPUT TYPE="radio" name="Radio_2_Selection" ~cRadio_2_Selection:0~ value=0>Selection 1 (2.4 GHz)&nbsp&nbsp&nbsp&nbsp
+    <td><td class="doctitle" id="radio2_select2"><INPUT TYPE="radio" name="Radio_2_Selection" ~cRadio_2_Selection:1~ value=1>Selection 2 (5.0 GHz)
 <tr><td class="header" id="radio2_channel">Channel
 <td><INPUT type="text" id="AP_PRIMARY_CH_FAN_2" name="AP_PRIMARY_CH_FAN_2"
            class="text2" size="20" maxlength="16"
