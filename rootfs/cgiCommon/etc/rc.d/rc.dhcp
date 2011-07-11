@@ -49,20 +49,20 @@ fi
 touch /tmp/inadyn.log
 
 if [ "$DDNS" = "enabled" ]; then
-	if [ "$User_Name" != "" ]; then
-		sed -i 's/username.*$/username '$User_Name'/' /etc/inadyn.conf
+	if [ "$DDNS_USER_NAME" != "" ]; then
+		sed -i 's/username.*$/username '$DDNS_USER_NAME'/' /etc/inadyn.conf
 	fi
 
-	if [ "$Password" != "" ]; then
-		sed -i 's/password.*$/password '$Password'/' /etc/inadyn.conf
+	if [ "$DDNS_Password" != "" ]; then
+		sed -i 's/password.*$/password '$DDNS_Password'/' /etc/inadyn.conf
 	fi
 
-	if [ "$Host_Name" != "" ]; then
-		sed -i 's/alias.*$/alias '$Host_Name'/'  /etc/inadyn.conf
+	if [ "$DDNS_Host_Name" != "" ]; then
+		sed -i 's/alias.*$/alias '$DDNS_Host_Name'/'  /etc/inadyn.conf
 	fi
 
-	if [ "$Server_Address" != "" ]; then
-		sed -i 's/dyndns_system.*$/dyndns_system '$Server_Address'/' /etc/inadyn.conf
+	if [ "$DDNS_Server_Address" != "" ]; then
+		sed -i 's/dyndns_system.*$/dyndns_system '$DDNS_Server_Address'/' /etc/inadyn.conf
 	fi
 
 	inadyn &

@@ -154,7 +154,7 @@ a:active{   text-decoration: none;
 input[type="text"],input[type="password"]
 {
             border: 1px solid #696969;
-            margin: 10px 0px 2px 26px;
+            margin: 5px 0px 5px 0px;
   background-color: azure;
 }
 
