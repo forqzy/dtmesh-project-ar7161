@@ -14,9 +14,6 @@ function changeMode()
         document.getElementById("proto").style.visibility = "hidden";
         document.getElementById("proto").style.display = "none";
         document.getElementById("proto").style.disabled = true;
-        document.getElementById("PPPOESettings").style.visibility="hidden";
-        document.getElementById("PPPOESettings").style.display = "none";
-        document.getElementById("PPPOESettings").style.disabled = true;
         document.getElementById("wan_pppoe").style.visibility="hidden";
         document.getElementById("wan_pppoe").style.display = "none";
         document.getElementById("wan_pppoe").style.disabled = true;
@@ -34,14 +31,11 @@ function changeMode()
         document.getElementById("proto").style.disabled = false;
         if(document.network.WAN_PROTO[0].checked)
         {
-            document.getElementById("PPPOESettings").style.visibility="hidden";
-            document.getElementById("PPPOESettings").style.display = "none";
-            document.getElementById("PPPOESettings").style.disabled = true;
             document.getElementById("wan_pppoe").style.visibility="hidden";
             document.getElementById("wan_pppoe").style.display = "none";
             document.getElementById("wan_pppoe").style.disabled = true;
             document.getElementById("wan_static").style.visibility="visible";
-            document.getElementById("wan_static").style.display = "table-row";
+            document.getElementById("wan_static").style.display = "table";
             document.getElementById("wan_static").style.disabled = false;
         }
         else if(document.network.WAN_PROTO[2].checked)
@@ -49,9 +43,6 @@ function changeMode()
             document.getElementById("wan_static").style.visibility="hidden";
             document.getElementById("wan_static").style.display = "none";
             document.getElementById("wan_static").style.disabled = true;
-            document.getElementById("PPPOESettings").style.visibility="visible";
-            document.getElementById("PPPOESettings").style.display = "inline";
-            document.getElementById("PPPOESettings").style.disabled = false;
             document.getElementById("wan_pppoe").style.visibility="visible";
             document.getElementById("wan_pppoe").style.display = "table";
             document.getElementById("wan_pppoe").style.disabled = false;
@@ -61,9 +52,6 @@ function changeMode()
             document.getElementById("wan_static").style.visibility="hidden";
             document.getElementById("wan_static").style.display = "none";
             document.getElementById("wan_static").style.disabled = true;
-            document.getElementById("PPPOESettings").style.visibility="hidden";
-            document.getElementById("PPPOESettings").style.display = "none";
-            document.getElementById("PPPOESettings").style.disabled = true;
             document.getElementById("wan_pppoe").style.visibility="hidden";
             document.getElementById("wan_pppoe").style.display = "none";
             document.getElementById("wan_pppoe").style.disabled = true;
@@ -504,20 +492,20 @@ function initValue()
 <INPUT type="radio" name="DDNS" ~cDDNS:disabled~ value=disabled id="ddnsdisable"> Disabled&nbsp
 </td></tr>
 <tr><td class="headind" id="ddnsuser">User Name
-<td><INPUT type="text" id="User_Name" name="User_Name"
+<td><INPUT type="text" id="DDNS_USER_NAME" name="DDNS_USER_NAME"
            class="text2" size="20" maxlength="32"
-           value="~~User_Name~">
+           value="~~DDNS_USER_NAME~">
 <tr><td class="headind" id="ddnspwd">Password
-<td><INPUT type="password" id="Password" name="Password"
+<td><INPUT type="password" id="DDNS_Password" name="DDNS_Password"
            class="text2" size="20" maxlength="32"
-           value="~~Password~">
+           value="~~DDNS_Password~">
 <tr><td class="headind" id="ddnshostname">Host Name
-<td><INPUT type="text" id="Host_Name" name="Host_Name"
+<td><INPUT type="text" id="DDNS_Host_Name" name="DDNS_Host_Name"
            class="text2" size="20" maxlength="50"
-           value="~~Host_Name~">
+           value="~~DDNS_Host_Name~">
 <tr><td class="headind" id="ddnsserver">Server Address
 </td>
-<td><SELECT class="headind" NAME="Server_Address">
+<td><SELECT class="headind" NAME="DDNS_Server_Address">
 	<OPTION ~sServer_Address:dyndns@dyndns.org~ value=dyndns@dyndns.org>dyndns@dyndns.org
     <OPTION ~sServer_Address:statdns@dyndns.org~ value=stat@dyndns.org>statdns@dyndns.org
     <OPTION ~sServer_Address:customdns@dyndns.org~ value=customdns@dyndns.org>customdns@dyndns.org
@@ -549,8 +537,8 @@ function initValue()
 </table>
 
 <!-- ----------------- PPPOE Mode ----------------- -->
-<p class="topnavg" id="PPPOESettings">PPPoE Settings</p>
-<table border="1" cellpadding="2" cellspacing="1" id="wan_pppoe"> 
+<table border="1" cellpadding="2" cellspacing="1" id="wan_pppoe">
+<tr><td class="topnavg" id="PPPOESettings" colspan=2>PPPoE Settings
 <tr><td class="header" id="pppoeUser">User Name</td>
 <td><INPUT type="text" id="WAN_PPPOE_USER" name="WAN_PPPOE_USER"
            class="text2" size="32" maxlength="48"

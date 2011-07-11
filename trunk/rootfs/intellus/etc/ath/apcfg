@@ -28,7 +28,7 @@ cfg -a IS_11NMODE=${IS_11NMODE:="0"};
 cfg -a NTP_HOSTNAME=${NTP_HOSTNAME:="pool.ntp.org"};
 cfg -a NTPSync=${NTPSync:="2"};
 cfg -a NTP_PORT=${NTP_PORT:="123"};
-cfg -a TIMEZONE=${TIMEZONE:="GMT-8"};
+cfg -a TIMEZONE=${TIMEZONE:="CST_008"};
 
 ##
 ## Set httpd username/password/port
