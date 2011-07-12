@@ -371,7 +371,9 @@ function initTranslation()
 	e = document.getElementById("wanIP");
 	e.innerHTML = _("wan IP address");	
 	e = document.getElementById("wanMask");
-	e.innerHTML = _("wan IP mask");	
+	e.innerHTML = _("wan IP mask");
+	e = document.getElementById("wanGateway");
+	e.innerHTML = _("wan default gateway");	
 	e = document.getElementById("wanFirstDns");
 	e.innerHTML = _("wan primary dns");	
 	e = document.getElementById("wanSecondDns");
@@ -516,18 +518,22 @@ function initValue()
 <td><INPUT type="text" id="WAN_IPADDR" name="WAN_IPADDR"
            class="text2" size="20" maxlength="16"
            value="~~WAN_IPADDR~">
-<tr><td class="header" id="wanMask">Local Netmask 
+<tr><td class="header" id="wanMask">Subnet Mask
 <td><INPUT type="text" id="WAN_NETMASK" name="WAN_NETMASK"
            class="text2" size="20" maxlength="16"
            value="~~WAN_NETMASK~">
+<tr><td class="header" id="wanGateway">Default Gateway
+<td><INPUT type="text" id="WAN_GATEWAY" name="WAN_GATEWAY"
+           class="text2" size="20" maxlength="16"
+           value="~~WAN_GATEWAY~">
 <tr><td class="header" id="wanFirstDns">Primary DNS
-<td><INPUT type="text" id="PRIDNS" name="PRIDNS"
+<td><INPUT type="text" id="WAN_PRIDNS" name="WAN_PRIDNS"
            class="text2" size="20" maxlength="16"
-           value="~~PRIDNS~">
+           value="~~WAN_PRIDNS~">
 <tr><td class="header" id="wanSecondDns">Secondary DNS
-<td><INPUT type="text" id="SECDNS" name="SECDNS"
+<td><INPUT type="text" id="WAN_SECDNS" name="WAN_SECDNS"
            class="text2" size="20" maxlength="16"
-           value="~~SECDNS~">
+           value="~~WAN_SECDNS~">
 </table>
 
 <!-- ----------------- PPPOE Mode ----------------- -->

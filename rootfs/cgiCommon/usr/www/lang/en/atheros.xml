@@ -137,7 +137,8 @@
 <message msgid="ddns server address" msgstr="Server Address"/>
 <message msgid="wan IP setting" msgstr="WAN IP Settings"/>
 <message msgid="wan IP address" msgstr="WAN IP Addr"/>
-<message msgid="wan IP mask" msgstr="Local NetMask"/>
+<message msgid="wan IP mask" msgstr="Subnet Mask"/>
+<message msgid="wan default gateway" msgstr="Default Gateway"/>
 <message msgid="wan primary dns" msgstr="Primary DNS"/>
 <message msgid="wan second dns" msgstr="Secondary DNS"/>
 <message msgid="pppoe settings" msgstr="PPPoE Settings"/>
