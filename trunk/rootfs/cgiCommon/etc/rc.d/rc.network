@@ -41,7 +41,15 @@ if [ "${NETWORK_MODE}" != "Bridge" ]; then
                 ifconfig $ETH0 $WAN_IPADDR netmask $WAN_NETMASK up
             fi
 
-            [ "$WAN_GATEWAY" != "" ] && route add default gw $WAN_GATEWAY
+            [ "$WAN_GATEWAY" != "" ] && route add default gw $WAN_GATEWAY $ETH0
+            
+            if [ "$WAN_PRIDNS" != "" ]; then
+                echo "" > /etc/resolv.conf
+                echo "nameserver $WAN_PRIDNS" > /etc/resolv.conf
+                if [ "$WAN_SECDNS" != "" ]; then
+                    echo "nameserver $WAN_SECDNS" >> /etc/resolv.conf
+                fi
+            fi    
         ;;
         "PPPOE")
 			if [ "$WAN_PPPOE_USER" != "" ]; then

@@ -137,6 +137,7 @@
 <message msgid="wan IP setting" msgstr="静态广域网设置"/>
 <message msgid="wan IP address" msgstr="IP地址"/>
 <message msgid="wan IP mask" msgstr="子网掩码"/>
+<message msgid="wan default gateway" msgstr="默认网关"/>
 <message msgid="wan primary dns" msgstr="首选DNS"/>
 <message msgid="wan second dns" msgstr="其它DNS"/>
 <message msgid="pppoe settings" msgstr="PPPoE设置"/>
