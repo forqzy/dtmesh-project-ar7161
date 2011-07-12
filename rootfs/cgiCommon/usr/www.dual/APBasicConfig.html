@@ -219,6 +219,7 @@ function Checkform()
 	{
 		return false;
 	}
+
 	if(!checkIpAddr(document.network.DHCP_IP_START))
 	{
 		return false;
@@ -237,8 +238,11 @@ function Checkform()
 	}
 	if(isOnlyNum(document.network.DHCP_LEASE_TIME) == 0)
 	{
+	    alert('It should be a [0-9] number.');
+	    document.network.DHCP_LEASE_TIME.focus();
 		return false;
 	}
+
 	if(!checkIpAddr(document.network.WAN_IPADDR))
 	{
 		return false;
@@ -247,11 +251,15 @@ function Checkform()
 	{
 		return false;
 	}
-	if(!checkIpAddr(document.network.PRIDNS))
+	if(!checkIpAddr(document.network.WAN_GATEWAY))
 	{
 		return false;
-	}	
-	if(!checkIpAddr(document.network.SECDNS))
+	}
+	if(!checkIpAddr(document.network.WAN_PRIDNS))
+	{
+		return false;
+	}
+	if(!checkIpAddr(document.network.WAN_SECDNS))
 	{
 		return false;
 	}
