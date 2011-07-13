@@ -20,8 +20,8 @@ touch /etc/options.pppoe;
 touch /tmp/resolv.conf
 [ -e "/etc/resolv.conf" ] || ln -s /tmp/resolv.conf /etc/
 
-[ -n "$PRIDNS" ] && echo "nameserver $PRIDNS" >> /tmp/resolv.conf
-[ -n "$SECDNS" ] && echo "nameserver $SECDNS" >> /tmp/resolv.conf
+[ -n "$WAN_PRIDNS" ] && echo "nameserver $WAN_PRIDNS" >> /tmp/resolv.conf
+[ -n "$WAN_SECDNS" ] && echo "nameserver $WAN_SECDNS" >> /tmp/resolv.conf
 
 ##
 ## Check the WAN mode.  If not bridged, check for DHCP client, else
@@ -43,13 +43,6 @@ if [ "${NETWORK_MODE}" != "Bridge" ]; then
 
             [ "$WAN_GATEWAY" != "" ] && route add default gw $WAN_GATEWAY $ETH0
             
-            if [ "$WAN_PRIDNS" != "" ]; then
-                echo "" > /etc/resolv.conf
-                echo "nameserver $WAN_PRIDNS" > /etc/resolv.conf
-                if [ "$WAN_SECDNS" != "" ]; then
-                    echo "nameserver $WAN_SECDNS" >> /etc/resolv.conf
-                fi
-            fi    
         ;;
         "PPPOE")
 			if [ "$WAN_PPPOE_USER" != "" ]; then
