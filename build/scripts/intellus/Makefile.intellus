@@ -126,6 +126,7 @@ rp-pppoe: pppd
 	mkdir $(INSTALL_ROOT)/etc/ppp $(INSTALL_ROOT)/etc/ppp/configs $(INSTALL_ROOT)/etc/ppp/plugins; \
 	cp ../configs/pppoe.conf $(INSTALL_ROOT)/etc/ppp ; \
 	cp ../configs/pap-secrets $(INSTALL_ROOT)/etc/ppp ; \
+	cp ../configs/pppoe-server-options  $(INSTALL_ROOT)/etc/ppp ; \
 	cp rp-pppoe.so $(INSTALL_ROOT)/etc/ppp/plugins ;\
 	cd $(INSTALL_ROOT)/etc/ppp/ ; \
 	ln -s /tmp/pppoe.conf pppoe.conf ; \

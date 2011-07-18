@@ -189,23 +189,11 @@ function SrvCheckValue()
     {
     	return true;
     }
-    if(document.PPPoESettings.PPPoESrvIP.value == "")
-    {
-    	alert("Please input Server IP!");
-    	document.PPPoESettings.PPPoESrvIP.focus();
-    	return false;
-    }
     if(!checkIpAddr(document.PPPoESettings.PPPoESrvIP))
     {
         document.PPPoESettings.PPPoESrvIP.focus();
         return false;
     }
-    if(document.PPPoESettings.ClientStartIP.value == "")
-    {
-    	alert("Please input client start IP!");
-    	document.PPPoESettings.ClientStartIP.focus();
-    	return false;
-    }    
     if(!checkIpAddr(document.PPPoESettings.ClientStartIP))
     {
         document.PPPoESettings.ClientStartIP.focus();
@@ -218,27 +206,21 @@ function SrvCheckValue()
     	return false;
     }
     if(isOnlyNum(document.PPPoESettings.ClientMaxNum.value) == 0)
-	{
+    {
 		alert("It should be a [0-9] number!");
 		document.PPPoESettings.ClientMaxNum.focus();
 		return false;
-	}
-	if(document.PPPoESettings.PPPoEFirstDNS.value == "")
-	{
-		alert("Please input the DNS!");
-		document.PPPoESettings.PPPoEFirstDNS.focus();
-		return false;
-	}
-    else(!checkIpAddr(document.PPPoESettings.PPPoEFirstDNS))
+    }
+    if(!checkIpAddr(document.PPPoESettings.PPPoEFirstDNS))
     {
         document.PPPoESettings.PPPoEFirstDNS.focus();
         return false;
     }
-    if(document.PPPoESettings.PPPoESecondDNS == "")
-	{
+    if(document.PPPoESettings.PPPoESecondDNS.value == "")
+    {
 		return true;
-	}
-    else(!checkIpAddr(document.PPPoESettings.PPPoESecondDNS))
+    }
+    else if(!checkIpAddr(document.PPPoESettings.PPPoESecondDNS))
     {
         document.PPPoESettings.PPPoESecondDNS.focus();
         return false;
