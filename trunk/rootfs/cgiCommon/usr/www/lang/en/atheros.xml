@@ -107,6 +107,7 @@
 <message msgid="AthSelect channel" msgstr="Available Channel"/>
 <message msgid="AthSelect wlan" msgstr="WLAN"/>
 <message msgid="AthSelect temperature" msgstr="Temperature"/>
+<message msgid="AthSelect dhcpclients" msgstr="DHCP CliInfo"/>
 <message msgid="AthSelect system" msgstr="System"/>
 <message msgid="AthSelect firmware upgrade" msgstr="Firmware Upgrade"/>
 <message msgid="AthSelect administration" msgstr="Administration"/>
@@ -314,5 +315,12 @@
 <message msgid="radio channel width" msgstr="Channel Width"/>       
 <message msgid="radio TXMask" msgstr="TX ChainMask"/>   
 <message msgid="radio RXMask" msgstr="RX ChainMask"/>         
+
+<!--DhcpCliInfo.html-->
+<message msgid="dhcpCli" msgstr="DHCP Clients"/>
+<message msgid="dhcpCli introduction" msgstr="You could view DHCP clients information here"/>
+<message msgid="dhcpCli mac" msgstr="MAC Address"/>
+<message msgid="dhcpCli ip" msgstr="IP Address"/>
+<message msgid="dhcpCli host" msgstr="Host Name"/>
 
 </po>

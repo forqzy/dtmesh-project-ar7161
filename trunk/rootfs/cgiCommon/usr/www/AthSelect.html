@@ -31,6 +31,8 @@ function initTranslation()
 	e.innerHTML = _("AthSelect wlan");
 	e = document.getElementById("temperature");
 	e.innerHTML = _("AthSelect temperature");
+	e = document.getElementById("dhcpclients");
+	e.innerHTML = _("AthSelect dhcpclients");
 	e = document.getElementById("system");
 	e.innerHTML = _("AthSelect system");
 	e = document.getElementById("upgrade");
@@ -77,6 +79,7 @@ function initValue()
 <a class="SideNav" href="cgi-bin/APChannels" target="parameter" id="channel">Available Channel</a><br>
 <a class="SideNav" href="cgi-bin/APStatistics" target="parameter" id="wlan">WLAN</a><br>
 <a class="SideNav" href="cgi-bin/APTemperature" target="parameter" id="temperature">Temperature</a><br>
+<a class="SideNav" href="cgi-bin/DhcpCliInfo" target="parameter" id="dhcpclients">DHCP CliInfo</a><br>
 
 <p class="topnavg" align="center" id="system">System</p>
 <a class="SideNav" href="APUpgradeLoad.html" target="parameter" id="upgrade">Firmware Upgrade</a><br>

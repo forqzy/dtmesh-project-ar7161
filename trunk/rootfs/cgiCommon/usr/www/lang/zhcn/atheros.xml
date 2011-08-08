@@ -106,6 +106,7 @@
 <message msgid="AthSelect channel" msgstr="信道"/>
 <message msgid="AthSelect wlan" msgstr="无线局域网"/>
 <message msgid="AthSelect temperature" msgstr="温度信息"/>
+<message msgid="AthSelect dhcpclients" msgstr="DHCP客户端信息"/>
 <message msgid="AthSelect system" msgstr="系统管理"/>
 <message msgid="AthSelect firmware upgrade" msgstr="固件更新"/>
 <message msgid="AthSelect administration" msgstr="管理者设置"/>
@@ -317,5 +318,13 @@
 <message msgid="radio aggMinSize" msgstr="最小聚合帧"/>   
 <message msgid="radio channel width" msgstr="带宽"/>       
 <message msgid="radio TXMask" msgstr="TX ChainMask"/>   
-<message msgid="radio RXMask" msgstr="RX ChainMask"/>  
+<message msgid="radio RXMask" msgstr="RX ChainMask"/> 
+
+<!--DhcpCliInfo.html-->
+<message msgid="dhcpCli" msgstr="DHCP客户端列表"/>
+<message msgid="dhcpCli introduction" msgstr="在这里你可以查看DHCP客户端信息"/>
+<message msgid="dhcpCli mac" msgstr="MAC地址"/>
+<message msgid="dhcpCli ip" msgstr="IP地址"/>
+<message msgid="dhcpCli host" msgstr="主机名"/>
+ 
 </po>
