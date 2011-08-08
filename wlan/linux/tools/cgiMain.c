@@ -3066,6 +3066,60 @@ void iptablesDMZ()
 
 /******************************* End DMZ ***********************************/
 
+/************************show dhcp client info******************************/
+void showDhcpCliinfo()
+{
+	char time[64]  = {0};
+	char mac[64]   = {0};
+	char ip[64]    = {0};
+	char host[64]  = {0};
+	char buf[1024] = {0};
+	char val[254]  = {0};
+	FILE *fp       = NULL;
+	char *p        = NULL;
+	
+	CFG_get_by_name("UDHCPD", val);
+
+	if(strcmp(val,"server") == 0)
+	{
+		fp = fopen("/tmp/dnsmasq.leases","r");
+		if(fp == NULL)
+		{
+			printf("Can't open dnsmasq.leases!");
+		}
+		fread(buf,sizeof(buf),1,fp);
+	
+		if(strlen(buf) != 0 )
+		{
+			p = buf;
+			sscanf(p,"%s",time);
+
+			p += strlen(time) + 1;
+			sscanf(p,"%s",mac);
+
+			p += strlen(mac) + 1;
+			sscanf(p,"%s",ip);
+
+			p += strlen(ip) + 1;
+			sscanf(p,"%s",host);
+
+			printf("<tr>\n");
+			printf("<td> %s </td>\n", mac);	
+			printf("<td> %s </td>\n",ip);
+			printf("<td> %s </host>\n",host);			
+			printf("</tr>\n");
+		}
+	}
+	printf("</table>\n");
+	printf("</form>\n");
+	printf("</table>\n");	
+	printf("</body></html>\n");
+	
+	return;
+}
+
+
+
 
 /*****************************************************************************
 **
@@ -3680,6 +3734,10 @@ int main(int argc,char **argv)
 		ShowRouting();
 	}
 /*************************end for Static Routing Settings**************************/
+	if(strcmp(argv[0],"DhcpCliInfo") == 0)
+	{
+		showDhcpCliinfo();
+	}
 
     exit(0);
 }
