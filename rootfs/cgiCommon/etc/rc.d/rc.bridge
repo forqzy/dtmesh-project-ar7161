@@ -10,7 +10,7 @@
 . /etc/ath/apcfg
 
 brctl addbr br0
-[ "${AP_STARTMODE}" = "standard" -o "${AP_STARTMODE}" = "rootap" ] && IS_AP=1
+[ "${AP_STARTMODE}" = "standard" -o "${AP_STARTMODE}" = "rootap" -o "${AP_STARTMODE}" = "multi" ] && IS_AP=1
 
 if [ "${NETWORK_MODE}" = "Bridge" -o -z "${IS_AP}" ] ; then   
     ifconfig $ETH0 up

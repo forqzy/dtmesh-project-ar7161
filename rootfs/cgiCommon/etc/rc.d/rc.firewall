@@ -98,6 +98,19 @@ if [ "$NETWORK_MODE" = "Router" ]; then
 	    fi
     fi
 fi
+
+# NAT table (pre/post routing stages)
+if [ "$NETWORK_MODE" = "Router" ]; then
+    if [ "$WAN_PROTO" = "PPPOE" -o "$WAN_PROTO" = "3G" ];then	 
+        iptables -t nat -A POSTROUTING -o ppp0 -j MASQUERADE
+    else
+        iptables -t nat -A POSTROUTING -o $ETH0 -j MASQUERADE
+    fi
+
+    #Enable IP forwarding
+    echo 1 > /proc/sys/net/ipv4/ip_forward
+fi
+
 rm -rf /tmp/tmp_pf
 rm -rf /tmp/tmp_pf1
 rm -rf /tmp/tmp_pf2
