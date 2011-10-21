@@ -1,0 +1,7 @@
+#!/bin/sh                                                                       
+#
+
+if [ "$1" = "usb" ]; then                                                       
+  /etc/rc.d/usb.sh                                                              
+fi 
+
