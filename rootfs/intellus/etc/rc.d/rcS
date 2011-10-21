@@ -55,6 +55,7 @@ fi
 /etc/rc.d/rc.firewall
 /etc/rc.d/rc.misc
 /etc/rc.d/rc.pppoe
+/etc/rc.d/rc.route
 
 cat > /tmp/httpd.conf <<EOF
 /:${HTTPD_USERNAME}:${HTTPD_PASSWORD}
@@ -64,4 +65,21 @@ EOF
 /usr/sbin/telnetd
 /usr/sbin/httpd -h /usr/www -c /tmp/httpd.conf -p ${HTTPD_PORT}
 /bin/factoryreset /dev/freset
+
+#usb hotplug
+if [ ! -e /mnt/usba ]; then
+    mkdir -p /mnt/usba
+fi
+
+if [ ! -e /mnt/usbb ]; then
+    mkdir -p /mnt/usbb
+fi
+
+if [ -e /etc/rc.d/hotplug ]; then
+    mv /etc/rc.d/hotplug /sbin/
+fi
+chmod 755 /proc/partitions
+
+##重启时，若已插入usb设备，保重能加载
+/etc/rc.d/usb.sh
 
