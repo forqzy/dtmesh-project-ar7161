@@ -1,0 +1,29 @@
+#!/bin/sh
+for i in `cat /tmp/.apcfg`
+do
+	tmp=$i
+	cc=${tmp%=*}
+	tmp1="RoutingRules"
+	echo $cc | grep -q $tmp1
+	if [ $? -eq 0 ]; then
+		cc=${tmp#*=}
+		#desip
+		desip=${cc%%,*}
+		#netmask
+		netmask=${cc%,*,*,*,*,*,*}
+		netmask=${netmask##*,}
+		#gateway
+		gateway=${cc%,*,*,*,*,*}
+		gateway=${gateway##*,}
+		#hostnet
+		hostnet=${cc%,*}
+		hostnet=${hostnet##*,}
+		if [ "${hostnet}" = "net" ]; then
+			route add -net $desip netmask  $netmask gw $gateway
+			echo "route add -net $desip netmask  $netmask gw $gateway"
+		else 
+			route add -host $desip netmask  $netmask gw $gateway
+			echo "route add -host $desip netmask  $netmask gw $gateway"
+		fi
+	fi
+done
