@@ -1886,7 +1886,7 @@ void iptablesPortForwardRun()
 		// get ip address
 		if( getNthValueSafe(0, value[i], ',', ip_address, sizeof(ip_address)) == -1 )
 		{
-			printf("prf = %s\n", prf);	
+			printf("ip_address = %s\n", ip_address);	
 			continue;
 		}
 		if(!isIpValid(ip_address))
@@ -2248,7 +2248,7 @@ void portForward()
 			}
 			old_proto = atoi(old_protocol);
 			
-			if((old_ip == ip_address) && (old_prf_int == prf_int) && (old_prt_int == prt_int) && (old_proto == proto))
+			if(!strcmp(ip_address, old_ip) && (old_prf_int == prf_int) && (old_prt_int == prt_int) && (old_proto == proto))
 			{
 				printf("Already have this configuration!\n");
 				break;
