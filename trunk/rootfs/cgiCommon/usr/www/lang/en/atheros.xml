@@ -12,7 +12,7 @@
   <message msgid="admin apply" msgstr="Apply" />
   <message msgid="admin cancel" msgstr="Cancel" />  
   <message msgid="admin reset" msgstr="Reset" /> 
-  <message msgid="admin action" msgstr="Action:These settings only work in Router mode !"/> 
+  <message msgid="admin action" msgstr="Attention:These settings only work in Router mode !"/> 
   
 <!--Administration.html-->
   <message msgid="adm language settings" msgstr="Language Settings" />
@@ -31,7 +31,7 @@
   <message msgid="adm password" msgstr="Password" />    
 
   <message msgid="NTP settings" msgstr="NTP Settings" />
-  <message msgid="NTP action" msgstr="Action:Time Zone Sync works only in Router mode !" />
+  <message msgid="NTP action" msgstr="Attention:Time Zone Sync works only in Router mode !" />
   <message msgid="NTP current time" msgstr="Current Time" />
   <message msgid="NTP time zone" msgstr="Time Zone" />
   <message msgid="man ntp mid island" msgstr="(GMT-11:00) Midway Island, Samoa" />
