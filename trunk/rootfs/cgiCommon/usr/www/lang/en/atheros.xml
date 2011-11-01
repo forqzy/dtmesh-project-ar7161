@@ -116,6 +116,7 @@
 <message msgid="AthSelect firewall" msgstr="Firewall"/>
 <message msgid="AthSelect port forwarding" msgstr="Port Forwarding"/>
 <message msgid="AthSelect routing config" msgstr="Advanced Routing"/>
+<message msgid="AthSelect port filter" msgstr="MAC/IP/Port Filter"/>
 <!--APBasicConfig.html-->
 <message msgid="basic AP config" msgstr="Basic AP Configuration"/>
 <message msgid="basic bridge mode" msgstr="Bridge Mode"/>
@@ -322,5 +323,20 @@
 <message msgid="dhcpCli mac" msgstr="MAC Address"/>
 <message msgid="dhcpCli ip" msgstr="IP Address"/>
 <message msgid="dhcpCli host" msgstr="Host Name"/>
+
+<!--PortFilter.html-->
+<message msgid="mac port title" msgstr="MAC/IP/Port Filtering Settings"/>
+<message msgid="mac port setting" msgstr="Basic Settings"/>
+<message msgid="mac port filter" msgstr="MAC/IP/Port Filtering"/>
+<message msgid="mac port defalut policy" msgstr="Default Policy---The packet that don't match with any rules would be"/>
+<message msgid="mac port accept" msgstr="Accept"/>
+<message msgid="mac port drop" msgstr="Drop"/>
+<message msgid="mac port action" msgstr="Action"/>
+<message msgid="mac port mac" msgstr="Mac address"/>
+<message msgid="mac port dest ip" msgstr="Dest IP Address"/>
+<message msgid="mac port sour ip" msgstr="Source IP Address"/>
+<message msgid="mac port dest port" msgstr="Dest Port Range"/>
+<message msgid="mac port sour port" msgstr="Src Port Range"/>
+<message msgid="mac port show" msgstr="Current IP/Port filtering rules in system "/>
 
 </po>

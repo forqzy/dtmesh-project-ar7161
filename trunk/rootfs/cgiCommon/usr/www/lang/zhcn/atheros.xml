@@ -115,6 +115,7 @@
 <message msgid="AthSelect firewall" msgstr="防火墙"/>
 <message msgid="AthSelect port forwarding" msgstr="端口转发"/>
 <message msgid="AthSelect routing config" msgstr="高级路由配置"/>
+<message msgid="AthSelect port filter" msgstr="MAC/IP/Port过滤"/>
 <!---APBasicConfig.html-->
 <message msgid="basic AP config" msgstr="基本节点配置"/>
 <message msgid="basic bridge mode" msgstr="桥接模式"/>
@@ -326,5 +327,20 @@
 <message msgid="dhcpCli mac" msgstr="MAC地址"/>
 <message msgid="dhcpCli ip" msgstr="IP地址"/>
 <message msgid="dhcpCli host" msgstr="主机名"/>
+ 
+<!--PortFilter.html-->
+<message msgid="mac port title" msgstr="MAC/IP/Port过滤设置"/>
+<message msgid="mac port setting" msgstr="基本设置"/>
+<message msgid="mac port filter" msgstr="MAC/IP/Port过滤"/>
+<message msgid="mac port defalut policy" msgstr="默认原则：未符合规则的数据包将被"/>
+<message msgid="mac port accept" msgstr="接受"/>
+<message msgid="mac port drop" msgstr="抛弃"/>
+<message msgid="mac port action" msgstr="执行动作"/>
+<message msgid="mac port mac" msgstr="Mac地址"/>
+<message msgid="mac port dest ip" msgstr="目的端IP地址"/>
+<message msgid="mac port sour ip" msgstr="来源端IP地址"/>
+<message msgid="mac port dest port" msgstr="目的端端口范围"/>
+<message msgid="mac port sour port" msgstr="来源端端口范围"/>
+<message msgid="mac port show" msgstr="当前系统的MAC/IP/Port过滤规则"/>
  
 </po>

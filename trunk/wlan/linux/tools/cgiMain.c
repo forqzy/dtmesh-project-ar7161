@@ -37,6 +37,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <ctype.h>
 
 #ifdef CONFIG_NVRAM
 #define NVRAM  "/dev/nvram"
@@ -47,14 +48,20 @@
 #endif
 
 #define PORT_FORWARD_CHAIN	"port_forward"
+#define PROTO_NONE		0
 #define PROTO_TCP		1
 #define PROTO_UDP		2
 #define PROTO_TCP_UDP	3
+#define PROTO_ICMP		4
+
 #define MaxRulesCount   32
 
 #define DMZ_CHAIN       "dmz"
 #define DMZ_PORT        80
 
+#define PORT_FILTER_CHAIN    "macipport_filter"
+#define ACTION_DROP    0
+#define ACTION_ACCEPT  1
 /*
 ** local definitions
 *****************
@@ -69,7 +76,7 @@ char    *label;
 
 typedef struct {
 char    Name[32];
-char    Val[70];
+char    Val[80];
 } t_singleParam;
 
 #define MAX_WLAN_ELEMENT    1024
@@ -1157,7 +1164,13 @@ void writeParameters(char *name,char *mode,unsigned long offset)
             if( !strcmp(config.Param[i].Name,"deleteSelPortForward") )
                 continue;
             if( !strcmp(config.Param[i].Name,"NTPApply") )
-                continue;                
+                continue;
+            if( !strcmp(config.Param[i].Name,"PortFilterSetApply") )
+                continue;
+            if( !strcmp(config.Param[i].Name,"deleteSelPortFilter") )
+                continue;
+            if( !strcmp(config.Param[i].Name,"PortFilterApply") )
+                continue;
             if( config.Param[i].Val[0] == 0)
                 continue;
 
@@ -2377,6 +2390,844 @@ void portForwardDelete()
 /**************************************************************************/	
 /*************************end for port forwarding**************************/
 /**************************************************************************/
+
+
+/*************************start for port filtering**************************/
+/*** mac地址形式如下：00:e0:4c:00:4d:c0 ***/
+int isMacValid(char *str)
+{
+	int i;
+	int len = strlen(str);
+	
+	if(len != 17)
+	{
+		return 0;
+	}
+	
+	for(i=0; i<5; i++)
+	{
+		if((!isxdigit( str[i*3])) || (!isxdigit( str[i*3+1])) || (str[i*3+2] != ':'))
+		{
+			return 0;
+		}
+	}
+	
+	return (isxdigit(str[15]) && isxdigit(str[16])) ? 1: 0;
+}
+
+void PortFilterFlush()
+{
+	char cmd[120] = {0};
+	snprintf(cmd, sizeof(cmd), "iptables -t filter -F %s ",PORT_FILTER_CHAIN);
+	system(cmd);
+	return;
+}
+
+void makePortFilterRule(char *mac, char *sip, int sprf_int, int sprt_int, char *dip, int dprf_int, int dprt_int, int proto, int action)
+{
+	int  rc = 0;
+	char buf[200] = {0};
+	char *pos = buf;
+	int  len = sizeof(buf);
+
+	rc = snprintf(pos, len-rc, "iptables -t filter -A %s ", PORT_FILTER_CHAIN);
+	pos = pos + rc;
+
+	// write mac address
+	if(mac && strlen(mac))
+	{
+		rc = snprintf(pos, len-rc, "-m mac --mac-source %s ", mac);
+		pos = pos+rc;
+	}
+
+	// write source ip
+	if(sip && strlen(sip))
+	{
+		rc = snprintf(pos, len-rc, "-s %s ", sip);
+		pos = pos+rc;
+	}
+	
+	// write dest ip
+	if(dip && strlen(dip))
+	{
+		rc = snprintf(pos, len-rc, "-d %s ", dip);
+		pos = pos+rc;
+	}
+	
+	// write protocol type
+	if(proto == PROTO_NONE)
+	{
+		rc = snprintf(pos, len-rc, " ");
+		pos = pos + rc;
+	}
+	else if(proto == PROTO_ICMP)
+	{
+		rc = snprintf(pos, len-rc, "-p icmp ");
+		pos = pos + rc;
+	}
+	else
+	{
+		if(proto == PROTO_TCP)
+		{
+			rc = snprintf(pos, len-rc, "-p tcp ");
+		}
+		else if (proto == PROTO_UDP)
+		{
+			rc = snprintf(pos, len-rc, "-p udp ");
+		}
+		pos = pos + rc;
+
+		// write source port
+		if(sprf_int)
+		{
+			if(sprt_int)
+			{
+				rc = snprintf(pos, len-rc, "--sport %d:%d ", sprf_int, sprt_int);
+			}
+			else
+			{
+				rc = snprintf(pos, len-rc, "--sport %d ", sprf_int);
+			}
+			pos = pos+rc;
+		}
+
+		// write dest port
+		if(dprf_int)
+		{
+			if(dprt_int)
+			{
+				rc = snprintf(pos, len-rc, "--dport %d:%d ", dprf_int, dprt_int);
+			}
+			else
+			{
+				rc = snprintf(pos, len-rc, "--dport %d ", dprf_int);
+			}
+			pos = pos+rc;
+		}
+	}
+
+	switch(action)
+	{
+		case ACTION_DROP:	// DROP mode
+		{
+			rc = snprintf(pos, len-rc, "-j DROP");
+			break;
+		}
+		case ACTION_ACCEPT:	// ACCEPT mode
+		{
+			rc = snprintf(pos, len-rc, "-j ACCEPT");
+			break;
+		}
+	}
+
+	system(buf);
+	return;
+}
+
+void PortFilterRun()
+{
+	int  i = 0;
+	char pfe[10] = {0};
+	int  rule_count = 0;
+	char cmd[1024] = {0}, rule[100] = {0}, value[MaxRulesCount][80] = {0};
+	char depolicy[8] = {0};
+	char action[10] = {0};
+	char mac[20] = {0};
+	char dip[20] = {0}, sip[20] = {0};
+	char dprf[10] = {0}, dprt[10] = {0}, sprf[10] = {0}, sprt[10] = {0};
+	char proto[10] = {0};
+	int  proto_int = 0;
+	int  dprf_int = 0, sprf_int = 0, dprt_int = 0, sprt_int = 0;
+	int  action_int = 0;
+	
+	CFG_get_by_name("PortFilterEnabled", pfe);
+	if(!pfe || !atoi(pfe))
+	{
+		return;
+	}
+
+	for(i = 0, rule_count = 0; i < MaxRulesCount; i++)
+	{
+		snprintf(cmd, sizeof(cmd),"PortFilterRules%d", i);
+		CFG_get_by_name(cmd,rule);
+		if(!rule || !strlen(rule))
+		{
+			continue;
+		}
+		else
+		{
+		  	strcpy(value[rule_count++], rule);
+		}
+	}
+    if(rule_count == 0)
+    {
+		// there is no PortFilterRules        
+        return;
+	}
+
+	for(i=0; i<rule_count; i++)
+	{
+		// get mac address
+		if( getNthValueSafe(0, value[i], ',', mac, sizeof(mac)) == -1 )
+		{
+			continue;
+		}
+
+		// get dest ip
+		if( getNthValueSafe(1, value[i], ',', dip, sizeof(dip)) == -1 )
+		{
+			continue;
+		}
+
+		// get source ip
+		if( getNthValueSafe(2, value[i], ',', sip, sizeof(sip)) == -1 )
+		{
+			continue;
+		}
+
+		// get protocol
+		if( getNthValueSafe(3, value[i], ',', proto, sizeof(proto)) == -1 )
+		{
+			continue;
+		}
+		proto_int = atoi(proto);
+
+		// get dest port from
+		if( getNthValueSafe(4, value[i], ',', dprf, sizeof(dprf)) == -1 )
+		{
+			continue;
+		}
+		if((dprf_int = atoi(dprf)) > 65535)
+		{
+			continue;
+		}
+		// get dest port to
+		if( getNthValueSafe(5, value[i], ',', dprt, sizeof(dprt)) == -1 )
+		{
+			continue;
+		}
+		if((dprt_int = atoi(dprt)) > 65535)
+		{
+			continue;
+		}
+	
+		// get source port from
+		if( getNthValueSafe(6, value[i], ',', sprf, sizeof(sprf)) == -1 )
+		{
+			continue;
+		}
+		if((sprf_int = atoi(sprf)) > 65535)
+		{
+			continue;
+		}		
+		// get source port to
+		if( getNthValueSafe(7, value[i], ',', sprt, sizeof(sprt)) == -1 )
+		{
+			continue;
+		}
+		if((sprt_int = atoi(sprt)) > 65535)
+		{
+			continue;
+		}
+
+		// get action
+		if( getNthValueSafe(8, value[i], ',', action, sizeof(action)) == -1 )
+		{
+			continue;
+		}
+		action_int = atoi(action);	
+
+		makePortFilterRule(mac, sip, sprf_int, sprt_int, dip, dprf_int, dprt_int, proto_int, action_int);
+	}
+
+	CFG_get_by_name("defaultFirewallPolicy",depolicy);
+	switch(atoi(depolicy))
+	{
+		case 0:
+		{
+			snprintf(cmd, sizeof(cmd), "iptables -t filter -A %s -j ACCEPT", PORT_FILTER_CHAIN);
+			system(cmd);
+			break;
+		}
+		case 1:
+		{
+			snprintf(cmd, sizeof(cmd), "iptables -t filter -A %s -j DROP", PORT_FILTER_CHAIN);
+			system(cmd);
+			break;
+		}
+	}
+
+	return;
+}
+/*
+ * ASP function
+ */
+void showPortFilterRulesASP()
+{
+	int  i = 0;
+	int  rule_count = 0;
+	char cmd[100] = {0}, rule[100] = {0}, value[MaxRulesCount][80] = {0};
+	char depolicy[8] = {0};
+	char action[10] = {0};
+	char mac[20] = {0};
+	char dip[20] = {0}, sip[20] = {0};
+	char dprf[10] = {0}, dprt[10] = {0}, sprf[10] = {0}, sprt[10] = {0};
+	char proto[10] = {0};
+	int  dprf_int = 0, sprf_int = 0, dprt_int = 0, sprt_int = 0;
+
+	for(i = 0, rule_count = 0; i < MaxRulesCount; i++)
+	{
+		snprintf(cmd, sizeof(cmd),"PortFilterRules%d", i);
+		CFG_get_by_name(cmd,rule);
+		if(!rule || !strlen(rule))
+		{
+			continue;
+	    }
+	    else
+	    {
+	    	strcpy(value[rule_count++], rule);
+	    }
+    }
+
+	/*
+	 * format is : [ip],[port_from],[port_to],[protocol],[comment],;
+	 */
+	for(i = 0; i < rule_count; i++)
+	{
+		// get mac address
+		if( getNthValueSafe(0, value[i], ',', mac, sizeof(mac)) == -1 )
+		{
+			continue;
+		}
+
+		// get dest ip
+		if( getNthValueSafe(1, value[i], ',', dip, sizeof(dip)) == -1 )
+		{
+			continue;
+		}
+		
+		// get source ip
+		if( getNthValueSafe(2, value[i], ',', sip, sizeof(sip)) == -1 )
+		{
+			continue;
+		}
+
+		// get protocol
+		if( getNthValueSafe(3, value[i], ',', proto, sizeof(proto)) == -1 )
+		{
+			continue;
+		}
+		
+		// get dest port from
+		if( getNthValueSafe(4, value[i], ',', dprf, sizeof(dprf)) == -1 )
+		{
+			continue;
+		}
+		if((dprf_int = atoi(dprf)) > 65535)
+		{
+			continue;
+		}
+		// get dest port to
+		if( getNthValueSafe(5, value[i], ',', dprt, sizeof(dprt)) == -1 )
+		{
+			continue;
+		}
+		if((dprt_int = atoi(dprt)) > 65535)
+		{
+			continue;
+		}
+		
+		// get source port from
+		if( getNthValueSafe(6, value[i], ',', sprf, sizeof(sprf)) == -1 )
+		{
+			continue;
+		}
+		if((sprf_int = atoi(sprf)) > 65535)
+		{
+			continue;
+		}		
+		// get source port to
+		if( getNthValueSafe(7, value[i], ',', sprt, sizeof(sprt)) == -1 )
+		{
+			continue;
+		}
+		if((sprt_int = atoi(sprt)) > 65535)
+		{
+			continue;
+		}
+		
+		// get action
+		if( getNthValueSafe(8, value[i], ',', action, sizeof(action)) == -1 )
+		{
+			continue;
+		}
+
+		printf("<tr>\n");
+		// output No.
+		printf("<td align=center class=headind> %d&nbsp; <input type=\"checkbox\" name=\"delPortFilterRule%d\"></td>\n", i+1, i);
+		// output Mac address
+		if(strlen(mac) != 0)
+		{
+			printf("<td align=center class=headind> %s </td>\n", mac);
+		}
+		else
+		{			
+			printf("<td align=center> - </td>\n");
+		}
+		
+		// output dest ip address
+		if(strlen(dip) != 0)
+		{
+			printf("<td align=center class=headind> %s </td>\n", dip);
+		}
+		else
+		{
+			printf("<td align=center> - </td>\n");
+		}
+		
+		//output source ip address
+		if(strlen(sip) != 0)
+		{
+			printf("<td align=center class=headind> %s </td>\n", sip);
+		}
+		else
+		{
+			printf("<td align=center> - </td>\n");
+		}
+		
+		//output proto
+		switch(atoi(proto))
+		{
+			case PROTO_NONE:
+			{
+				printf("<td align=center class=headind>None</td>\n");
+				break;
+			}
+			case PROTO_TCP:
+			{
+				printf("<td align=center class=headind>TCP</td>\n");
+				break;	
+			}
+			case PROTO_UDP:
+			{
+				printf("<td align=center class=headind>UDP</td>\n");
+				break;
+			}
+			case PROTO_ICMP:
+			{
+				printf("<td align=center class=headind>ICMP</td>\n");
+				break;
+			}
+		}
+		
+		// output dest Port Range
+		if((atoi(dprf) == 0) && (atoi(dprt) == 0))
+		{
+			printf("<td align=center> - </td>\n");
+		}
+		else
+		{
+			if(atoi(dprt) == 0)
+			{
+				printf("<td align=center class=headind>%s</td>\n",dprf);
+			}
+			else
+			{
+				printf("<td align=center class=headind> %s - %s </td>\n", dprf, dprt);
+			}
+		}
+		
+		// output source Port Range
+		if((atoi(sprf) == 0) && (atoi(sprt) ==0))
+		{
+			printf("<td align=center> - </td>\n");
+		}
+		else
+		{
+			if(atoi(sprt) == 0)
+			{
+				printf("<td align=center class=headind>%s</td>\n",sprf);
+			}
+			else
+			{
+				printf("<td align=center class=headind> %s - %s </td>\n", sprf, sprt);
+			}
+		}
+
+		// output action
+		switch(atoi(action))
+		{
+			case ACTION_DROP:
+			{
+				printf("<td align=center class=headind>Drop</td>\n");
+				break;
+			}
+			case ACTION_ACCEPT:
+			{
+				printf("<td align=center class=headind>Accept</td>\n");
+				break;
+			}
+		}
+
+		printf("</tr>\n");
+	}
+	printf("</table>\n");
+	printf("</table>\n");
+	printf("</form>\n");
+	printf("</body></html>\n");
+    
+	return;	
+}
+
+void portFilterSet()
+{
+	char pfe[10]   = {0};
+	char ip[32]    = {0};
+	char cmd[100] = {0};
+    
+	PortFilterFlush();
+    
+	CFG_get_by_name("PortFilterEnabled", pfe);
+	if(!pfe || !atoi(pfe))
+	{
+        return;
+	}
+	
+	PortFilterRun();
+	
+	writeParameters("/tmp/.apcfg","w+",0);
+	writeParameters(NVRAM,"w+", NVRAM_OFFSET);
+	return;
+}
+
+void portFilter()
+{
+	char action[10] = {0};
+	char mac[20] = {0};
+	char dip[20] = {0}, sip[20] = {0};
+	char dprf[10] = {0}, dprt[10] = {0}, sprf[10] = {0}, sprt[10] = {0};
+	char proto[10] = {0};
+	int  proto_int = 0;
+	int  dprf_int = 0, sprf_int = 0, dprt_int = 0, sprt_int = 0;
+	int  action_int = 0;
+	char old_action[10] = {0};
+	char old_mac[20] = {0};
+	char old_dip[20] = {0}, old_sip[20] = {0};
+	char old_dprf[10] = {0}, old_dprt[10] = {0}, old_sprf[10] = {0}, old_sprt[10] = {0};
+	char old_proto[10] = {0};
+	int  i = 0;
+	char cmd[128] = {0};          
+	char rule[80] = {0};
+	char valBuff[80] = {0};
+	
+	CFG_get_by_name("PortFilterAction", action);	
+	CFG_get_by_name("PortFilterMac", mac);
+	CFG_get_by_name("PortFilterDestIPAddr", dip);
+	CFG_get_by_name("PortFilterSourIPAddr", sip);
+	CFG_get_by_name("PortFilterProtocol", proto);
+	CFG_get_by_name("PortFilterDestPortFr", dprf);
+	CFG_get_by_name("PortFilterDestPortTo", dprt);
+	CFG_get_by_name("PortFilterSourPortFr", sprf);
+	CFG_get_by_name("PortFilterSourPortTo", sprt);
+	
+	if(!mac || !sip || !dip || !sprf || !dprf)
+	{
+		return;
+	}
+	
+	if(!strlen(mac) && !strlen(sip) && !strlen(dip) && !strlen(sprf) && !strlen(dprf))
+	{
+		PortFilterFlush();
+		PortFilterRun();	
+		return;
+	}
+
+	if(strlen(mac) && !isMacValid(mac))
+	{
+		return;
+	}
+	
+	if(strlen(sip) && !isIpValid(sip))
+	{
+		return;
+	}
+	
+	if(strlen(dip) && !isIpValid(dip))
+	{
+		return;
+	}
+
+	if( !strcmp(proto, "TCP"))
+	{
+		proto_int = PROTO_TCP;
+	}
+	else if( !strcmp(proto, "UDP"))
+	{
+		proto_int = PROTO_UDP;
+	}
+	else if( !strcmp(proto, "None"))
+	{
+		proto_int = PROTO_NONE;
+	}
+	else if( !strcmp(proto, "ICMP"))
+	{
+		proto_int = PROTO_ICMP;
+	}
+	else
+	{
+		return;
+	}
+	
+	if(!strlen(sprf) || proto_int == PROTO_NONE || proto_int == PROTO_ICMP)
+	{
+		sprf_int = 0;
+	}
+	else
+	{
+		sprf_int = atoi(sprf);
+		if(sprf_int < 0 || sprf_int > 65535)
+		{
+			return;
+		}
+	}
+
+	if(!strlen(sprt) || proto_int == PROTO_NONE || proto_int == PROTO_ICMP)
+	{
+		sprt_int = 0;
+	}
+	else
+	{
+		sprt_int = atoi(sprt);
+		if(sprt_int < 0 || sprt_int > 65535)
+		{
+			return;
+		}
+	}
+
+	if(!strlen(dprf) || proto_int == PROTO_NONE || proto_int == PROTO_ICMP)
+	{
+		dprf_int = 0;
+	}
+	else
+	{
+		dprf_int = atoi(dprf);
+		if(dprf_int < 0 || dprf_int > 65535)
+		{
+			return;
+		}
+	}
+
+	if(!strlen(dprt) || proto_int == PROTO_NONE || proto_int == PROTO_ICMP)
+	{
+		dprt_int = 0;
+	}
+	else
+	{
+		dprt_int = atoi(dprt);
+		if(dprt_int < 0 || dprt_int > 65535)
+		{
+			return;
+		}
+	}
+
+	if(strlen(sprf) && strlen(sprt))
+	{
+		if(sprf_int > sprt_int)
+		{
+			return;
+		}
+	}
+	if(strlen(dprf) && strlen(dprt))
+	{
+		if(dprf_int > dprt_int)
+		{
+			return;
+		}
+	}
+	
+	action_int = atoi(action);
+
+	for (i = 0; i < MaxRulesCount; i++)
+	{
+		snprintf(cmd, sizeof(cmd), "PortFilterRules%d", i);
+		CFG_get_by_name(cmd, valBuff);
+		if( valBuff && strlen(valBuff) )
+		{
+			// get mac address
+			if( getNthValueSafe(0, valBuff, ',', old_mac, sizeof(old_mac)) == -1 )
+			{
+				continue;
+			}
+
+			// get dest ip
+			if( getNthValueSafe(1, valBuff, ',', old_dip, sizeof(old_dip)) == -1 )
+			{
+				continue;
+			}
+
+			// get source ip
+			if( getNthValueSafe(2, valBuff, ',', old_sip, sizeof(old_sip)) == -1 )
+			{
+				continue;
+			}
+
+			// get protocol
+			if( getNthValueSafe(3, valBuff, ',', old_proto, sizeof(old_proto)) == -1 )
+			{
+				continue;
+			}
+			
+			// get dest port from
+			if( getNthValueSafe(4, valBuff, ',', old_dprf, sizeof(old_dprf)) == -1 )
+			{
+				continue;
+			}
+			// get dest port to
+			if( getNthValueSafe(5, valBuff, ',', old_dprt, sizeof(old_dprt)) == -1 )
+			{
+				continue;
+			}
+			// get source port from
+			if( getNthValueSafe(6, valBuff, ',', old_sprf, sizeof(old_sprf)) == -1 )
+			{
+				continue;
+			}
+			// get source port to
+			if( getNthValueSafe(7, valBuff, ',', old_sprt, sizeof(old_sprt)) == -1 )
+			{
+				continue;
+			}
+			// get action
+			if( getNthValueSafe(8, valBuff, ',', old_action, sizeof(old_action)) == -1 )
+			{
+				continue;
+			}						
+
+			
+			if(!strcmp(mac,old_mac) && !strcmp(dip,old_dip) && !strcmp(sip,old_sip) && !strcmp(proto,old_proto) &&
+			   !strcmp(dprf,old_dprf) && !strcmp(dprt,old_dprt) && !strcmp(sprf,old_sprf) && !strcmp(sprt,old_sprt) &&
+			   !strcmp(action,old_action))
+			{
+				printf("Already have this configuration!\n");
+				break;
+			}
+		}
+		else
+		{
+			sprintf(rule, "%s,%s,%s,%d,%d,%d,%d,%d,%d", mac, dip, sip, proto_int, dprf_int, dprt_int, sprf_int, sprt_int, action_int);
+			CFG_set_by_name(cmd, rule);
+			writeParameters("/tmp/.apcfg","w+",0);
+			writeParameters(NVRAM,"w+", NVRAM_OFFSET);
+			break;
+		}
+	}
+
+	PortFilterFlush();
+	PortFilterRun();
+     
+    return;
+}
+
+void portFilterDelete()
+{
+	int  i, rule_count;
+	int  j, delete_count;
+	char cmd[200], rule[200], buf[100], val[200];
+	int  flag = 0;   //mark if some rules to delete
+	char delRule[MaxRulesCount][32] = {0};
+	int  delRuleNum = 0;
+		
+	for(i = 0, rule_count = 0; i < MaxRulesCount; i++)
+	{
+		memset(cmd, 0, sizeof(cmd));
+		memset(rule, 0, sizeof(rule));			
+
+		sprintf(cmd, "PortFilterRules%d", i);
+		CFG_get_by_name(cmd,rule);
+		if(!rule || !strlen(rule))
+		{	
+			continue;
+	    }
+	    else
+	    {
+			rule_count++;
+	    }
+    }
+    if(rule_count == 0)
+    {
+		// there is no PortFilterRules        
+        return ;
+	}				
+
+	for(i = 0; i < rule_count; i++)
+	{
+		snprintf(buf, sizeof(buf), "delPortFilterRule%d", i);
+		CFG_get_by_name(buf,val);
+
+		if(!val || !strlen(val))
+		{
+			continue;
+		}
+		else //delete this record
+		{
+			if (0 == flag)
+			{
+				flag = 1;
+			}
+			
+			for(j = 0, delete_count = 0; j < MaxRulesCount; j++)
+			{
+				memset(cmd, 0, sizeof(cmd));
+				memset(rule, 0, sizeof(rule));
+				
+				snprintf(cmd,sizeof(cmd),"PortFilterRules%d",j);
+				CFG_get_by_name(cmd, rule);
+				if( !rule || !strlen(rule))
+				{
+					continue;
+				}
+				else
+				{
+					delete_count++;									
+					if( i == (delete_count-1) )
+					{	
+						strcpy(delRule[delRuleNum++], cmd);
+						CFG_remove_by_name(buf);
+						break;
+					}
+				}
+			}			
+		}
+	}
+
+    if(0 == flag)
+    {
+        printf("You didn't select any rules to delete.<br>\n");
+        return;
+    }
+	
+	for (j = 0; j < delRuleNum; j++)
+	{
+		CFG_remove_by_name(delRule[j]);
+	}
+	
+	writeParameters("/tmp/.apcfg","w+",0);
+	writeParameters(NVRAM,"w+", NVRAM_OFFSET);
+	
+	// restart iptables if it is running
+	CFG_get_by_name("PortFilterEnabled",val);
+	if(val && atoi(val))
+	{
+		PortFilterFlush();
+		PortFilterRun();
+	}
+
+	return;
+}
+
+
+/*************************end for port filtering**************************/
+
 /*
  * make run system
  */
@@ -3679,6 +4530,32 @@ int main(int argc,char **argv)
 	if(strcmp(argv[0],"PortForward") == 0)
 	{
 		showPortForwardRulesASP();
+	}
+
+/*************************end for port forwarding**************************/
+
+/*************************add for port forwarding**************************/
+
+	//setup iptables chain PORT_FORWARD_CHAIN
+	if(strcmp(CFG_get_by_name("PortFilterSetApply",valBuff),"Apply") == 0 || strcmp(CFG_get_by_name("PortFilterSetApply",valBuff),"确定") == 0 )
+	{
+		portFilterSet();
+	}
+		
+	if(strcmp(CFG_get_by_name("PortFilterApply",valBuff),"Apply") == 0 || strcmp(CFG_get_by_name("PortFilterApply",valBuff),"确定") == 0 )
+	{
+		portFilter();
+	}
+	
+	if(strcmp(CFG_get_by_name("deleteSelPortFilter",valBuff),"Delete Selected") == 0 
+	|| strcmp(CFG_get_by_name("deleteSelPortFilter",valBuff),"选择删除") == 0)
+	{
+		portFilterDelete();
+	}
+
+	if(strcmp(argv[0],"PortFilter") == 0)
+	{
+		showPortFilterRulesASP();
 	}
 
 /*************************end for port forwarding**************************/
