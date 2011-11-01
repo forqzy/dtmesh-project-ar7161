@@ -1,0 +1,416 @@
+<html><head>
+<link rel="stylesheet" href="../styleSheet.css" type="text/css">
+<script type="text/javascript" src="/lang/b28n.js"></script>
+<script language="JavaScript" type="text/javascript">
+Butterlate.setTextDomain("atheros");
+
+function atoi(str, num)
+{
+	var i = 1;
+	if(num != 1 )
+	{
+		while (i != num && str.length != 0)
+		{
+			if(str.charAt(0) == '.')
+			{
+				i++;
+			}
+			str = str.substring(1);
+		}
+	  	if(i != num )
+	  	{
+			return -1;
+		}
+	}
+	
+	for(i = 0; i < str.length; i++)
+	{
+		if(str.charAt(i) == '.')
+		{
+			str = str.substring(0, i);
+			break;
+		}
+	}
+	if(str.length == 0)
+	{
+		return -1;
+	}
+	return parseInt(str, 10);
+}
+
+function isAllNum(str)
+{
+	var n = 0;
+	for (var i=0; i<str.length; i++)
+	{
+	    if((str.charAt(i) >= '0' && str.charAt(i) <= '9') || (str.charAt(i) == '.' ))
+	    {
+			continue;
+		}
+		return 0;
+	}
+
+	return 1;
+}
+
+
+function checkRange(str, num, mini, maxi)
+{
+	var d = atoi(str,num);
+	if(d > maxi || d < mini)
+	{
+		return false;
+	}
+	return true;
+}
+
+function checkIpAddr(field)
+{
+	var n = 0;
+    if ( isAllNum(field.value) == 0) 
+    {
+        alert('It should be a [0-9] number.');
+        field.focus();
+        return false;
+    }
+
+    if( (!checkRange(field.value,1,1,255)) ||
+        (!checkRange(field.value,2,0,255)) ||
+        (!checkRange(field.value,3,0,255)) ||
+        (!checkRange(field.value,4,1,254)) )
+	{
+        alert('IP format error.');
+        field.focus();
+        return false;
+    }
+    for (var i=0; i< field.value.length; i++)
+    {
+        if(field.value.charAt(i) == '.' )
+        {
+            n++;
+        }
+	}
+	if(3 != n)
+	{
+		alert('IP format error.');
+		return false;	
+	}
+	
+   return true;
+}
+
+function protocolChange()
+{
+	if( document.PortFilter.PortFilterProtocol.value == "TCP" ||
+		document.PortFilter.PortFilterProtocol.value == "UDP")
+	{
+		document.PortFilter.PortFilterDestPortFr.disabled = false;
+		document.PortFilter.PortFilterDestPortTo.disabled = false;
+		document.PortFilter.PortFilterSourPortFr.disabled = false;
+		document.PortFilter.PortFilterSourPortTo.disabled = false;
+	}
+	else
+	{
+		document.PortFilter.PortFilterDestPortFr.disabled = true;
+		document.PortFilter.PortFilterDestPortTo.disabled = true;
+		document.PortFilter.PortFilterSourPortFr.disabled = true;
+		document.PortFilter.PortFilterSourPortTo.disabled = true;
+	}
+}
+
+function initTranslation()
+{
+	document.getElementById("PortFilterTitle").innerHTML = _("mac port title");
+	document.getElementById("PortFilterWarn").innerHTML = _("admin action");
+	
+	document.getElementById("portBasicSet").innerHTML = _("mac port setting");
+	document.getElementById("portBasicFilter").innerHTML = _("mac port filter");
+	document.getElementById("portBasicEnable").innerHTML = _("admin enable");
+	document.getElementById("portBasicDisable").innerHTML = _("admin disable");	
+	document.getElementById("PortFilterDefaultPolicy").innerHTML = _("mac port defalut policy");
+	document.getElementById("portBasicDefaultPolicyAccept").innerHTML = _("mac port accept");
+	document.getElementById("portBasicDefaultPolicyDrop").innerHTML = _("mac port drop");
+	document.getElementById("PortFilterSetApply").value = _("admin apply");
+	document.getElementById("PortFilterSetReset").value = _("admin reset");
+	
+	document.getElementById("PortFilterSet").innerHTML = _("mac port title");	
+	document.getElementById("pFilterAction").innerHTML = _("mac port action");
+	document.getElementById("portFilterActionDrop").innerHTML = _("mac port drop");
+	document.getElementById("portFilterActionAccept").innerHTML = _("mac port accept");
+	document.getElementById("pFilterMac").innerHTML = _("mac port mac");
+	document.getElementById("pFilterDIPAddr").innerHTML = _("mac port dest ip");
+	document.getElementById("pFilterSIPAddr").innerHTML = _("mac port sour ip");
+	document.getElementById("pFilterProtocol").innerHTML = _("forward protocol");
+	document.getElementById("pFilterDestPort").innerHTML = _("mac port dest port");	
+	document.getElementById("pFilterSourPort").innerHTML = _("mac port sour port");
+	document.getElementById("PortFilterIntro").innerHTML = _("forward introduction");
+	document.getElementById("PortFilterApply").value = _("admin apply");
+	document.getElementById("PortFilterReset").value = _("admin reset");
+	
+	document.getElementById("deleteSelPortFilter").value = _("firewall del select");
+	document.getElementById("portCurrentFilterReset").value = _("admin reset");	
+	document.getElementById("portCurrentFilter").innerHTML = _("mac port show");
+	document.getElementById("portCurrentFilterNo").innerHTML = _("forward no");
+	document.getElementById("portCurrentFilterMac").innerHTML = _("mac port mac");
+	document.getElementById("portCurrentFilterDIP").innerHTML = _("mac port dest ip");
+	document.getElementById("portCurrentFilterSIP").innerHTML = _("mac port sour ip");
+	document.getElementById("portCurrentFilterProtocol").innerHTML = _("forward protocol");
+	document.getElementById("portCurrentFilterDPort").innerHTML = _("mac port dest port");	
+	document.getElementById("portCurrentFilterSPort").innerHTML = _("mac port sour port");	
+	document.getElementById("portCurrentFilterAction").innerHTML = _("mac port action");	
+}
+
+function updateState()
+{
+	initTranslation();
+	
+	if(document.PortFilter.PortFilterEnabled.value == "0")
+	{
+		document.PortFilter.PortFilterAction.disabled = true;
+		document.PortFilter.PortFilterMac.disabled = true;
+		document.PortFilter.PortFilterDestIPAddr.disabled = true;
+		document.PortFilter.PortFilterSourIPAddr.disabled = true;
+		document.PortFilter.PortFilterProtocol.disabled = true;
+		document.PortFilter.PortFilterDestPortFr.disabled = true;
+		document.PortFilter.PortFilterDestPortTo.disabled = true;
+		document.PortFilter.PortFilterSourPortFr.disabled = true;
+		document.PortFilter.PortFilterSourPortTo.disabled = true;		
+		document.PortFilter.PortFilterApply.disabled = true;
+		document.PortFilter.PortFilterReset.disabled = true;		
+	}
+	else
+	{
+		document.PortFilter.PortFilterAction.disabled = false;
+		document.PortFilter.PortFilterMac.disabled = false;
+		document.PortFilter.PortFilterDestIPAddr.disabled = false;
+		document.PortFilter.PortFilterSourIPAddr.disabled = false;	
+		document.PortFilter.PortFilterProtocol.disabled = false;
+		document.PortFilter.PortFilterApply.disabled = false;
+		document.PortFilter.PortFilterReset.disabled = false;	
+		protocolChange();
+	}	
+}
+
+function ipportFormCheck()
+{
+	if(document.PortFilter.PortFilterSourPortFr.value != "")
+	{
+		var d1 = atoi(document.PortFilter.PortFilterSourPortFr.value, 1);
+		
+		if(isAllNum( document.PortFilter.PortFilterSourPortFr.value ) == 0)
+		{
+			alert("Invalid port number!");
+			document.PortFilter.PortFilterSourPortFr.focus();
+			return false;
+		}
+		if(d1 > 65535 || d1 < 1)
+		{
+			alert("Invalid port number: it should be between 1 - 65535!");
+			document.PortFilter.PortFilterSourPortFr.focus();
+			return false;
+		}
+		
+		if(document.PortFilter.PortFilterSourPortTo.value != "")
+		{
+			if(isAllNum( document.PortFilter.PortFilterSourPortTo.value ) == 0)
+			{
+				alert("Invalid port number!");
+				document.PortFilter.PortFilterSourPortTo.focus();
+				return false;
+			}		
+			d2 = atoi(document.PortFilter.PortFilterSourPortTo.value, 1);
+			if(d2 > 65535 || d2 < 1)
+			{
+				alert("Invalid port number: it should be between 1 - 65535!");
+				document.PortFilter.PortFilterSourPortTo.focus();
+				return false;
+			}
+			if(d1 > d2)
+			{
+				alert("Invalid source port range setting.");
+				return false;
+			}
+		}
+	}
+
+	if(document.PortFilter.PortFilterDestPortFr.value != "")
+	{
+		d1 = atoi(document.PortFilter.PortFilterDestPortFr.value, 1);
+		
+		if(isAllNum( document.PortFilter.PortFilterDestPortFr.value ) == 0)
+		{
+			alert("Invalid port number!");
+			document.PortFilter.PortFilterDestPortFr.focus();
+			return false;
+		}
+		if(d1 > 65535 || d1 < 1)
+		{
+			alert("Invalid port number: it should be between 1 - 65535!");
+			document.PortFilter.PortFilterDestPortFr.focus();
+			return false;
+		}
+		
+		if(document.PortFilter.PortFilterDestPortTo.value != "")
+		{
+			if(isAllNum( document.PortFilter.PortFilterDestPortTo.value ) == 0)
+			{
+				alert("Invalid port number!");
+				document.PortFilter.PortFilterDestPortTo.focus();
+				return false;
+			}		
+			d2 = atoi(document.PortFilter.PortFilterDestPortTo.value, 1);
+			if(d2 > 65535 || d2 < 1)
+			{
+				alert("Invalid port number: it should be between 1 - 65535!");
+				document.PortFilter.PortFilterDestPortTo.focus();
+				return false;
+			}
+			if(d1 > d2)
+			{
+				alert("Invalid dest port range setting.");
+				return false;
+			}
+		}
+	}
+	// check ip address format
+	if(document.PortFilter.PortFilterSourIPAddr.value != "")
+	{
+		if(! checkIpAddr(document.PortFilter.PortFilterSourIPAddr) )
+		{
+			alert("Source IP address format error.");
+			document.PortFilter.PortFilterSourIPAddr.focus();
+			return false;
+		}
+    }
+	
+	if(document.PortFilter.PortFilterDestIPAddr.value != "")
+	{
+		if(! checkIpAddr(document.PortFilter.PortFilterDestIPAddr) )
+		{
+			alert("Dest IP address format error.");
+			document.PortFilter.PortFilterSourIPAddr.focus();
+			return false;
+		}
+    }
+
+	return true;
+}
+
+
+
+
+</script>
+</head>
+
+<body onload="updateState()">
+<form method="post" name="PortFilter">
+<table><tr><td>
+<p class="vap" id="PortFilterTitle">MAC/IP/Port Filtering Settings</p>
+<p id="PortFilterWarn" class="action">
+	Attention:These settings only work in Router mode!</p>
+
+<!--------------------------------    MAC/IP/Port  form  -------------------------------->
+<table width="400" border="1" cellpadding="2" cellspacing="1">
+<tr>
+	<td class="topnavg" colspan="4" id="portBasicSet">Basic Settings</td></tr>
+<tr>
+	<td class="header" colspan="2" id="portBasicFilter">MAC/IP/Port Filtering</td>
+	<td colspan="2">
+	  	<select name="PortFilterEnabled" size="1" style="width:80px" onChange="updateState()">
+		<option ~sPortFilterEnabled:0~ value=0 id="portBasicDisable">Disable</option>
+    	<option ~sPortFilterEnabled:1~ value=1 id="portBasicEnable">Enable</option>
+      	</select>
+    </td></tr>
+<tr><td class="header" colspan="2" id="PortFilterDefaultPolicy">
+		Default Policy---The packet that don't match with any rules would be</td>
+	<td colspan="2">
+	  	<select name="defaultFirewallPolicy" style="width:80px">
+		<option ~sdefaultFirewallPolicy:1~ value=1 id="portBasicDefaultPolicyAccept">Accept</option>
+		<option ~sdefaultFirewallPolicy:0~ value=0 id="portBasicDefaultPolicyDrop">Drop</option>
+	  	</select></td></tr>
+</table>
+<table width="400">
+	<tr>
+		<td><input type="submit" value="Apply" id="PortFilterSetApply" name="PortFilterSetApply">
+		    <input type="reset"  value="Reset" id="PortFilterSetReset" name="PortFilterSetReset"></td>
+	</tr>
+</table>
+<br>
+
+<table width="400" border="1" cellpadding="2" cellspacing="1">
+<tr><td class="topnavg" colspan="4" id="PortFilterSet">MAC/IP/Port Filter Settings</td></tr>
+<tr>
+	<td class="header" colspan="2" id="pFilterAction">Action</td>
+	<td colspan="2">
+	  	<select name="PortFilterAction" style="width:80px">
+   		<option ~sPortFilterAction:0~ value="0" id="portFilterActionDrop">Drop</option>
+		<option ~sPortFilterAction:1~ value="1" id="portFilterActionAccept">Accept</option>
+   	  	</select>
+	</td></tr>
+<tr>
+	<td class="header" colspan="2" id="pFilterMac">Mac address</td>
+	<td colspan="2">
+		 <input type="text" size="18" name="PortFilterMac">
+	</td></tr>
+<tr>
+	<td class="header" colspan="2" id="pFilterDIPAddr">Dest IP Address</td>
+	<td colspan="2">
+		<input type="text" size="18" name="PortFilterDestIPAddr">
+	</td></tr>
+<tr>
+	<td class="header" colspan="2" id="pFilterSIPAddr">Source IP Address</td>
+	<td colspan="2">
+  		<input type="text" size="18" name="PortFilterSourIPAddr">
+	</td></tr>
+<tr>
+	<td class="header" colspan="2" id="pFilterProtocol">Protocol</td>
+	<td colspan="2">
+	  	<select onChange="protocolChange()" name="PortFilterProtocol" style="width:80px">
+		<option ~sPortFilterProtocol:None~ value="None">None</option>
+		<option ~sPortFilterProtocol:TCP~  value="TCP">TCP</option>
+		<option ~sPortFilterProtocol:UDP~  value="UDP">UDP</option>
+		<option ~sPortFilterProtocol:ICMP~ value="ICMP">ICMP</option>
+	  	</select>
+	</td></tr>
+<tr>
+	<td class="header" colspan="2" id="pFilterDestPort">Dest Port Range</td>
+	<td colspan="2">
+  		<input type="text" size="5" name="PortFilterDestPortFr"> -
+		<input type="text" size="5" name="PortFilterDestPortTo">
+	</td></tr>
+<tr>
+	<td class="header" colspan="2" id="pFilterSourPort">Src Port Range</td>
+	<td colspan="2">
+  		<input type="text" size="5" name="PortFilterSourPortFr" id="PortFilterSourPortFr"> -
+		<input type="text" size="5" name="PortFilterSourPortTo" id="PortFilterSourPortTo">
+	</td></tr>
+</table>
+<table width="400">
+	<tr><td id="PortFilterIntro" class="headind">The maximum rule count is 32.</td>
+	<td style="text-align:right">
+		<input type="submit" value="Apply" id="PortFilterApply" name="PortFilterApply" onClick="return ipportFormCheck()">
+		<input type="reset"  value="Reset" id="PortFilterReset" name="PortFilterReset"></td>
+	</tr>
+</table>
+<br>
+
+<!---------------------------------  delete rules  --------------------------------->
+<p>
+	<input type="submit" value="Delete Selected" id="deleteSelPortFilter" name="deleteSelPortFilter" onClick="return deleteClick()">
+	<input type="reset" value="Reset" id="portCurrentFilterReset" name="reset">
+</p>
+<table  border="1" cellpadding="2" cellspacing="1">	
+<tr>
+	<td class="topnavg" colspan="10" id="portCurrentFilter">Current IP/Port filtering rules in system </td></tr>
+<tr>
+	<td align=center class="header" id="portCurrentFilterNo"> No.</td>
+	<td align=center class="header" id="portCurrentFilterMac"> Mac Address </td>
+	<td align=center class="header" id="portCurrentFilterDIP"> Dest IP Address </td>
+	<td align=center class="header" id="portCurrentFilterSIP"> Source IP Address </td>
+	<td align=center class="header" id="portCurrentFilterProtocol"> Protocol</td>
+	<td align=center class="header" id="portCurrentFilterDPort"> Dest Port Range</td>
+	<td align=center class="header" id="portCurrentFilterSPort"> Source Port Range</td>
+	<td align=center class="header" id="portCurrentFilterAction"> Action</td>
+</tr>
+	
+

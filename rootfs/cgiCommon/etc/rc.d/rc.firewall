@@ -7,14 +7,21 @@
 #########################################################################
 
 . /etc/ath/apcfg
+PORT_FORWARD=port_forward
+PORT_FILTER=macipport_filter
+DMZ=dmz
 
 iptables -F INPUT
 iptables -F OUTPUT
 iptables -F FORWARD
-iptables -t nat -L | grep -q port_forward || iptables -t nat -N port_forward
-iptables -t nat -L | grep -q dmz || iptables -t nat -N dmz
-iptables -t nat -F port_forward
-iptables -t nat -F dmz
+iptables -t nat -L | grep -q $PORT_FORWARD || iptables -t nat -N $PORT_FORWARD
+iptables -t nat -L | grep -q $DMZ || iptables -t nat -N $DMZ
+iptables -t filter -L | grep -q $PORT_FILTER || iptables -t filter -N $PORT_FILTER
+iptables -t filter -A FORWARD -j $PORT_FILTER 
+iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
+iptables -t filter -F $PORT_FILTER
+iptables -t nat -F $PORT_FORWARD
+iptables -t nat -F $DMZ
 iptables -t nat -F PREROUTING
 iptables -t nat -F POSTROUTING
 ##
@@ -42,8 +49,8 @@ iptables -A OUTPUT -j ACCEPT            #allow everything out
 #allow all packets FORWARDED between network ports
 iptables -P FORWARD DROP
 iptables -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
-iptables -t nat -I PREROUTING 1 -j port_forward
-iptables -t nat -I PREROUTING 2 -j dmz
+iptables -t nat -I PREROUTING 1 -j $PORT_FORWARD
+iptables -t nat -I PREROUTING 2 -j $DMZ
 
 if [ "$NETWORK_MODE" = "Router" ]; then
     echo 1 > /proc/sys/net/ipv4/ip_forward
@@ -55,8 +62,8 @@ fi
 if [ "$NETWORK_MODE" = "Router" ]; then
 	if [ "$DMZEnabled" = "1" ]; then
 	    if [ "$DMZIPAddress" != "" ]; then
-	        iptables -t nat -A dmz -j DNAT -i $ETH0 -p udp --dport ! 80 --to $DMZIPAddress
-	        iptables -t nat -A dmz -j DNAT -i $ETH0 -p tcp --dport ! 80 --to $DMZIPAddress
+	        iptables -t nat -A $DMZ -j DNAT -i $ETH0 -p udp --dport ! 80 --to $DMZIPAddress
+	        iptables -t nat -A $DMZ -j DNAT -i $ETH0 -p tcp --dport ! 80 --to $DMZIPAddress
 	    fi
 	fi
 fi
@@ -87,13 +94,121 @@ if [ "$NETWORK_MODE" = "Router" ]; then
 		        port_t=$(echo $i | awk -F "," '{print $3}')
 				protocol=$(echo $i | awk -F "," '{print $4}')
 				if [ $protocol -eq 1 ]; then
-					iptables -t nat -A port_forward -i $ETH0 -p tcp --dport $port_f:$port_t -j DNAT --to $ip
+					iptables -t nat -A $PORT_FORWARD -i $ETH0 -p tcp --dport $port_f:$port_t -j DNAT --to $ip
 				elif [ $protocol -eq 2 ]; then
-		            iptables -t nat -A port_forward -i $ETH0 -p udp --dport $port_f:$port_t -j DNAT --to $ip
+		            iptables -t nat -A $PORT_FORWARD -i $ETH0 -p udp --dport $port_f:$port_t -j DNAT --to $ip
 				else
-		            iptables -t nat -A port_forward -i $ETH0 -p tcp --dport $port_f:$port_t -j DNAT --to $ip
-					iptables -t nat -A port_forward -i $ETH0 -p udp --dport $port_f:$port_t -j DNAT --to $ip
+		            iptables -t nat -A $PORT_FORWARD -i $ETH0 -p tcp --dport $port_f:$port_t -j DNAT --to $ip
+					iptables -t nat -A $PORT_FORWARD -i $ETH0 -p udp --dport $port_f:$port_t -j DNAT --to $ip
 				fi			
+		    done
+	    fi
+    fi
+fi
+
+rm -rf /tmp/tmp_pf
+rm -rf /tmp/tmp_pf1
+rm -rf /tmp/tmp_pf2
+
+## PortFilter rules
+if [ "$NETWORK_MODE" = "Router" ]; then
+    if [ "$PortFilterEnabled" = "1" ]; then
+    	if [ -e "/tmp/.apcfg" ]; then
+            grep -E '^PortFilterRules[0-9]{1,2}' /tmp/.apcfg > /tmp/tmp_pf
+        fi
+        
+        if [ -e "/tmp/tmp_pf" ]; then
+            for x in `awk -F "=" '{print $2}' /tmp/tmp_pf`
+		    do
+		        echo $x >> /tmp/tmp_pf1
+		    done
+        fi
+        
+        if [ -e "/tmp/tmp_pf1" ]; then
+	        grep -E ',' /tmp/tmp_pf1 > /tmp/tmp_pf2
+        fi
+    	
+    	if [ -e "/tmp/tmp_pf2" ]; then
+		    for i in `awk -F "," '{print $0}' /tmp/tmp_pf2`
+		    do
+				mac=$(echo $i | awk -F "," '{print $1}')
+		        dip=$(echo $i | awk -F "," '{print $2}')
+		        sip=$(echo $i | awk -F "," '{print $3}')
+				proto=$(echo $i | awk -F "," '{print $4}')
+				dprf=$(echo $i | awk -F "," '{print $5}')
+		        dprt=$(echo $i | awk -F "," '{print $6}')
+		        sprf=$(echo $i | awk -F "," '{print $7}')
+				sprt=$(echo $i | awk -F "," '{print $8}')
+				action=$(echo $i | awk -F "," '{print $9}')
+				
+				if [ "$proto" = "1" ]; then
+					proto="tcp"
+				elif [ "$proto" = "2" ]; then
+					proto="udp"
+				elif [ "$proto" = "4" ]; then
+					proto="icmp"
+				else
+					proto="none"
+				fi
+					
+				if [ "$action" = "0" ]; then
+					action="DROP"
+				else
+					action="ACCEPT"
+				fi
+				
+				if [ "$dprf" != "0" ]; then
+					if [ "$dprt" != "0" ]; then
+						dport="$dprf:$dprt"
+					else
+						dport="$dprf"
+					fi
+				else
+					if [ "$dprt" != "0" ]; then
+						dport="0:$dprt"
+					else
+						dport=""
+					fi
+				fi
+				
+				if [ "$sprf" != "0" ]; then
+					if [ "$sprt" != "0" ]; then
+						sport="$sprf:$sprt"
+					else
+						sport="$sprf"
+					fi
+				else
+					if [ "$sprt" != "0" ]; then
+						sport="0:$sprt"
+					else
+						sport=""
+					fi
+				fi
+								
+				Rules="iptables -t filter -A $PORT_FILTER"
+				if [ -n "$mac" ]; then
+					Rules="$Rules -m mac --mac-source $mac"
+				fi
+				if [ -n "$sip" ]; then
+					Rules="$Rules -s $sip"
+				fi
+				if [ -n "$dip" ]; then
+					Rules="$Rules -d $dip"
+				fi
+				if [ "$proto" != "none" ]; then
+					Rules="$Rules -p $proto"
+					if [ "$proto" = "tcp" -o "$proto" = "udp" ]; then
+						if [ -n "$sport" ]; then
+							Rules="$Rules --sport $sport"
+						fi
+						if [ -n "$dport" ]; then
+							Rules="$Rules --dport $dport"
+						fi
+					fi
+				fi				
+				
+				#run iptables rules
+				${Rules} -j ${action}
 		    done
 	    fi
     fi
