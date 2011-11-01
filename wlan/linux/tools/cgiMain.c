@@ -1687,6 +1687,7 @@ int getRadioID(int index)
 char* getWanIfName(void)
 {
 	char valBuff[128] = {0};
+	char buf[128] = {0};
 	char *if_name     = "br0";
 
 	CFG_get_by_name("NETWORK_MODE",valBuff);
@@ -1698,17 +1699,18 @@ char* getWanIfName(void)
 	{
 		if_name = "br0";
 	}
-	else if (!strcmp(valBuff, "Router")) 
+	else 
 	{
-		if_name = "eth1";
-	}
-	else
-	{
-		memset(valBuff, 0, sizeof(valBuff));
-	    CFG_get_by_name("WAN_PROTO",valBuff);
-	    if (!strcmp(valBuff, "PPPOE"))
+		memset(buf, 0, sizeof(buf));
+	    CFG_get_by_name("WAN_PROTO",buf);	
+		
+		if( !strcmp(valBuff, "Router") && !strcmp(buf, "PPPOE") )
     	{
         	if_name = "ppp0";
+		}
+		else
+		{		
+			if_name = "eth1";
 		}
 	}
 
@@ -1899,7 +1901,7 @@ void iptablesPortForwardRun()
 			printf("prf = %s\n", prf);	
 			continue;
 		}
-		if( (prf_int = atoi(prf)) == 0 || prf_int > 65535)
+		if( (prf_int = atoi(prf)) <= 0 || prf_int > 65535)
 		{
 			continue;
 		}
@@ -1955,7 +1957,7 @@ void iptablesPortForwardFlush()
 /*
  * ASP function
  */
-int showPortForwardRulesASP()
+void showPortForwardRulesASP()
 {
 	int  i              = 0;
 	int  rule_count     = 0;
@@ -2005,7 +2007,7 @@ int showPortForwardRulesASP()
 		{
 			continue;
 		}
-		if( (prf_int = atoi(prf)) == 0 || prf_int > 65535)
+		if( (prf_int = atoi(prf)) <= 0 || prf_int > 65535)
 		{
 			continue;
 		}
@@ -2015,7 +2017,7 @@ int showPortForwardRulesASP()
 		{
 			continue;
 		}
-		if((prt_int = atoi(prt)) == 0 || prt_int > 65535)
+		if((prt_int = atoi(prt)) <= 0 || prt_int > 65535)
 		{
 			continue;
 		}
@@ -2047,36 +2049,36 @@ int showPortForwardRulesASP()
 
 		printf("<tr>\n");
 		// output No.
-		printf("<td> %d&nbsp; <input type=\"checkbox\" name=\"delRule%d\"> </td>\n", i+1, i);
+		printf("<td class=headind> %d&nbsp; <input type=\"checkbox\" name=\"delRule%d\"> </td>\n", i+1, i);
 
 		// output IP address
-		printf("<td align=center> %s </td>\n", ip_address);
+		printf("<td align=center class=headind> %s </td>\n", ip_address);
 
 		// output Port Range
 		if(prt_int)
 		{
-			printf("<td align=center> %d - %d </td>\n", prf_int, prt_int);
+			printf("<td align=center class=headind> %d - %d </td>\n", prf_int, prt_int);
 		}
 		else
 		{
-			printf("<td align=center> %d </td>\n", prf_int);
+			printf("<td align=center class=headind> %d </td>\n", prf_int);
 		}
 		// output Protocol
         switch(proto)
         {
             case PROTO_TCP:
 			{	
-				printf("<td align=center> TCP </td>\n");
+				printf("<td align=center class=headind> TCP </td>\n");
 				break;
 			}
             case PROTO_UDP:
 			{
-				printf("<td align=center> UDP </td>\n");
+				printf("<td align=center class=headind> UDP </td>\n");
 				break;
 			}
             case PROTO_TCP_UDP:
 			{	
-				printf("<td align=center> TCP&UDP </td>\n");
+				printf("<td align=center class=headind> TCP&UDP </td>\n");
 				break;
 			}
 		}
@@ -2084,7 +2086,7 @@ int showPortForwardRulesASP()
 		// output Comment
 		if(strlen(comment))
 		{
-			printf("<td align=center> %s</td>\n", comment);
+			printf("<td align=center class=headind> %s</td>\n", comment);
 		}
 		else
 		{
@@ -2094,9 +2096,9 @@ int showPortForwardRulesASP()
 	}
 	printf("</table>\n");
 	printf("</form>\n");
-   printf("</body></html>\n");
+	printf("</body></html>\n");
 
-	return 0;	
+	return;	
 }
 
 void portForward()
@@ -2147,7 +2149,7 @@ void portForward()
 		return;
 	}
 
-	if(!ip_address && !strlen(ip_address))
+	if(!ip_address || !strlen(ip_address))
 	{
 		return;
 	}
@@ -2156,7 +2158,7 @@ void portForward()
 		return;
 	}
 	// we dont trust user input.....
-	if(!prf && !strlen(prf))
+	if(!prf || !strlen(prf))
 	{
 		return;
 	}
@@ -2165,7 +2167,7 @@ void portForward()
 		return;
 	}
 
-	if(!prt && !strlen(prt))
+	if(!prt || !strlen(prt))
 	{
 		return;
 	}
@@ -2226,7 +2228,7 @@ void portForward()
 			{
 				continue;
 			}
-			if((old_prf_int = atoi(old_prf)) == 0 || old_prf_int > 65535)
+			if((old_prf_int = atoi(old_prf)) <= 0 || old_prf_int > 65535)
 			{
 				continue;
 			}
@@ -2236,7 +2238,7 @@ void portForward()
 			{
 				continue;
 			}
-			if((old_prt_int = atoi(prt)) == 0 || old_prt_int > 65535)
+			if((old_prt_int = atoi(prt)) <= 0 || old_prt_int > 65535)
 			{
 				continue;
 			}
@@ -3117,9 +3119,6 @@ void showDhcpCliinfo()
 	
 	return;
 }
-
-
-
 
 /*****************************************************************************
 **
