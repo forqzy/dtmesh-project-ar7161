@@ -117,6 +117,8 @@
 <message msgid="AthSelect port forwarding" msgstr="Port Forwarding"/>
 <message msgid="AthSelect routing config" msgstr="Advanced Routing"/>
 <message msgid="AthSelect port filter" msgstr="MAC/IP/Port Filter"/>
+<message msgid="AthSelect system log" msgstr="System Log"/>
+
 <!--APBasicConfig.html-->
 <message msgid="basic AP config" msgstr="Basic AP Configuration"/>
 <message msgid="basic bridge mode" msgstr="Bridge Mode"/>
@@ -338,5 +340,10 @@
 <message msgid="mac port dest port" msgstr="Dest Port Range"/>
 <message msgid="mac port sour port" msgstr="Src Port Range"/>
 <message msgid="mac port show" msgstr="Current IP/Port filtering rules in system "/>
+
+<!--SystemLog.html-->
+<message msgid="system log" msgstr="System Log"/>
+<message msgid="system log refresh" msgstr="Refresh"/>
+<message msgid="system log clear" msgstr="Clear"/>
 
 </po>

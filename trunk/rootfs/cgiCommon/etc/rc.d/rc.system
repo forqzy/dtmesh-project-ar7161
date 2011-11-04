@@ -1,0 +1,13 @@
+#!/bin/sh
+
+## system log init 
+
+killall -q klogd
+killall -q syslogd
+syslogd -C8 1>/dev/null 2>&1
+klogd 1>/dev/null 2>&1
+
+
+
+
+

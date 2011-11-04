@@ -51,6 +51,8 @@ function initTranslation()
 	e.innerHTML = _("AthSelect routing config");
 	e = document.getElementById("PortFiltering");
 	e.innerHTML = _("AthSelect port filter");
+	e = document.getElementById("systemlog");
+	e.innerHTML = _("AthSelect system log");	
 }
 
 function initValue()
@@ -88,6 +90,7 @@ function initValue()
 <a class="SideNav" href="cgi-bin/Administration" target="parameter" id="administration">Administration</a><br>
 <a class="SideNav" href="cgi-bin/CfgManagement" target="parameter" id="management">Management</a><br>
 <a class="SideNav" href="cgi-bin/SystemCommand" target="parameter" id="systemcommand">System Command</a><br>
+<a class="SideNav" href="cgi-bin/SystemLog" target="parameter" id="systemlog">System Log</a><br>
 
 <p class="topnavg" align="center" id="firewall">Firewall</p>
 <a class="SideNav" href="cgi-bin/PortFilter"  target="parameter" id="PortFiltering">MAC/IP/Port Filtering</a><br>
