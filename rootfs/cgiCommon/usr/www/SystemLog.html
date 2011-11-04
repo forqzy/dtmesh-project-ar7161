@@ -1,0 +1,47 @@
+<html><head>
+<LINK REL="stylesheet" href="../styleSheet.css" type="text/css">
+<script type="text/javascript" src="/lang/b28n.js"></script>
+<script language="JavaScript" type="text/javascript">
+Butterlate.setTextDomain("atheros");
+
+function initTranslation()
+{
+	document.getElementById("SystemLogTitle").innerHTML = _("system log");
+	document.getElementById("syslog").innerHTML = _("system log");
+	document.getElementById("SystemLogRefresh").value = _("system log refresh");
+	document.getElementById("SystemLogClear").value = _("system log clear");
+}
+
+function InitPage()
+{
+	initTranslation();
+}
+
+
+</script>
+
+</head>
+<body onload="InitPage()">
+<table><tr><td>
+<p class="topnavg" id="SystemLogTitle">System Log</p>
+
+<!-- ----------------- System command ----------------- -->
+<form name="systemlog">
+<table border="1" cellpadding="2" cellspacing="1">
+<tr>
+  <td class="header" id="syslog">System Log</td>
+</tr>
+<tr>
+<td><div name="syslog" id="syslog" class="headind" style="height:460px; width:460px; overflow:auto;">~`logread`~</div></td></tr>
+</table>
+
+<table>
+	<input type="button" value="Refresh" id="SystemLogRefresh" name="SystemLogRefresh" onclick="location.reload()"> &nbsp;&nbsp;
+	<input type="submit" value="Clear"   id="SystemLogClear"   name="SystemLogClear">
+</table>
+</table>
+</form>
+
+</body></html>
+
+

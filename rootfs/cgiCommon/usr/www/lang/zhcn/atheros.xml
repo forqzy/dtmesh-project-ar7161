@@ -116,6 +116,8 @@
 <message msgid="AthSelect port forwarding" msgstr="端口转发"/>
 <message msgid="AthSelect routing config" msgstr="高级路由配置"/>
 <message msgid="AthSelect port filter" msgstr="MAC/IP/Port过滤"/>
+<message msgid="AthSelect system log" msgstr="系统日志"/>
+
 <!---APBasicConfig.html-->
 <message msgid="basic AP config" msgstr="基本节点配置"/>
 <message msgid="basic bridge mode" msgstr="桥接模式"/>
@@ -342,5 +344,11 @@
 <message msgid="mac port dest port" msgstr="目的端端口范围"/>
 <message msgid="mac port sour port" msgstr="来源端端口范围"/>
 <message msgid="mac port show" msgstr="当前系统的MAC/IP/Port过滤规则"/>
- 
+
+<!--SystemLog.html-->
+<message msgid="system log" msgstr="系统日志"/>
+<message msgid="system log refresh" msgstr="刷新"/>
+<message msgid="system log clear" msgstr="清除"/>
+
+
 </po>

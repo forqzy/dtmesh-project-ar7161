@@ -1171,6 +1171,8 @@ void writeParameters(char *name,char *mode,unsigned long offset)
                 continue;
             if( !strcmp(config.Param[i].Name,"PortFilterApply") )
                 continue;
+            if( !strcmp(config.Param[i].Name,"SystemLogClear") )
+                continue;                
             if( config.Param[i].Val[0] == 0)
                 continue;
 
@@ -3971,6 +3973,15 @@ void showDhcpCliinfo()
 	return;
 }
 
+void systemlogclear(void)
+{
+	system("killall -q klogd");
+	system("killall -q syslogd");
+	system("syslogd -C8 1>/dev/null 2>&1");
+	system("klogd 1>/dev/null 2>&1");
+	
+	return;
+}
 /*****************************************************************************
 **
 ** /brief Main
@@ -4613,6 +4624,12 @@ int main(int argc,char **argv)
 	if(strcmp(argv[0],"DhcpCliInfo") == 0)
 	{
 		showDhcpCliinfo();
+	}
+/**************************** system log ******************************************/	
+	if(strcmp(CFG_get_by_name("SystemLogClear",valBuff),"Clear") == 0 || 
+	   strcmp(CFG_get_by_name("SystemLogClear",valBuff),"Çå³ý") == 0 )
+	{
+		systemlogclear();
 	}
 
     exit(0);
