@@ -1,3 +1,0 @@
-
-Inorder to make art.ko kernel module do a 'make' in this directory. The art.ko will be built in modules directory 
-under this directory. You can also 'make clean'.
