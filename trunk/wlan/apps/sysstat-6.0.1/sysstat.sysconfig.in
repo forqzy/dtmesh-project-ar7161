@@ -1,3 +1,0 @@
-# How long to keep log files (days), maximum is a month
-HISTORY=CONFIG_HISTORY
-

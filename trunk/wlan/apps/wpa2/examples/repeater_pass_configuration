@@ -1,4 +1,0 @@
-#!/bin/sh
-#
-echo ENTER $0 $@
-exec wpatalk ath0 "CONFIGIE $1"
