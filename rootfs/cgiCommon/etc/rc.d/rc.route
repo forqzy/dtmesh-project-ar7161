@@ -9,21 +9,20 @@ do
 		cc=${tmp#*=}
 		#desip
 		desip=${cc%%,*}
+		#hostnet
+		hostnet=${cc%,*,*,*,*}
+		hostnet=${hostnet##*,}
 		#netmask
-		netmask=${cc%,*,*,*,*,*,*}
+		netmask=${cc%,*,*,*}
 		netmask=${netmask##*,}
 		#gateway
-		gateway=${cc%,*,*,*,*,*}
+		gateway=${cc%,*,*}
 		gateway=${gateway##*,}
-		#hostnet
-		hostnet=${cc%,*}
-		hostnet=${hostnet##*,}
+		
 		if [ "${hostnet}" = "net" ]; then
 			route add -net $desip netmask  $netmask gw $gateway
-			echo "route add -net $desip netmask  $netmask gw $gateway"
 		else 
-			route add -host $desip netmask  $netmask gw $gateway
-			echo "route add -host $desip netmask  $netmask gw $gateway"
+			route add -host $desip gw $gateway
 		fi
 	fi
 done

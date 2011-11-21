@@ -3,213 +3,199 @@
 <script type="text/javascript" src="/lang/b28n.js"></script>
 <script language="JavaScript" type="text/javascript">
 Butterlate.setTextDomain("atheros");
-function deleteClick()
-{
-	return true;
-}
-function checkRange(str, num, min, max)
-{
-    d = atoi(str,num);
-    if(d > max || d < min)
-        return false;
-    return true;
-}
-function checkIpAddr(field)
-{
-    if(field.value == ""){
-        field.focus();
-        return false;
-    }
 
-    if ( isAllNum(field.value) == 0) {
-        field.focus();
-        return false;
-    }
-
-    if( (!checkRange(field.value,1,0,255)) ||
-        (!checkRange(field.value,2,0,255)) ||
-        (!checkRange(field.value,3,0,255)) ||
-        (!checkRange(field.value,4,0,255)) ){
-        field.focus();
-        return false;
-    }
-
-   return true;
-}
 function atoi(str, num)
 {
-	i=1;
-	if(num != 1 ){
-		while (i != num && str.length != 0){
-			if(str.charAt(0) == '.'){
+	var i = 1;
+	if(num != 1 )
+	{
+		while (i != num && str.length != 0)
+		{
+			if(str.charAt(0) == '.')
+			{
 				i++;
 			}
 			str = str.substring(1);
 		}
 	  	if(i != num )
+	  	{
 			return -1;
+		}
 	}
 	
-	for(i=0; i<str.length; i++){
-		if(str.charAt(i) == '.'){
+	for(i = 0; i < str.length; i++)
+	{
+		if(str.charAt(i) == '.')
+		{
 			str = str.substring(0, i);
 			break;
 		}
 	}
 	if(str.length == 0)
+	{
 		return -1;
+	}
 	return parseInt(str, 10);
 }
+
 function isAllNum(str)
 {
-	for (var i=0; i<str.length; i++){
+	var n = 0;
+	for (var i=0; i<str.length; i++)
+	{
 	    if((str.charAt(i) >= '0' && str.charAt(i) <= '9') || (str.charAt(i) == '.' ))
+	    {
 			continue;
+		}
 		return 0;
 	}
+
 	return 1;
 }
+
+
+function checkRange(str, num, mini, maxi)
+{
+	var d = atoi(str,num);
+	if(d > maxi || d < mini)
+	{
+		return false;
+	}
+	return true;
+}
+
+function checkIpAddr(field)
+{
+	var n = 0;
+    if ( isAllNum(field.value) == 0) 
+    {
+        alert('It should be a [0-9] number.');
+        field.focus();
+        return false;
+    }
+
+    if( (!checkRange(field.value,1,1,255)) ||
+        (!checkRange(field.value,2,0,255)) ||
+        (!checkRange(field.value,3,0,255)) ||
+        (!checkRange(field.value,4,1,254)) )
+	{
+        alert('IP format error.');
+        field.focus();
+        return false;
+    }
+    for (var i=0; i< field.value.length; i++)
+    {
+        if(field.value.charAt(i) == '.' )
+        {
+            n++;
+        }
+	}
+	if(3 != n)
+	{
+		alert('IP format error.');
+		return false;	
+	}
+	
+   return true;
+}
+
 function formCheck()
 {
-	if( document.routingConfig.dest.value != "" && !checkIpAddr(document.routingConfig.dest )){
+	if( document.routingConfig.StaticRouteDest.value != "" && !checkIpAddr(document.routingConfig.StaticRouteDest ))
+	{
 		alert("The destination has wrong format.");
 		return false;
 	}
-	if( document.routingConfig.netmask.value != "" && !checkIpAddr(document.routingConfig.netmask )){
+	if( document.routingConfig.StaticRouteMask.value != "" && !checkIpAddr(document.routingConfig.StaticRouteMask ))
+	{
 		alert("The netmask has wrong format.");
 		return false;
 	}
-	if( document.routingConfig.gateway.value != "" && !checkIpAddr(document.routingConfig.gateway)){
+	if( document.routingConfig.StaticRouteGateway.value != "" && !checkIpAddr(document.routingConfig.StaticRouteGateway))
+	{
 		alert("The gateway has wrong format.");
 		return false;
 	}
 
-	if(	document.routingConfig.dest.value == ""){
+	if(	document.routingConfig.StaticRouteDest.value == "")
+	{
 		alert("please input the destination.");
 		return false;
 	}
 
-    if( document.routingConfig.hostnet.selectedIndex == 1 &&
-		document.routingConfig.netmask.value == ""){
+    if( document.routingConfig.StaticRouteHostNet.value == "net" &&
+		document.routingConfig.StaticRouteMask.value == "")
+	{
 		alert("please input the netmask.");
-        	return false;
+       	return false;
     }
 
-	if(document.routingConfig.interface.value == "Custom" &&
-		document.routingConfig.custom_interface.value == ""){
+	if(document.routingConfig.StaticRouteInterface.value == "Custom" &&
+	   document.routingConfig.custom_StaticRouteCusIntf.value == "")
+	{
 		alert("please input custom interface name.");
 		return false;
 	}
-	return true;
 	
+	return true;	
 }
+
 function initTranslation()
 {
-	var e;
-	e = document.getElementById("routingTitle");
-	e.innerHTML = _("routing title");
-	e = document.getElementById("routingIntroduction");
-	e.innerHTML = _("routing Introduction");
-	e = document.getElementById("routingAddRule");
-	e.innerHTML = _("routing add rule");
-	e = document.getElementById("routingDest");
-	e.innerHTML = _("routing routing dest");
-	e = document.getElementById("routingRange");
-	e.innerHTML = _("routing range");
-	e = document.getElementById("routingNetmask");
-	e.innerHTML = _("routing netmask");
-	e = document.getElementById("routingGateway");
-	e.innerHTML = _("routing gateway");
-	e = document.getElementById("routingInterface");
-	e.innerHTML = _("routing interface");
-	e = document.getElementById("routingCustom");
-	e.innerHTML = _("routing custom");
-	e = document.getElementById("routingComment");
-	e.innerHTML = _("routing comment");
-	e = document.getElementById("routingSubmit");
-	e.value = _("admin apply");
-	e = document.getElementById("routingReset");
-	e.value = _("admin reset");
-	e = document.getElementById("routingCurrentRoutingTableRules");
-	e.innerHTML = _("routing del title");
-	e = document.getElementById("routingNo");
-	e.innerHTML = _("routing Number");
-	e = document.getElementById("routingDelDest");
-	e.innerHTML = _("routing del dest");
-	e = document.getElementById("routingDelNetmask");
-	e.innerHTML = _("routing del netmask");
-	e = document.getElementById("routingDelGateway");
-	e.innerHTML = _("routing del gateway");
-	e = document.getElementById("routingDelFlags");
-	e.innerHTML = _("routing del flags");
-	e = document.getElementById("routingDelMetric");
-	e.innerHTML = _("routing del metric");
-	e = document.getElementById("routingDelRef");
-	e.innerHTML = _("routing del ref");
-	e = document.getElementById("routingDelUse");
-	e.innerHTML = _("routing del use");
-	e = document.getElementById("routingDelInterface");
-	e.innerHTML = _("routing del interface");
-	e = document.getElementById("routingDelComment");
-	e.innerHTML = _("routing del comment");
-	e = document.getElementById("routingDel");
-	e.value = _("routing del");
-	e = document.getElementById("routingDelReset");
-	e.value = _("routing del reset");
-	e = document.getElementById("routing host");
-	e.innerHTML = _("routing host");
-	e = document.getElementById("routing net");
-	e.innerHTML = _("routing net");
-	e = document.getElementById("routing LAN");
-	e.innerHTML = _("routing LAN");
-	if(document.getElementById("routing WAN")){
-		e = document.getElementById("routing WAN");
-		e.innerHTML = _("routing WAN");
-	}
-	e = document.getElementById("dynamicRoutingTitle");
-	e.innerHTML = _("routing dynamic Title");
-	e = document.getElementById("dynamicRoutingTitle2");
-	e.innerHTML = _("routing dynamic Title2");
-	e = document.getElementById("RIPDisable");
-	e.innerHTML = _("routing dynamic rip disable");
-	e = document.getElementById("RIPEnable");
-	e.innerHTML = _("routing dynamic rip enable");
-	e = document.getElementById("dynamicRoutingApply");
-	e.value = _("routing dynamic rip apply");
-	e = document.getElementById("dynamicRoutingReset");
-	e.value = _("routing dynamic rip reset");
-}
-
-function initValue()
-{
-	initTranslation();
-	document.routingConfig.hostnet.selectedIndex = 0;
-	document.routingConfig.netmask.readOnly = true;
-	document.routingConfig.interface.selectedIndex = 0;
-	document.routingConfig.custom_interface.value = "";
-	document.routingConfig.custom_interface.readOnly = true;
-
+	document.getElementById("routingTitle").innerHTML = _("routing title");
+	document.getElementById("routingIntroduction").innerHTML = _("routing Introduction");
+	document.getElementById("routingAddRule").innerHTML = _("routing add rule");
+	document.getElementById("routingDest").innerHTML = _("routing routing dest");
+	document.getElementById("routingRange").innerHTML = _("routing range");
+	document.getElementById("routingNetmask").innerHTML = _("routing netmask");
+	document.getElementById("routingGateway").innerHTML = _("routing gateway");
+	document.getElementById("routingInterface").innerHTML = _("routing interface");
+	document.getElementById("routingCustom").innerHTML = _("routing custom");
+	document.getElementById("routingSubmit").value = _("admin apply");
+	document.getElementById("routingReset").value = _("admin reset");
+	document.getElementById("routingCurrentRoutingTableRules").innerHTML = _("routing del title");
+	document.getElementById("routingNo").innerHTML = _("routing Number");
+	document.getElementById("routingDelDest").innerHTML = _("routing del dest");
+	document.getElementById("routingDelNetmask").innerHTML = _("routing del netmask");
+	document.getElementById("routingDelGateway").innerHTML = _("routing del gateway");
+	document.getElementById("routingDelInterface").innerHTML = _("routing del interface");
+	document.getElementById("routingDel").value = _("routing del");
+	document.getElementById("routingDelReset").value = _("routing del reset");
+	document.getElementById("StaticRouteHost").innerHTML = _("routing host");
+	document.getElementById("StaticRouteNet").innerHTML = _("routing net");
 }
 
 function hostnetChange()
 {
-	if(document.routingConfig.hostnet.selectedIndex == 1){
-		document.routingConfig.netmask.readOnly = false;
-		document.routingConfig.netmask.focus();
-	}else{
-		document.routingConfig.netmask.value = "";
-		document.routingConfig.netmask.readOnly = true;	
+	if(document.routingConfig.StaticRouteHostNet.value == "host")
+	{
+		document.routingConfig.StaticRouteMask.disabled = true;
+	}
+	else
+	{
+		document.routingConfig.StaticRouteMask.disabled = false;
+		document.routingConfig.StaticRouteMask.focus();
 	}
 }
+
 function interfaceChange()
 {
-	if(document.routingConfig.interface.selectedIndex == 2){
-		document.routingConfig.custom_interface.readOnly = false;
-		document.routingConfig.custom_interface.focus();
-	}else{
-		document.routingConfig.custom_interface.value = "";
-		document.routingConfig.custom_interface.readOnly = true;
+	if(document.routingConfig.StaticRouteInterface.value == "Custom")
+	{
+		document.routingConfig.StaticRouteCusIntf.readOnly = false;
+		document.routingConfig.StaticRouteCusIntf.focus();
 	}
+	else
+	{
+		document.routingConfig.StaticRouteCusIntf.readOnly = true;
+	}
+}
+
+function initValue()
+{
+	hostnetChange();
+	interfaceChange();
+	initTranslation();
 }
 
 </script>
@@ -217,107 +203,50 @@ function interfaceChange()
 
 <body onload="initValue()">
 <form method="post"  id="routingConfig" value="routingConfig" name="routingConfig" >
+
+
 <p id="routingTitle" class="topnavg">Static Routing  Settings  </p>
-<p id="routingIntroduction" style="font-family:Arial;color:red;font-size:11px;font-weight:bold;">
-	You may add or remote Internet routing rules here.</p>
-<!--娣诲姞-->
+<p id="routingIntroduction" class="action">You may add or remove Internet routing rules here.</p>
 <table border="1" cellpadding="2" cellspacing="1" width="400">
-<tbody><tr>
-  <td class="topnavg" colspan="2" id="routingAddRule">Add a routing rule</td>
-</tr>
-
-<tr>
-	<td class="header" id="routingDest">
-		Destination
-	</td>
+<tr><td class="topnavg" colspan="2" id="routingAddRule">Add a routing rule</td></tr>
+<tr><td class="header" id="routingDest">Destination</td>
+	<td><input size="16" name="StaticRouteDest" type="text"></td></tr>
+<tr><td class="header" id="routingRange">Host/Net</td>
 	<td>
-  		<input size="16" name="dest" type="text">
-	</td>
-</tr>
-
-<tr>
-	<td class="header" id="routingRange">
-		Host/Net
-	</td>
+		<select name="StaticRouteHostNet" onchange="hostnetChange()">
+		<option value="host" name="StaticRouteHost" id="StaticRouteHost">Host</option>
+		<option value="net"  name="StaticRouteNet" id="StaticRouteNet">Net</option></select>
+	</td></tr>
+<tr><td class="header" id="routingNetmask">Sub Netmask</td>
+	<td><input size="16" name="StaticRouteMask" type="text"></td></tr>
+<tr><td class="header" id="routingGateway">Gateway</td>
+	<td><input size="16" name="StaticRouteGateway" type="text"></td></tr>
+<tr><td class="header" id="routingInterface">Interface</td>
 	<td>
-		<select name="hostnet" onchange="hostnetChange()">
-		<option value="host" id="routing host">Host</option>
-		<option value="net"  id="routing net">Net</option>
-		</select>
-	</td>
-</tr>
-
-<tr id="routingNetmaskRow">
-	<td class="header" id="routingNetmask">
-		Sub Netmask
-	</td>
-	<td>
-  		<input size="16" name="netmask" type="text">
-	</td>
-</tr>
-
-<tr>
-	<td class="header" id="routingGateway">
-		Gateway
-	</td>
-	<td>
-  		<input size="16" name="gateway" type="text">
-	</td>
-</tr>
-
-<tr>
-	<td class="header" id="routingInterface">
-		Interface
-	</td>
-	<td>
-		<select name="interface" onChange="interfaceChange()">
+		<select name="StaticRouteInterface" onChange="interfaceChange()">
 		<option value="LAN" id="routing LAN">LAN</option>
 		<option value="WAN" id="routing WAN">WAN</option>
-		<option value="Custom" id="routingCustom">Custom</option>
-		</select>
-		<input alias="right" size="16" name="custom_interface" type="text">
-	</td>
-</tr>
-
-<tr>
-	<td class="header" id="routingComment">
-		Comment
-	</td>
-	<td>
-		<input name="comment" size="16" maxlength="32" type="text">
-	</td>
-</tr>
-</tbody></table>
+		<option value="Custom" id="routingCustom">Custom</option></select>
+		<input alias="right" size="16" name="StaticRouteCusIntf" type="text"></td></tr>
+</table>
 
 <p>
-	<input value="Apply" id="routingSubmit" name="AddroutingConfigApply" onclick="return formCheck();" type="submit"> &nbsp;&nbsp;
-	<input value="Reset" id="routingReset" name="reset" type="reset">
+	<input type="submit" value="Apply" id="routingSubmit" name="AddroutingConfigApply" onclick="return formCheck();"> &nbsp;&nbsp;
+	<input type="reset"  value="Reset" id="routingReset"  name="AddroutingReset">
 </p>
+
 <!--配置规则列表-->
-  <p class="headind">
-  	<input value="Delete" id="routingDel" name="deleteRoutingConfig" onclick="return deleteClick()" type="submit">
-	<input value="Reset" id="routingDelReset" name="reset" type="reset">
-  </p>
-<table border="1" cellpadding="2" cellspacing="1" width="800">	
-	<tbody><tr>
-		<td class="topnavg" colspan="10" id="routingCurrentRoutingTableRules">Current Routing table in the system: </td>
-	</tr>
-
-	<tr>
-		<td class="header" id="routingNo" align="center"> No.</td>
-		<td class="header" id="routingDelDest" align="center"> Destination </td>
-		<td class="header" id="routingDelNetmask" align="center"> Netmask</td>
-		<td class="header" id="routingDelGateway" align="center"> Gateway</td>
-		<td class="header" id="routingDelFlags" align="center"> Flags</td>
-		<td class="header" id="routingDelMetric" align="center"> Metric</td>
-		<td class="header" id="routingDelRef" align="center"> Ref</td>
-		<td class="header" id="routingDelUse" align="center"> Use</td>
-		<td class="header" id="routingDelInterface" align="center"> Interface</td>
-		<td class="header" id="routingDelComment" align="center"> Comment</td>
-	</tr>
-
-<!--</tbody></table>
-<br>
--->
-</form>
-</body></html>
+<p class="headind">
+  	<input value="Delete" id="routingDel" name="deleteRoutingConfig" type="submit"> &nbsp;&nbsp;
+	<input value="Reset"  id="routingDelReset" name="deleteRoutingReset" type="reset">
+</p>
+<table border="1" cellpadding="2" cellspacing="1" width="540">	
+<tr><td class="topnavg" colspan="6" id="routingCurrentRoutingTableRules">Current Routing table in the system: </td></tr>
+<tr>
+	<td class="header" align="center" id="routingNo"> No.</td>
+	<td class="header" align="center" id="routingDelDest"> Destination </td>
+	<td class="header" align="center" id="routingDelHostnet"> Host/Net </td>
+	<td class="header" align="center" id="routingDelNetmask"> Netmask</td>
+	<td class="header" align="center" id="routingDelGateway"> Gateway</td>
+	<td class="header" align="center" id="routingDelInterface"> Interface</td>
+</tr>
