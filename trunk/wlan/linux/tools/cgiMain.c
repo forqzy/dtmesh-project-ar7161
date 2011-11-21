@@ -1172,7 +1172,11 @@ void writeParameters(char *name,char *mode,unsigned long offset)
             if( !strcmp(config.Param[i].Name,"PortFilterApply") )
                 continue;
             if( !strcmp(config.Param[i].Name,"SystemLogClear") )
-                continue;                
+                continue;
+            if( !strcmp(config.Param[i].Name,"AddroutingConfigApply") )
+                continue;
+            if( !strcmp(config.Param[i].Name,"deleteRoutingConfig") )
+                continue;                                
             if( config.Param[i].Val[0] == 0)
                 continue;
 
@@ -1736,34 +1740,8 @@ char* getWanIfName(void)
  */
 char* getLanIfName(void)
 {
-	char mode[128] = {0};
-	char num_s[10]={0};
-	CFG_get_by_name("OperationMode",mode);
-	static char *if_name = "br0";
-
-	if (NULL == mode)
-		return if_name;
-	if (!strncmp(mode, "0", 2))
-		if_name = "br0";
-	else if (!strncmp(mode, "1", 2)) {
-#if defined CONFIG_RAETH_ROUTER || defined CONFIG_MAC_TO_MAC_MODE || defined CONFIG_RT_3052_ESW
-		if_name = "br0";
-#elif defined  CONFIG_ICPLUS_PHY && CONFIG_RT2860V2_AP_MBSS
-		CFG_get_by_name("BssidNum",num_s);
-		if(atoi(num_s) > 1)	// multiple ssid
-			if_name = "br0";
-		else
-			if_name = "ra0";
-#else
-		if_name = "ra0";
-#endif
-	}
-	else if (!strncmp(mode, "2", 2)) {
-		if_name = "eth2";
-	}
-	else if (!strncmp(mode, "3", 2)) {
-		if_name = "br0";
-	}
+	char * if_name = "br0";
+	
 	return if_name;
 }
 int isIpValid(char *str)
@@ -3229,307 +3207,310 @@ void portFilterDelete()
 
 
 /*************************end for port filtering**************************/
-
-/*
- * make run system
- */
-int RoutingRun(char *dest,char *hostnet,char *netmask,char *gateway,char *interface,char *custom_interface,char *comment)
-{
-	
-	char true_interface[20]={0};
-	char cmd[256] = {0};
-	char result[256] = {0};
-
-	FILE *fp;
-	if( !dest || !strlen(dest))
-	return;
-	strcat(cmd, "route add ");
-	
-	// host or net?
-	if(!strcmp(hostnet, "net"))
-		strcat(cmd, "-net ");
-	else
-		strcat(cmd, "-host ");
-
-	// destination
-	if(!strlen(dest))
-	{
-		return 0;
-	}
-	strcat(cmd, dest);
-	strcat(cmd, " ");
-
-	// netmask
-	if(strlen(netmask) )
-		sprintf(cmd, "%s netmask %s", cmd, netmask);
-	else
-		netmask = "255.255.255.255";
-
-	//gateway
-	if(strlen(gateway))
-		sprintf(cmd, "%s gw %s", cmd, gateway);
-	else
-		gateway = "0.0.0.0";
-
-	//interface
-	/*if(strlen(interface)){
-		if (!strcmp(interface, "WAN")){
-			strncpy(true_interface, getWanIfName(), sizeof(true_interface)-1);
-		}else if (!strcmp(interface, "Custom")){
-			if(!strlen(custom_interface))
-				return;
-			strcpy(true_interface, custom_interface);
-		}else	// LAN & unknown
-			strncpy(true_interface, getLanIfName(), sizeof(true_interface)-1);
-	}else{
-		interface = "LAN";
-		strncpy(true_interface,getLanIfName(), sizeof(true_interface)-1);
-	}
-	sprintf(cmd, "%s dev %s ", cmd, true_interface);*/
-	strcat(cmd, " ");
-	strcat(cmd, "2>&1 ");
-	fp = popen(cmd, "r");
-	fgets(result, sizeof(result), fp);
-	pclose(fp);
-	if(!strlen(result)){
-	// success, write down to the flash
-   	 system(cmd);
-		return 1;
-	}else{
-		return 0;
-	}
-}
 /*
  * Add paramper 
  */
-int AddRouting(void)
+void AddRouting(void)
 {
 	
-	char dest[20]={0};
-	char hostnet[5]={0};
-	char netmask[20]={0};
-	char gateway[20]={0};
-	char interface[10]={0};
-	char true_interface[20]={0};
+	char dest[20]={0}, old_dest[20] = {0};
+	char hostnet[5]={0}, old_hostnet[5] = {0};
+	char netmask[20]={0}, old_netmask[20] = {0};
+	char gateway[20]={0}, old_gateway[20] = {0};
+	char interface[10]={0}, old_interface[10] = {0};
+	char true_interface[20]={0}, old_trueintf[20] = {0};
 	char custom_interface[20]={0};
-	char comment[20]={0};
-	char tmp[30]={0};
-
-	int i=0;
-	int index=-1;//第一个空位置 
+	char tmp[100]={0};
+	int i = 0;
 	char cmd[256] = {0};
 	char valBuff[1024] = {0};
-	FILE *fp;
-	CFG_get_by_name("dest", dest);
-	CFG_get_by_name("hostnet", hostnet);
-	CFG_get_by_name("netmask", netmask);
-	CFG_get_by_name("gateway", gateway);
-	CFG_get_by_name("interface", interface);
-	CFG_get_by_name("custom_interface", custom_interface);
-	CFG_get_by_name("comment", comment);
-	if( !dest || !strlen(dest))
-	return;
-	// netmask
-	if(!strlen(netmask))
-	strcpy(netmask,"255.255.255.255");
-	//gateway
-	if(!strlen(gateway))
-	strcpy(gateway,"0.0.0.0");
-	//interface
-	if(strlen(interface)){
-		if (!strcmp(interface, "WAN")){
-			strncpy(true_interface,getWanIfName(),sizeof(true_interface)-1);
-		}else if (!strcmp(interface, "Custom")){
-			if(!strlen(custom_interface))
-				return;
-			strcpy(true_interface,custom_interface);	
-		}else	// LAN & unknown
-		strncpy(true_interface,getLanIfName(),sizeof(true_interface)-1);
-	}else{
-		strcpy(interface,"LAN");
-		strncpy(true_interface,getLanIfName(),sizeof(true_interface)-1);
-	}
-	for(i=0;i<MaxRulesCount;i++)
-	{
-		snprintf(cmd, sizeof(cmd), "RoutingRules%d", i);
-		CFG_get_by_name(cmd, valBuff);
-		if(valBuff && strlen(valBuff) )
-		{
-			// get dest
-			if( getNthValueSafe(0, valBuff, ',', tmp, sizeof(tmp)) == -1 )
-			{ 
-				continue;
-			}
-			if(strcmp(dest,tmp))
-			{
-				continue;
-			}
-			// get netmask
-			if( getNthValueSafe(1, valBuff, ',', tmp, sizeof(tmp)) == -1 )
-			{ 
-				continue;
-			}
-			if(strcmp(netmask,tmp))
-			{
-				continue;
-			}
-			// get gateway
-			if( getNthValueSafe(2, valBuff, ',', tmp, sizeof(tmp)) == -1 )
-			{ 
-				continue;
-			}
-			if(strcmp(gateway,tmp))
-			{
-				continue;
-			}
-			// get interface
-			if( getNthValueSafe(3, valBuff, ',', tmp, sizeof(tmp)) == -1 )
-			{ 
-				continue;
-			}
-			if(strcmp(interface,tmp))
-			{
-				continue;
-			}
-			// get true_interface
-			if( getNthValueSafe(4, valBuff, ',', tmp, sizeof(tmp)) == -1 )
-			{ 
-				continue;
-			}
-			if(strcmp(true_interface,tmp))
-			{
-				continue;
-			}
-			// get custom_interface
-			if( getNthValueSafe(5, valBuff, ',', tmp, sizeof(tmp)) == -1 )
-			{ 
-				continue;
-			}
-			if(strcmp(custom_interface,tmp))
-			{
-				continue;
-			}
-			// get hostnet
-			if( getNthValueSafe(6, valBuff, ',', tmp, sizeof(tmp)) == -1 )
-			{ 
-				continue;
-			}
-			if(strcmp(hostnet,tmp))
-			{
-				continue;
-			}
-
-			printf("Already have this configuration!\n");
-			return;
-		}
-		else if(index==-1)
-		{
-			index=i;
-		}	
-	}
-	//不存在
-	if(index!=-1)
-	{
-		char tmp[1024]={0};
-		snprintf(cmd, sizeof(cmd), "RoutingRules%d", index);
-		sprintf(tmp, "%s,%s,%s,%s,%s,%s,%s,%s",  dest, netmask, gateway, interface, true_interface, custom_interface, hostnet,comment);
-		CFG_set_by_name(cmd, tmp);
-		if(RoutingRun(dest,hostnet,netmask,gateway,interface,custom_interface,comment))
-		{
-			writeParameters("/tmp/.apcfg","w+",0);	
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	else if(index>32 || index==-1)
-	{
-		printf("Max config number 32!\n");
-		return 0;
-	}
-}
- int removeRoutingRule(char *dest, char *netmask, char *hostnet)
-{
-	char cmd[1024];
-	strcpy(cmd, "route del ");
+	char result[256] = {0};
+	FILE *fp = NULL;
 	
-	// host or net?
-	if(!strcmp(hostnet,"net"))
-		strcat(cmd, " -net ");
+	CFG_get_by_name("StaticRouteDest", dest);
+	CFG_get_by_name("StaticRouteHostNet", hostnet);
+	CFG_get_by_name("StaticRouteMask", netmask);
+	CFG_get_by_name("StaticRouteGateway", gateway);
+	CFG_get_by_name("StaticRouteInterface", interface);
+	CFG_get_by_name("StaticRouteCusIntf", custom_interface);
+	
+	if( !dest || !strlen(dest))
+	{
+		return;
+	}
+		
+	memset(cmd, 0, sizeof(cmd));
+	strcat(cmd, "route add ");
+
+	if(!strcmp(hostnet, "net"))
+	{
+		strcat(cmd, "-net ");
+	}
 	else
-		strcat(cmd, " -host ");
+	{
+		strcat(cmd, "-host ");
+	}
+	
 	// destination
 	strcat(cmd, dest);
 	strcat(cmd, " ");
+
+	// netmask
+	if(strlen(netmask))
+	{
+		sprintf(cmd, "%s netmask %s", cmd, netmask);
+	}
+	else
+	{
+		strcpy(netmask,"255.255.255.255");
+	}
+
+	//gateway
+	if(strlen(gateway))
+	{
+		sprintf(cmd, "%s gw %s", cmd, gateway);
+	}
+	else
+	{
+		strcpy(gateway,"0.0.0.0");
+	}
+	
+	//interface
+	if(strlen(interface))
+	{
+		if (!strcmp(interface, "WAN"))
+		{
+			strncpy(true_interface, getWanIfName(), sizeof(true_interface)-1);
+		}
+		else if (!strcmp(interface, "Custom"))
+		{
+			if(!strlen(custom_interface))
+			{
+				return;
+			}
+			strcpy(true_interface,custom_interface);	
+		}
+		else	// LAN & unknown
+		{
+			strncpy(true_interface,getLanIfName(),sizeof(true_interface)-1);
+		}
+	}
+	else
+	{
+		strcpy(interface,"LAN");
+		strncpy(true_interface,getLanIfName(),sizeof(true_interface)-1);
+	}
+	
+	sprintf(cmd, "%s dev %s 2>&1", cmd, true_interface);
+
+	fp = popen(cmd, "r");
+	fgets(result, sizeof(result), fp);
+	pclose(fp);	
+	
+	if(!strlen(result))
+	{
+		for(i=0; i<MaxRulesCount; i++)
+		{
+			snprintf(cmd, sizeof(cmd), "RoutingRules%d", i);
+			CFG_get_by_name(cmd, valBuff);
+			
+			if(valBuff && strlen(valBuff))
+			{
+				// get dest
+				if(getNthValueSafe(0, valBuff, ',', old_dest, sizeof(old_dest)) == -1 )
+				{ 
+					continue;
+				}
+				// get hostnet
+				if(getNthValueSafe(1, valBuff, ',', old_hostnet, sizeof(old_hostnet)) == -1 )
+				{ 
+					continue;
+				}
+				// get netmask
+				if( getNthValueSafe(2, valBuff, ',', old_netmask, sizeof(old_netmask)) == -1 )
+				{ 
+					continue;
+				}
+
+				// get gateway
+				if( getNthValueSafe(3, valBuff, ',', old_gateway, sizeof(old_gateway)) == -1 )
+				{ 
+					continue;
+				}
+
+				// get interface
+				if( getNthValueSafe(4, valBuff, ',', old_interface, sizeof(old_interface)) == -1 )
+				{ 
+					continue;
+				}
+
+				// get true_interface
+				if( getNthValueSafe(5, valBuff, ',', old_trueintf, sizeof(old_trueintf)) == -1 )
+				{ 
+					continue;
+				}
+
+				if(!strcmp(dest,old_dest) && !strcmp(netmask,old_netmask) && !strcmp(hostnet,old_hostnet))
+				{
+					printf("Already have this configuration!\n");
+					return;
+				}
+			}
+			else
+			{
+				snprintf(cmd, sizeof(cmd), "RoutingRules%d", i);
+				sprintf(tmp, "%s,%s,%s,%s,%s,%s", dest, hostnet, netmask, gateway, interface, true_interface);
+				CFG_set_by_name(cmd, tmp);
+				writeParameters("/tmp/.apcfg","w+",0);
+				writeParameters(NVRAM,"w+", NVRAM_OFFSET);
+				break;
+			}	
+		}
+	}
+	else
+	{
+		printf("Add routing failed: %s <br>", result);
+		return;
+	}
+	
+	return;
+}
+
+void removeRoutingRule(char *dest, char *netmask, char *hostnet)
+{
+	char cmd[1024];
+	
+	strcpy(cmd, "route del ");	
+	// host or net?
+	if(!strcmp(hostnet,"net"))
+	{
+		strcat(cmd, " -net ");
+	}
+	else
+	{
+		strcat(cmd, " -host ");
+	}
+	// destination
+	strcat(cmd, dest);
 	// netmask
 	if(!strcmp(hostnet,"net"))
 	{
 		sprintf(cmd, "%s netmask %s", cmd, netmask);
 	}
-	//interface
-	//sprintf(cmd, "%s dev %s ", cmd, ifname);
+
 	system(cmd);
-	return 1;
+	return;
 }
+
 int DelRouting(void)
 {
-	int  i            = 0;
-	char cmd[128]     = {0};
-	char rule[70]     = {0};
-	char dest[20]={0};
-	char netmask[20]={0};
-	char  hostnet[20]={0};
-
-	for(i = 0;i < MaxRulesCount; i++)
+	int  i, rule_count;
+	int  j, delete_count;
+	char cmd[200], rule[200], buf[100], val[200];
+	int  flag = 0;   //mark if some rules to delete
+	char delRule[MaxRulesCount][32] = {0};
+	int  delRuleNum = 0;
+	char dest[20] = {0}, hostnet[20] = {0}, netmask[20] = {0};
+		
+	for(i = 0, rule_count = 0; i < MaxRulesCount; i++)
 	{
 		memset(cmd, 0, sizeof(cmd));
-		memset(rule, 0, sizeof(rule));
-		sprintf(cmd, "delRouting%d", i);
+		memset(rule, 0, sizeof(rule));			
+
+		sprintf(cmd, "RoutingRules%d", i);
 		CFG_get_by_name(cmd,rule);
 		if(!rule || !strlen(rule))
 		{	
 			continue;
-	   	}
-		else
-		{
-			CFG_remove_by_name(cmd);
-			memset(cmd, 0, sizeof(cmd));
-			memset(rule, 0, sizeof(rule));
+	    }
+	    else
+	    {
+			rule_count++;
+	    }
+    }
+    if(rule_count == 0)
+    {
+		// there is no RoutingRules        
+        return ;
+	}				
 
-			sprintf(cmd, "RoutingRules%d", i);
-			CFG_get_by_name(cmd,rule);
-			if(!rule || !strlen(rule))
-			{
-				continue;
-			}
-			else
-			{
-				if( getNthValueSafe(0, rule, ',', dest, sizeof(dest)) == -1 )
-				{ 
-					continue;
-				}
-			
-				// get netmask
-				if( getNthValueSafe(1, rule, ',', netmask, sizeof(netmask)) == -1 )
-				{ 
-					continue;
-				}
-				//hostnet
-				if( getNthValueSafe(6, rule, ',', hostnet, sizeof(hostnet)) == -1 )
-				{ 
-					continue;
-				}
-				removeRoutingRule(dest, netmask, hostnet);		
-				CFG_remove_by_name(cmd);
-			}	
+	for(i = 0; i < rule_count; i++)
+	{
+		snprintf(buf, sizeof(buf), "delRouting%d", i);
+		CFG_get_by_name(buf,val);
+
+		if(!val || !strlen(val))
+		{
+			continue;
 		}
-    	}
-	writeParameters("/tmp/.apcfg","w+",0);	
-	return 1;
+		else //delete this record
+		{
+			if (0 == flag)
+			{
+				flag = 1;
+			}
+			
+			for(j = 0, delete_count = 0; j < MaxRulesCount; j++)
+			{
+				memset(cmd, 0, sizeof(cmd));
+				memset(rule, 0, sizeof(rule));
+				
+				snprintf(cmd,sizeof(cmd),"RoutingRules%d",j);
+				CFG_get_by_name(cmd, rule);
+				if( !rule || !strlen(rule))
+				{
+					continue;
+				}
+				else
+				{
+					delete_count++;									
+					if( i == (delete_count-1) )
+					{	
+						strcpy(delRule[delRuleNum++], cmd);
+						CFG_remove_by_name(buf);
+						
+						if( getNthValueSafe(0, rule, ',', dest, sizeof(dest)) == -1 )
+						{ 
+							continue;
+						}
+						//hostnet
+						if( getNthValueSafe(1, rule, ',', hostnet, sizeof(hostnet)) == -1 )
+						{ 
+							continue;
+						}
+						
+						// get netmask
+						if( getNthValueSafe(2, rule, ',', netmask, sizeof(netmask)) == -1 )
+						{ 
+							continue;
+						}
+
+						removeRoutingRule(dest, netmask, hostnet);
+						break;
+					}
+				}				
+			}
+		}		
+	}
+
+    if(0 == flag)
+    {
+        printf("You didn't select any rules to delete.<br>\n");
+        return;
+    }
+	
+	for (j = 0; j < delRuleNum; j++)
+	{
+		CFG_remove_by_name(delRule[j]);
+	}
+	
+	writeParameters("/tmp/.apcfg","w+",0);
+	writeParameters(NVRAM,"w+", NVRAM_OFFSET);
+
+	return;
 }
-int ShowRouting(void)
+
+void ShowRouting(void)
 {
 	int  i   = 0;
 	int  index = 0;
@@ -3542,7 +3523,7 @@ int ShowRouting(void)
 	char custom_interface[20]={0};
 	char comment[20]={0};
 	char name[30]={0};
-	char valBuff[70]     = {0};
+	char valBuff[70] = {0};
 	for(i = 0;  i < MaxRulesCount; i++)
 	{
 		snprintf(name, sizeof(name),"RoutingRules%d", i);
@@ -3550,7 +3531,7 @@ int ShowRouting(void)
 		if(!valBuff || !strlen(valBuff))
 		{
 			continue;
-	    	}
+	    }
 		else
 		{
 			//打印
@@ -3560,61 +3541,50 @@ int ShowRouting(void)
 				continue;
 			}
 			
+			// get hostnet
+			if( getNthValueSafe(1, valBuff, ',', hostnet, sizeof(hostnet)) == -1 )
+			{ 
+				continue;
+			}
+			
 			// get netmask
-			if( getNthValueSafe(1, valBuff, ',', netmask, sizeof(netmask)) == -1 )
+			if( getNthValueSafe(2, valBuff, ',', netmask, sizeof(netmask)) == -1 )
 			{ 
 				continue;
 			}
 			
 			// get gateway
-			if( getNthValueSafe(2, valBuff, ',', gateway, sizeof(gateway)) == -1 )
+			if( getNthValueSafe(3, valBuff, ',', gateway, sizeof(gateway)) == -1 )
 			{ 
 				continue;
 			}
 			
 			// get interface
-			if( getNthValueSafe(3, valBuff, ',', interface, sizeof(interface)) == -1 )
+			if( getNthValueSafe(4, valBuff, ',', interface, sizeof(interface)) == -1 )
 			{ 
 				continue;
 			}
 			
 			// get true_interface
-			if( getNthValueSafe(4, valBuff, ',', true_interface, sizeof(true_interface)) == -1 )
+			if( getNthValueSafe(5, valBuff, ',', true_interface, sizeof(true_interface)) == -1 )
 			{ 
 				continue;
 			}
-			
-			// get custom_interface
-			if( getNthValueSafe(5, valBuff, ',', custom_interface, sizeof(custom_interface)) == -1 )
-			{ 
-				continue;
-			}
-			//comment
-			if( getNthValueSafe(7, valBuff, ',', comment, sizeof(comment)) == -1 )
-			{ 
-				continue;
-			}
-			//comment
-			if( getNthValueSafe(6, valBuff, ',', hostnet, sizeof(hostnet)) == -1 )
-			{ 
-				continue;
-			}
+
 			printf("<tr>");
-			printf("<td> %d&nbsp; <input type=\"checkbox\" name=\"delRouting%d\"> </td>", index++,i);
-			printf("<td align=\"center\">%s</td>", dest);
-			printf("<td align=\"center\">%s</td>", netmask);
-			printf("<td align=\"center\">%s</td>", gateway);
-			printf("<td align=\"center\">U</td>");
-			printf("<td align=\"center\">0</td>");
-			printf("<td align=\"center\">0</td>");
-			printf("<td align=\"center\">0</td>");
-			printf("<td align=\"center\">%s(%s)</td>",interface,true_interface);
-			printf("<td align=\"center\">%s</td>", comment);
+			printf("<td class=headind> %d&nbsp; <input type=\"checkbox\" name=\"delRouting%d\"> </td>", index++,i);
+			printf("<td class=headind align=\"center\">%s</td>", dest);
+			printf("<td class=headind align=\"center\">%s</td>", hostnet);			
+			printf("<td class=headind align=\"center\">%s</td>", netmask);
+			printf("<td class=headind align=\"center\">%s</td>", gateway);
+			printf("<td class=headind align=\"center\">%s(%s)</td>",interface,true_interface);
 			printf("</tr>");
 		 }
 	}
-	printf("</tbody></table>");
-	return 0;	
+	printf("</table>");
+	printf("</form>");
+	printf("</body></html>");
+	return;	
 }
 /**************************************************************************/	
 /***********************end for Static Routing Settings********************/
@@ -4597,26 +4567,19 @@ int main(int argc,char **argv)
 		iptablesDMZ();
 	}
 /*************************add for Static Routing Settings**************************/
-	CFG_get_by_name("AddroutingConfigApply",valBuff);
-	if(strcmp(valBuff,"Apply") == 0 || 
-	   strcmp(valBuff,"确定") == 0 )
+	CFG_get_by_name("AddroutingConfigApply", valBuff);
+	if(strcmp(valBuff,"Apply") == 0 || strcmp(valBuff,"确定") == 0 )
 	{
-		if(AddRouting())
-		{
-			writeParameters(NVRAM,"w+", NVRAM_OFFSET);
-		}
+		AddRouting();
+	}
 	
-	}
-	CFG_get_by_name("deleteRoutingConfig",valBuff);
-	if(strcmp(valBuff,"Delete") == 0 || 
-	   strcmp(valBuff,"删除") == 0 )
+	CFG_get_by_name("deleteRoutingConfig", valBuff);
+	if(strcmp(valBuff,"Delete") == 0 || strcmp(valBuff,"删除") == 0 )
 	{
-		if(DelRouting())
-		{
- 			writeParameters(NVRAM,"w+", NVRAM_OFFSET);
-		}		
+		DelRouting();
 	}
-	if(strcmp(argv[0],"RoutingConfig")==0)
+	
+	if(strcmp(argv[0],"RoutingConfig") == 0)
 	{
 		ShowRouting();
 	}

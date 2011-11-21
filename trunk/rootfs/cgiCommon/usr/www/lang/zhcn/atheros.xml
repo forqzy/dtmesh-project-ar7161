@@ -257,7 +257,7 @@
 <message msgid="Current board temperature:" msgstr="当前板子温度："/>
 <!--RoutingConfig.html-->
 <message msgid="routing title" msgstr="静态路由设置"/>
-<message msgid="routing Introduction" msgstr="新增路由规则"/>
+<message msgid="routing Introduction" msgstr="可以在这里添加或删除路由规则"/>
 <message msgid="routing add rule" msgstr="添加路由"/>
 <message msgid="routing routing dest" msgstr="目的IP地址"/>
 <message msgid="routing range" msgstr="Host/Net"/>
@@ -279,8 +279,8 @@
 <message msgid="routing del comment" msgstr="备注"/>
 <message msgid="routing del" msgstr="删除"/>
 <message msgid="routing del reset" msgstr="重置"/>
-<message msgid="routing host" msgstr="Host"/>
-<message msgid="routing net" msgstr="Net"/>
+<message msgid="routing host" msgstr="主机"/>
+<message msgid="routing net" msgstr="网络"/>
 <message msgid="routing LAN" msgstr="LAN"/>
 <message msgid="routing WAN" msgstr="WAN"/>
 
