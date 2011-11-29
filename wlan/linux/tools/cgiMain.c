@@ -4074,8 +4074,6 @@ void ripdRestart(void)
 		{
 			//delete line include network 
 			system("sed -i \'/network.*$/d\' /etc/ripd.conf");
-			//delete blank line
-			system("sed -i \'/^\\s*$/d\' /etc/ripd.conf");
 			
 			memset(buf, 0, sizeof(buf));
 			sprintf(buf,"echo \"network %s/%d\" >> /etc/ripd.conf", wan_ip, netmask_aton(wan_mask));
