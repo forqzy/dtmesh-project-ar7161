@@ -256,6 +256,8 @@
 <!--APTemperature.html-->
 <message msgid="Current board temperature:" msgstr="当前板子温度："/>
 <!--RoutingConfig.html-->
+<message msgid="dynamic routing setting" msgstr="动态路由设置"/>
+<message msgid="dynamic routing" msgstr="动态路由"/>
 <message msgid="routing title" msgstr="静态路由设置"/>
 <message msgid="routing Introduction" msgstr="可以在这里添加或删除路由规则"/>
 <message msgid="routing add rule" msgstr="添加路由"/>

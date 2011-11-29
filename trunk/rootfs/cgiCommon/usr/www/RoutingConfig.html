@@ -142,6 +142,13 @@ function formCheck()
 
 function initTranslation()
 {
+	document.getElementById("dynamicRoutingSet").innerHTML = _("dynamic routing setting");
+	document.getElementById("dynamicRoutingAction").innerHTML = _("admin action");
+	document.getElementById("dynamicRouting").innerHTML = _("dynamic routing");
+	document.getElementById("RIPDisable").innerHTML = _("admin disable");
+	document.getElementById("RIPEnable").innerHTML = _("admin enable");
+	document.getElementById("dynamicRoutingApply").value = _("admin apply");
+	document.getElementById("dynamicRoutingReset").value = _("admin reset");	
 	document.getElementById("routingTitle").innerHTML = _("routing title");
 	document.getElementById("routingIntroduction").innerHTML = _("routing Introduction");
 	document.getElementById("routingAddRule").innerHTML = _("routing add rule");
@@ -160,7 +167,7 @@ function initTranslation()
 	document.getElementById("routingDelGateway").innerHTML = _("routing del gateway");
 	document.getElementById("routingDelInterface").innerHTML = _("routing del interface");
 	document.getElementById("routingDel").value = _("routing del");
-	document.getElementById("routingDelReset").value = _("routing del reset");
+	document.getElementById("routingDelReset").value = _("admin reset");
 	document.getElementById("StaticRouteHost").innerHTML = _("routing host");
 	document.getElementById("StaticRouteNet").innerHTML = _("routing net");
 }
@@ -203,6 +210,23 @@ function initValue()
 
 <body onload="initValue()">
 <form method="post"  id="routingConfig" value="routingConfig" name="routingConfig" >
+<p id="dynamicRoutingSet" class="topnavg">Dynamic Routing Settings </p>
+<p id="dynamicRoutingAction" class="action">Attention:These settings only work in Router mode!</p>
+<table width="400" border="1" cellpadding="2" cellspacing="1">
+<tr>
+	<td class="topnavg" colspan="2" id="dynamicRouting">Dynamic routing</td>
+</tr>
+<tr><td class="header" id="RIP">RIP</td>
+	<td>
+	<select name="RIPSelect" size="1">
+	<option ~sRIPSelect:0~ value=0 id="RIPDisable">Disable</option>
+	<option ~sRIPSelect:1~ value=1 id="RIPEnable">Enable</option>
+	</select></td></tr>
+</table>
+<p>
+	<input type="submit" value="Apply" id="dynamicRoutingApply" name="dynamicRoutingApply"> &nbsp;&nbsp;
+	<input type="reset"  value="Reset" id="dynamicRoutingReset" name="dynamicRoutingReset">
+</p>
 
 
 <p id="routingTitle" class="topnavg">Static Routing  Settings  </p>

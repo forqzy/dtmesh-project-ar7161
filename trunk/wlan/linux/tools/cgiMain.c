@@ -38,6 +38,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <ctype.h>
+#include <net/if.h>
+#include <sys/ioctl.h>
 
 #ifdef CONFIG_NVRAM
 #define NVRAM  "/dev/nvram"
@@ -1172,6 +1174,8 @@ void writeParameters(char *name,char *mode,unsigned long offset)
             if( !strcmp(config.Param[i].Name,"PortFilterApply") )
                 continue;
             if( !strcmp(config.Param[i].Name,"SystemLogClear") )
+                continue;
+            if( !strcmp(config.Param[i].Name,"dynamicRoutingApply") )
                 continue;
             if( !strcmp(config.Param[i].Name,"AddroutingConfigApply") )
                 continue;
@@ -3952,6 +3956,216 @@ void systemlogclear(void)
 	
 	return;
 }
+
+int getIfNetmask(char *ifname, char *if_net)
+{
+	struct ifreq ifr;
+	int skfd = 0;
+
+	if((skfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) 
+	{
+		printf("getIfNetmask: open socket error");
+		return -1;
+	}
+
+	strncpy(ifr.ifr_name, ifname, IF_NAMESIZE);
+	if(ioctl(skfd, SIOCGIFNETMASK, &ifr) < 0) 
+	{
+		return -1;
+	}
+	strcpy(if_net, inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr));
+	close(skfd);
+	return 0;
+}
+
+int getIfIp(char *ifname, char *if_addr)
+{
+	struct ifreq ifr;
+	int skfd = 0;
+
+	if((skfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) 
+	{
+		printf("getIfIp: open socket error");
+		return -1;
+	}
+
+	strncpy(ifr.ifr_name, ifname, IF_NAMESIZE);
+	if (ioctl(skfd, SIOCGIFADDR, &ifr) < 0) 
+	{
+		return -1;
+	}
+	strcpy(if_addr, inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr));
+
+	close(skfd);
+	return 0;
+}
+
+int netmask_aton(const char *ip)
+{
+	int i, a[4], result = 0;
+	sscanf(ip, "%d.%d.%d.%d", &a[0], &a[1], &a[2], &a[3]);
+	for(i=0; i<4; i++)
+	{
+		if(a[i] == 255)
+		{
+			result += 8;
+			continue;
+		}
+		if(a[i] == 254)
+		{
+			result += 7;
+		}
+		if(a[i] == 252)
+		{
+			result += 6;
+		}
+		if(a[i] == 248)
+		{
+			result += 5;
+		}
+		if(a[i] == 240)
+		{
+			result += 4;
+		}
+		if(a[i] == 224)
+		{
+			result += 3;
+		}
+		if(a[i] == 192)
+		{
+			result += 2;
+		}
+		if(a[i] == 128)
+		{
+			result += 1;
+		}
+		break;
+	}
+	
+	return result;
+}
+
+void ripdRestart(void)
+{
+	char wan_ip[16] = {0}, wan_name[16] = {0}, wan_mask[16] = {0};
+	char lan_ip[16] = {0}, lan_name[16] = {0}, lan_mask[16] = {0};	
+	char opmode[20] = {0};
+	char rip[16] = {0};
+	char buf[100];
+	
+	system("killall -q ripd");
+
+	CFG_get_by_name("NETWORK_MODE", opmode);
+	if(!opmode || !strcmp(opmode, "Bridge"))
+	{
+		return;
+	}
+
+	CFG_get_by_name("RIPSelect", rip);
+	if(!rip || !strlen(rip))
+	{
+		return;
+	}
+
+	strcpy(wan_name, getWanIfName());
+	if(getIfIp(wan_name, wan_ip) != -1)
+	{
+		if(getIfNetmask(wan_name, wan_mask) != -1)
+		{
+			//delete line include network 
+			system("sed -i \'/network.*$/d\' /etc/ripd.conf");
+			//delete blank line
+			system("sed -i \'/^\\s*$/d\' /etc/ripd.conf");
+			
+			memset(buf, 0, sizeof(buf));
+			sprintf(buf,"echo \"network %s/%d\" >> /etc/ripd.conf", wan_ip, netmask_aton(wan_mask));
+			system(buf);
+
+			memset(buf, 0, sizeof(buf));
+			sprintf(buf, "echo \"network %s\" >> /etc/ripd.conf", wan_name);
+			system(buf);
+		}
+		else
+		{
+			printf("ripdRestart(): The WAN IP is still undeterminated...\n");
+		}
+	}
+
+	strcpy(lan_name, getLanIfName());
+	if(getIfIp(lan_name, lan_ip) != -1)
+	{
+		if(getIfNetmask(lan_name, lan_mask) != -1)
+		{
+			memset(buf, 0, sizeof(buf));
+			sprintf(buf,"echo \"network %s/%d\" >> /etc/ripd.conf", lan_ip, netmask_aton(lan_mask));
+			system(buf);
+
+			memset(buf, 0, sizeof(buf));
+			sprintf(buf, "echo \"network %s\" >> /etc/ripd.conf", lan_name);
+			system(buf);
+		}
+	}
+	
+	system("ripd -f /etc/ripd.conf -d");	
+	return;
+}
+
+void zebraRestart(void)
+{
+	char opmode[20] = {0};
+	char rip[16] = {0};
+	
+	system("killall -q zebra");
+	
+	CFG_get_by_name("NETWORK_MODE", opmode);
+	if(!opmode || !strcmp(opmode, "Bridge"))
+	{
+		return;
+	}
+
+	CFG_get_by_name("RIPSelect", rip);
+	if(!rip || !strlen(rip))
+	{
+		return;
+	}
+	
+	system("zebra -d -f /etc/zebra.conf");
+	return;
+}
+
+void dynamicRouting(void)
+{
+	char opmode[20] = {0};
+	char rip[16] = {0};
+	
+	CFG_get_by_name("NETWORK_MODE", opmode);
+	if(!opmode || !strcmp(opmode, "Bridge"))
+	{
+		return;
+	}
+
+	CFG_get_by_name("RIPSelect", rip);
+	if(!rip || !strlen(rip))
+	{
+		return;
+	}
+
+	if(!strcmp(rip, "0"))
+	{
+		system("killall -q ripd");
+		system("killall -q zebra");
+	}
+	else if(!strcmp(rip, "1"))
+	{
+		zebraRestart();
+		ripdRestart();
+	}
+	
+	writeParameters(NVRAM,"w+", NVRAM_OFFSET);
+	writeParameters("/tmp/.apcfg","w+",0);
+	return;
+}
+
 /*****************************************************************************
 **
 ** /brief Main
@@ -4594,6 +4808,13 @@ int main(int argc,char **argv)
 	{
 		systemlogclear();
 	}
+/******************************* rip process **************************************/
+	CFG_get_by_name("dynamicRoutingApply",valBuff);
+	if(strcmp(valBuff,"Apply") == 0 || strcmp(valBuff,"È·¶¨") == 0 )
+	{
+		dynamicRouting();
+	}
+
 
     exit(0);
 }
