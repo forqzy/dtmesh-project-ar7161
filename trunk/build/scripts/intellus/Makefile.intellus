@@ -18,7 +18,7 @@ endif
 ifeq ($(BUILD_WPA2),y) ##################################################
 common_fusion: check_tftp rootfs_prep toolchain_build kernel_build \
 	kernel_info redboot_fusion busybox_build inadyn_build wpa2 sar \
-	cgi ntpclient dnsmasq rp-pppoe wireless_tools_fus
+	cgi ntpclient dnsmasq rp-pppoe wireless_tools_fus zebra_build
 common_build: check_tftp rootfs_prep toolchain_build kernel_build \
 	kernel_info redboot_build enet_build busybox_build inadyn_build wpa2 sar 
 
@@ -185,4 +185,11 @@ art_mod:
         make -f makefile.soc.linux.mips hydra
 	cp ../apps/art/modules/art.ko $(MODULEPATH)/art.ko
 
+zebra_build:
+	cd ${TOPDIR}/apps/zebra-0.95a; \
+	make clean; \
+	./configure --host=mips-linux CC=${TOOLPREFIX}gcc --disable-bgpd --disable-ripngd --disable-ospfd --disable-ospf6d; \
+	make; \
+	cp ripd/ripd $(INSTALL_ROOT)/sbin; \
+	cp zebra/zebra $(INSTALL_ROOT)/sbin;
 
