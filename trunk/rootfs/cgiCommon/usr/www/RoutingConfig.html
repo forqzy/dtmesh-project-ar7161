@@ -77,7 +77,7 @@ function checkIpAddr(field)
     if( (!checkRange(field.value,1,1,255)) ||
         (!checkRange(field.value,2,0,255)) ||
         (!checkRange(field.value,3,0,255)) ||
-        (!checkRange(field.value,4,1,254)) )
+        (!checkRange(field.value,4,0,255)) )
 	{
         alert('IP format error.');
         field.focus();
@@ -106,10 +106,13 @@ function formCheck()
 		alert("The destination has wrong format.");
 		return false;
 	}
-	if( document.routingConfig.StaticRouteMask.value != "" && !checkIpAddr(document.routingConfig.StaticRouteMask ))
+	if(document.routingConfig.StaticRouteHostNet.value = "net")
 	{
-		alert("The netmask has wrong format.");
-		return false;
+		if( document.routingConfig.StaticRouteMask.value != "" && !checkIpAddr(document.routingConfig.StaticRouteMask ))
+		{
+			alert("The netmask has wrong format.");
+			return false;
+		}
 	}
 	if( document.routingConfig.StaticRouteGateway.value != "" && !checkIpAddr(document.routingConfig.StaticRouteGateway))
 	{
