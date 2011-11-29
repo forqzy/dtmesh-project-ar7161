@@ -1,4 +1,5 @@
 #!/bin/sh
+. /etc/ath/apcfg
 for i in `cat /tmp/.apcfg`
 do
 	tmp=$i
@@ -26,3 +27,11 @@ do
 		fi
 	fi
 done
+
+if [ "${NETWORK_MODE}" = "Router" ]; then
+	if [ "${RIPSelect}" != "0" ]; then
+		zebra -d -f /etc/zebra.conf
+		ripd -f /etc/ripd.conf -d
+	fi
+fi
+

@@ -253,6 +253,8 @@
 <!--APTemperature.html-->
 <message msgid="Current board temperature:" msgstr="Current board temperature: "/>
 <!--RoutingConfig.html-->
+<message msgid="dynamic routing setting" msgstr="Dynamic Routing Settings"/>
+<message msgid="dynamic routing" msgstr="Dynamic routing"/>
 <message msgid="routing title" msgstr="Static Routing  Settings"/>
 <message msgid="routing Introduction" msgstr="You may add or remove Internet routing rules here."/>
 <message msgid="routing add rule" msgstr="Add a routing rule"/>
